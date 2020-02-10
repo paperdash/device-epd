@@ -1,54 +1,56 @@
 #include <Arduino.h>
 #include <pgmspace.h>
-
-//#include "uuid.h"
-//#include "wlan.h"
-//#include "ota.h"
-#include "display.h"
 #include <HTTPClient.h>
 
-// SMART SIGN CONFIG ========
-#define config_PullServer "http://smart-sign-server/satellite/get-data" // pull server address
-RTC_DATA_ATTR long config_DeepSleepInterval = 300;						// 5 min pull intervall
-String config_UUID = "";
+
+#include "display.h"
+#include "device.h"
+
+
+// TODO SMART SIGN CONFIG ========
+#define config_PullServer "http://paperdash.sonic.da-tom.com/gateway.php/" // pull server address
+String config_UUID = "22805938-2280-8022-3822-385980225980";				// TODO
 // SMART SIGN CONFIG ========
 
 // runtime data
 const char *setting_HeaderKeys[] = {
-	"DeepSleepInterval" // update deep sleep interval
-	,
-	"DisplayImage" // images for display...
-	,
-	"UpdateFirmware" // execute firmware update
+	// update deep sleep interval
+	"DeepSleepInterval",
+	// execute firmware update url
+	"UpdateFirmware"
 };
-long pullCount = 0;
 
-#include <GxEPD2_BW.h>
-#define FRAME_BUFFERBUFFE_SIZE GxEPD2_750::WIDTH *GxEPD2_750::HEIGHT / 8
-PROGMEM unsigned char displayImageBuffer[FRAME_BUFFERBUFFE_SIZE];
+//#include <GxEPD2_BW.h>
+//#define FRAME_BUFFERBUFFE_SIZE GxEPD2_750::WIDTH *GxEPD2_750::HEIGHT / 8
+//PROGMEM unsigned char displayImageBuffer[FRAME_BUFFERBUFFE_SIZE];
 
 HTTPClient http;
 
+void pullData();
+
+
 void setupCloud()
 {
+	Serial.println("setup cloud");
+
 	http.useHTTP10(true); // http1.1 chunked übertragung funktioniert irgendwie nicht
 	http.setTimeout(7000);
 	http.collectHeaders(setting_HeaderKeys, sizeof(setting_HeaderKeys) / sizeof(char *));
-}
 
+	Serial.println("setup cloud - done");
+}
 
 void loopCloud()
 {
-
+    pullData();
 }
-
 
 /**
  * 1. neue config daten über den http header laden
  * 2. neues bild vom server laden und anzeigen sofern vorhanden
  * @return bool true on new data to display
  */
-bool pullData()
+void pullData()
 {
 
 	String pullUrl = String(config_PullServer) + "/" + config_UUID; // + "?deep-sleep=" + String(config_DeepSleepInterval) + "&wakeup=" + getWakeupReason();
@@ -64,20 +66,20 @@ bool pullData()
 	{
 		// update poll interval
 		String DeepSleepInterval = http.header("DeepSleepInterval");
-		if (DeepSleepInterval.toInt() == 0)
+		if (false && DeepSleepInterval.toInt() == 0)
 		{
-			// TODO disable deep sleep
-			config_DeepSleepInterval = DeepSleepInterval.toInt();
+			// disable deep sleep
+			Serial.println("###### deep sleep disabled");
+			deviceSetSleepInterval(0);
 		}
-		else if (DeepSleepInterval.toInt() > 5 && DeepSleepInterval.toInt() != config_DeepSleepInterval)
+		else if (DeepSleepInterval.toInt() > 5 && DeepSleepInterval.toInt() != deviceGetSleepInterval())
 		{
-			// TODO
+			// update config
 			Serial.println("###### config update");
-			Serial.println("   set deep sleep interval from: " + String(config_DeepSleepInterval) + " to " + DeepSleepInterval);
+			Serial.println("   set deep sleep interval from: " + String(deviceGetSleepInterval()) + " to " + DeepSleepInterval);
 			Serial.println("###### config update");
 
-			config_DeepSleepInterval = DeepSleepInterval.toInt();
-			//setupDeepSleep();
+			deviceSetSleepInterval(DeepSleepInterval.toInt());
 		}
 
 
@@ -88,10 +90,9 @@ bool pullData()
 			Serial.println("TODO update firmware...");
 		}
 
-
 		if (httpCode == HTTP_CODE_OK)
 		{
-			// TODO update image
+			// update image
 
 			// get lenght of document (is -1 when Server sends no Content-Length header)
 			int len = http.getSize();
@@ -103,13 +104,13 @@ bool pullData()
 			WiFiClient *stream = http.getStreamPtr();
 
 			// reset image buffer
-			memset(displayImageBuffer, 0, sizeof(displayImageBuffer));
+			//memset(displayImageBuffer, 0, sizeof(displayImageBuffer));
 			int imageBufferOffset = 0;
+			displayOpenFramebuffer();
 
 			// read all data from server
 			while (http.connected() && (len > 0 || len == -1))
 			{
-
 				// get available data size
 				size_t size = stream->available();
 
@@ -118,6 +119,9 @@ bool pullData()
 					// read up to 128 byte
 					int c = stream->readBytes(buff, ((size > sizeof(buff)) ? sizeof(buff) : size));
 
+					displayWriteFramebuffer(imageBufferOffset, buff, c);
+					imageBufferOffset += c;
+/*
 					for (int i = 0; i < c; i++)
 					{
 						// write to display buffer
@@ -140,6 +144,7 @@ bool pullData()
 							break;
 						}
 					}
+					*/
 
 					if (len > 0)
 					{
@@ -150,9 +155,8 @@ bool pullData()
 				delay(1);
 			}
 
-			return true;
+			// done
+			displayFlushFramebuffer();
 		}
 	}
-
-	return false;
 }

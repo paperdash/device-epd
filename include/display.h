@@ -7,17 +7,10 @@
 
 
 void setupDisplay();
-void updateDisplay_Neu(const unsigned char *bitmap);
 
-void drawBitmaps640x384();
-void helloWorld();
-void helloFullScreenPartialMode();
-void helloArduino();
-void helloEpaper();
-void showFont(const char name[], const GFXfont* f);
-void drawFont(const char name[], const GFXfont* f);
-void drawBitmaps();
+void displayOpenFramebuffer();
+void displayWriteFramebuffer(int offset, uint8_t buff[], int c);
+void displayFlushFramebuffer();
 
-void deepSleepTest();
 
 #endif
