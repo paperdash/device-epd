@@ -16,10 +16,10 @@ String getWakeupReason();
 void setupDevice()
 {
     // increment boot number and print it every reboot
-    //bootCount++;
+    bootCount++;
 
-    // config wakeup timer
-	deviceSetSleepInterval(300);
+    // TODO muss in der cloud passieren? config wakeup timer
+	//deviceSetSleepInterval(300);
 }
 
 

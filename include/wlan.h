@@ -4,6 +4,6 @@
 #include <WiFi.h>
 
 void setupWlan();
-bool wlan_isAPMode();
+bool wlan_isConnected();
 
 #endif

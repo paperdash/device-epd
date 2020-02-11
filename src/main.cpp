@@ -24,23 +24,29 @@ void setup()
 
 	setupDisplay();
 	setupSettings();
-	// setup hardware
-	//setupConfig();
-	//setupDeepSleep();
 	setupDevice();
 	setupWlan();
-	setupCloud();
+
+	if (wlan_isConnected())
+	{
+		//setupCloud();
+	}
+
+	setupConfigure();
 
 	Serial.println();
-	Serial.println("setup... done");
+	Serial.println("setup - done");
 }
 
 void loop()
 {
 	// put your main code here, to run repeatedly:
 
-	loopCloud();
+	if (wlan_isConnected())
+	{
+		//loopCloud();
+	}
+
 	loopDevice();
 	loopConfigure();
-
 }

@@ -1,5 +1,4 @@
 #include "configure.h"
-#include "wlan.h"
 #include "SPIFFS.h"
 #include "ESPAsyncWebServer.h"
 
@@ -8,36 +7,33 @@
 
 AsyncWebServer server(80);
 
+
 void setupConfigure()
 {
-	if (wlan_isAPMode())
-	{
-		if (!SPIFFS.begin()) {
-			Serial.println("An Error has occurred while mounting SPIFFS");
-			return;
-		}
+	Serial.println("setup configure");
 
-		server.on("/dashboard", HTTP_GET, [](AsyncWebServerRequest *request){
-			request->send(SPIFFS, "/dashboard.html", "text/html");
-		});
-
-		server.on("/dashboard.css", HTTP_GET, [](AsyncWebServerRequest *request){
-			request->send(SPIFFS, "/dashboard.css", "text/css");
-		});
-
-		server.begin();
+	if (!SPIFFS.begin()) {
+		Serial.println("An Error has occurred while mounting SPIFFS");
+		return;
 	}
+
+	server.on("/", HTTP_GET, [](AsyncWebServerRequest *request) {
+		Serial.println("/");
+		request->send(SPIFFS, "/index.html", "text/html");
+	});
+
+	server.on("/app.css", HTTP_GET, [](AsyncWebServerRequest *request) {
+		Serial.println("/app.css");
+		request->send(SPIFFS, "/app.css", "text/css");
+	});
+
+	server.begin();
+
+	Serial.println("setup configure - done");
 }
 
 
 void loopConfigure()
 {
-	if (wlan_isAPMode())
-	{
-		// ap mode
-	}
-	else
-	{
-		// connected to wifi
-	}
+
 }
