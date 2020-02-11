@@ -1,4 +1,4 @@
-#include "configure.h"
+#include "app.h"
 #include "SPIFFS.h"
 #include "ESPAsyncWebServer.h"
 
@@ -8,7 +8,7 @@
 AsyncWebServer server(80);
 
 
-void setupConfigure()
+void setupApp()
 {
 	Serial.println("setup configure");
 
@@ -17,23 +17,21 @@ void setupConfigure()
 		return;
 	}
 
-	server.on("/", HTTP_GET, [](AsyncWebServerRequest *request) {
-		Serial.println("/");
-		request->send(SPIFFS, "/index.html", "text/html");
+
+	// @see https://github.com/me-no-dev/ESPAsyncWebServer
+
+	// DirectoryIndex Directive
+	server.on("/", HTTP_GET, [](AsyncWebServerRequest *request){
+		request->send(SPIFFS, "/dist/index.html", "text/html");
 	});
 
-	server.on("/app.css", HTTP_GET, [](AsyncWebServerRequest *request) {
-		Serial.println("/app.css");
-		request->send(SPIFFS, "/app.css", "text/css");
-	});
+	// serve static files
+	server
+		.serveStatic("/", SPIFFS, "/dist/")
+		.setCacheControl("max-age=600")
+	;
 
 	server.begin();
 
 	Serial.println("setup configure - done");
-}
-
-
-void loopConfigure()
-{
-
 }

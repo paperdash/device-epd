@@ -5,7 +5,7 @@
 #include "display.h"
 #include "settings.h"
 #include "cloud.h"
-#include "configure.h"
+#include "app.h"
 
 
 void gotoDeepSleep();
@@ -32,7 +32,7 @@ void setup()
 		//setupCloud();
 	}
 
-	setupConfigure();
+	setupApp();
 
 	Serial.println();
 	Serial.println("setup - done");
@@ -48,5 +48,4 @@ void loop()
 	}
 
 	loopDevice();
-	loopConfigure();
 }
