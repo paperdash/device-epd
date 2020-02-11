@@ -1,8 +1,9 @@
 #ifndef WLAN_H
 #define WLAN_H
 
-void setupWlan();
+#include <WiFi.h>
 
-void disableWlan();
+void setupWlan();
+bool wlan_isAPMode();
 
 #endif

@@ -3,7 +3,9 @@
 #include "device.h"
 #include "wlan.h"
 #include "display.h"
+#include "settings.h"
 #include "cloud.h"
+#include "configure.h"
 
 
 void gotoDeepSleep();
@@ -21,6 +23,7 @@ void setup()
 	Serial.println();
 
 	setupDisplay();
+	setupSettings();
 	// setup hardware
 	//setupConfig();
 	//setupDeepSleep();
@@ -38,5 +41,6 @@ void loop()
 
 	loopCloud();
 	loopDevice();
+	loopConfigure();
 
 }

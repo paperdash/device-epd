@@ -2,7 +2,7 @@
 #include <pgmspace.h>
 #include <HTTPClient.h>
 
-
+#include "settings.h"
 #include "display.h"
 #include "device.h"
 
@@ -10,6 +10,9 @@
 // TODO SMART SIGN CONFIG ========
 #define config_PullServer "http://paperdash.sonic.da-tom.com/gateway.php/" // pull server address
 String config_UUID = "22805938-2280-8022-3822-385980225980";				// TODO
+
+//String config_PullServer;
+//String config_UUID;
 // SMART SIGN CONFIG ========
 
 // runtime data
@@ -32,6 +35,11 @@ void pullData();
 void setupCloud()
 {
 	Serial.println("setup cloud");
+
+	// load settings
+	//config_PullServer = NVS.getString("cloud_gateway");
+	config_UUID = NVS.getString("cloud_uuid");
+
 
 	http.useHTTP10(true); // http1.1 chunked übertragung funktioniert irgendwie nicht
 	http.setTimeout(7000);

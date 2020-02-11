@@ -1,17 +1,39 @@
-#include <Arduino.h>
-#include <WiFi.h>
 #include "wlan.h"
+#include "settings.h"
 
-const char *ssid = "";
-const char *password = "";
+
+void initClientMode(const char *ssid, const char *password);
+void initAPMode();
+
 
 void setupWlan()
 {
 	Serial.println("setup Wlan");
+	WiFi.setHostname("paperdash-display");
+
+	// load wifi settings
+    String ssid = NVS.getString("wlan_ssid");
+    String password = NVS.getString("wlan_password");
+
+
+	if (true)
+	{
+		// client mode
+		initClientMode(ssid.c_str(), password.c_str());
+	}
+	else
+	{
+		// ap mode
+		initAPMode();
+	}
+}
+
+
+void initClientMode(const char *ssid, const char *password)
+{
 	long startMills = millis();
 
 	WiFi.mode(WIFI_STA);
-	WiFi.setHostname("paperdash-display");
 
 	Serial.print("Connecting to ");
     Serial.println(ssid);
@@ -19,18 +41,11 @@ void setupWlan()
 	WiFi.begin(ssid, password);
 	Serial.println(millis() - startMills);
 
-/*
-	while (WiFi.status() != WL_CONNECTED) {
-        delay(100);
-        Serial.print(".");
-    }
-	*/
-
-	//WiFi.config(IPAddress(192, 168, 178, 62), IPAddress(192, 168, 178, 1), IPAddress(192, 168, 178, 1), IPAddress(255, 255, 255, 0));
-	//Serial.println(millis() - startMills);
 
 	while (WiFi.waitForConnectResult() != WL_CONNECTED)
 	{
+		// TODO count failed connecting
+		// on x failed, auto start AP mode
 		Serial.println("Connection Failed! Rebooting...");
 		delay(100);
 		ESP.restart();
@@ -43,7 +58,21 @@ void setupWlan()
 
 	Serial.print("connected in: ");
 	Serial.println(millis() - startMills);
+
 }
+
+
+void initAPMode()
+{
+
+}
+
+
+bool wlan_isAPMode()
+{
+	return false;
+}
+
 
 void disableWlan()
 {
