@@ -20,14 +20,10 @@ void setupApp()
 
 	// @see https://github.com/me-no-dev/ESPAsyncWebServer
 
-	// DirectoryIndex Directive
-	server.on("/", HTTP_GET, [](AsyncWebServerRequest *request){
-		request->send(SPIFFS, "/dist/index.html", "text/html");
-	});
-
 	// serve static files
 	server
 		.serveStatic("/", SPIFFS, "/dist/")
+		.setDefaultFile("index.html")
 		.setCacheControl("max-age=600")
 	;
 
