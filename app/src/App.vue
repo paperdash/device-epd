@@ -1,60 +1,80 @@
 <template>
-  <v-app>
-    <v-app-bar
-      app
-      color="primary"
-      dark
-    >
-      <div class="d-flex align-center">
-        <v-img
-          alt="Vuetify Logo"
-          class="shrink mr-2"
-          contain
-          src="https://cdn.vuetifyjs.com/images/logos/vuetify-logo-dark.png"
-          transition="scale-transition"
-          width="40"
-        />
+    <v-app style="background: #e2e2e2">
+        <v-navigation-drawer
+            v-model="drawer"
+			app
+        >
+			<v-img :aspect-ratio="16/9" src="https://cdn.vuetifyjs.com/images/parallax/material.jpg">
+				<v-row align="end" class="lightbox white--text pa-2 fill-height">
+				<v-col>
+					<div class="subheading">update in 2min</div>
+					<!--<div class="body-1">heyfromjonathan@gmail.com</div>-->
+				</v-col>
+				</v-row>
+			</v-img>
 
-        <v-img
-          alt="Vuetify Name"
-          class="shrink mt-1 hidden-sm-and-down"
-          contain
-          min-width="100"
-          src="https://cdn.vuetifyjs.com/images/logos/vuetify-name-dark.png"
-          width="100"
-        />
-      </div>
+			<v-list-item>
+				<v-list-item-content>
+					<v-list-item-title class="title">
+						paperdash.io
+					</v-list-item-title>
+					<v-list-item-subtitle>
+						display
+					</v-list-item-subtitle>
+				</v-list-item-content>
+			</v-list-item>
 
-      <v-spacer></v-spacer>
+			<v-divider></v-divider>
 
-      <v-btn
-        href="https://github.com/vuetifyjs/vuetify/releases/latest"
-        target="_blank"
-        text
-      >
-        <span class="mr-2">Latest Release</span>
-        <v-icon>mdi-open-in-new</v-icon>
-      </v-btn>
-    </v-app-bar>
+            <v-list>
+                <v-list-item
+                    v-for="(link, i) in items"
+                    :key="i"
+                    :to="link.to"
+                    active-class="primary white--text"
+                    >
+                    <v-list-item-action>
+                        <component :is=link.icon class="icon icon-white"></component>
+                    </v-list-item-action>
 
-    <v-content>
-      <HelloWorld/>
-    </v-content>
-  </v-app>
+                    <v-list-item-title v-text="link.title" />
+                </v-list-item>
+            </v-list>
+        </v-navigation-drawer>
+
+        <v-content>
+            <v-container fluid fill-height class="align-start">
+                <router-view></router-view>
+            </v-container>
+        </v-content>
+    </v-app>
 </template>
 
 <script>
-import HelloWorld from './components/HelloWorld';
+	//complete: {component: () => import(/* webpackChunkName: "icons" */'!vue-svg-loader!@material-icons/svg/svg/check/baseline.svg')}
 
-export default {
-  name: 'App',
+	import iconDashboard from '!vue-svg-loader!@material-icons/svg/svg/check/baseline.svg'
 
-  components: {
-    HelloWorld,
-  },
 
-  data: () => ({
-    //
-  }),
-};
+    export default {
+        name: 'App',
+        components: {
+			iconDashboard
+        },
+        data: () => ({
+            drawer: true,
+            items: [
+                {title: 'Dashboard', icon: 'iconDashboard', to: '/'},
+                {title: 'Settings', icon: '', to: '/settings'},
+                {title: 'Sandbox', icon: '', to: '/sandbox'},
+            ],
+        })
+    };
 </script>
+
+<style scoped>
+  .lightbox {
+    box-shadow: 0 0 20px inset rgba(0, 0, 0, 0.2);
+    background-image: linear-gradient(to top, rgba(0, 0, 0, 0.4) 0%, transparent 72px);
+  }
+</style>
