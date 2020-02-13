@@ -1,6 +1,7 @@
 #include <Arduino.h>
 #include <pgmspace.h>
 #include <HTTPClient.h>
+#include <SPIFFS.h>
 
 #include "settings.h"
 #include "display.h"
@@ -9,7 +10,7 @@
 
 // TODO SMART SIGN CONFIG ========
 #define config_PullServer "http://paperdash.sonic.da-tom.com/gateway.php/" // pull server address
-String config_UUID = "22805938-2280-8022-3822-385980225980";				// TODO
+String config_UUID = "22805938-2280-8022-3822-385980225980";			   // TODO
 
 //String config_PullServer;
 //String config_UUID;
@@ -20,8 +21,7 @@ const char *setting_HeaderKeys[] = {
 	// update deep sleep interval
 	"DeepSleepInterval",
 	// execute firmware update url
-	"UpdateFirmware"
-};
+	"UpdateFirmware"};
 
 //#include <GxEPD2_BW.h>
 //#define FRAME_BUFFERBUFFE_SIZE GxEPD2_750::WIDTH *GxEPD2_750::HEIGHT / 8
@@ -31,7 +31,6 @@ HTTPClient http;
 
 void pullData();
 
-
 void setupCloud()
 {
 	Serial.println("setup cloud");
@@ -39,7 +38,6 @@ void setupCloud()
 	// load settings
 	//config_PullServer = NVS.getString("cloud_gateway");
 	config_UUID = NVS.getString("cloud_uuid");
-
 
 	http.useHTTP10(true); // http1.1 chunked übertragung funktioniert irgendwie nicht
 	http.setTimeout(7000);
@@ -50,7 +48,7 @@ void setupCloud()
 
 void loopCloud()
 {
-    pullData();
+	pullData();
 }
 
 /**
@@ -90,7 +88,6 @@ void pullData()
 			deviceSetSleepInterval(DeepSleepInterval.toInt());
 		}
 
-
 		// update to new firmware
 		String UpdateFirmware = http.header("UpdateFirmware");
 		if (UpdateFirmware.length() > 0)
@@ -116,6 +113,13 @@ void pullData()
 			int imageBufferOffset = 0;
 			displayOpenFramebuffer();
 
+			// persist image to display
+			File file = SPIFFS.open("/currentImage.bin", FILE_WRITE);
+			if (!file)
+			{
+				Serial.println("Failed to open file for writing");
+			}
+
 			// read all data from server
 			while (http.connected() && (len > 0 || len == -1))
 			{
@@ -127,9 +131,16 @@ void pullData()
 					// read up to 128 byte
 					int c = stream->readBytes(buff, ((size > sizeof(buff)) ? sizeof(buff) : size));
 
+					// write to storage
+					if (file)
+					{
+						file.write(buff, c);
+					}
+
+					// write display frame
 					displayWriteFramebuffer(imageBufferOffset, buff, c);
 					imageBufferOffset += c;
-/*
+					/*
 					for (int i = 0; i < c; i++)
 					{
 						// write to display buffer
@@ -161,6 +172,11 @@ void pullData()
 				}
 
 				delay(1);
+			}
+
+			if (file)
+			{
+				file.close();
 			}
 
 			// done

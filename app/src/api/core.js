@@ -3,11 +3,17 @@
  */
 
 const _settings = {
+	// connected wifi
 	"wifi_ssid": "",
 
+	// oparation mode
 	"device_mode": "active",
 
-	// deep sleep
+	// Set rotation setting for display
+	// 0 thru 3 corresponding to 4 cardinal rotations
+	"device_rotation": 0,
+
+	// deep sleep timer
 	"cloud_refresh": 97
 }
 
