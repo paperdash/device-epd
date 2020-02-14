@@ -29,7 +29,7 @@ void setup()
 
 	if (wlan_isConnected())
 	{
-		//setupCloud();
+		setupCloud();
 	}
 
 	setupApp();
@@ -44,7 +44,7 @@ void loop()
 
 	if (wlan_isConnected())
 	{
-		//loopCloud();
+		loopCloud();
 	}
 
 	loopDevice();

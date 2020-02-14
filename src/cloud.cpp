@@ -7,14 +7,16 @@
 #include "display.h"
 #include "device.h"
 
-
 // TODO SMART SIGN CONFIG ========
-#define config_PullServer "http://paperdash.sonic.da-tom.com/gateway.php/" // pull server address
-String config_UUID = "22805938-2280-8022-3822-385980225980";			   // TODO
+//#define config_PullServer "http://paperdash.sonic.da-tom.com/gateway.php/" // pull server address
+String config_UUID = "22805938-2280-8022-3822-385980225980"; // TODO
 
-//String config_PullServer;
-//String config_UUID;
+//#define config_PullServer = NVS.getString("cloud_server");
+//String config_UUID = NVS.getString("cloud_server");
 // SMART SIGN CONFIG ========
+
+unsigned long requestInterval = 1000; // 1 sec
+unsigned long previousTime = 0;
 
 // runtime data
 const char *setting_HeaderKeys[] = {
@@ -23,21 +25,19 @@ const char *setting_HeaderKeys[] = {
 	// execute firmware update url
 	"UpdateFirmware"};
 
-//#include <GxEPD2_BW.h>
-//#define FRAME_BUFFERBUFFE_SIZE GxEPD2_750::WIDTH *GxEPD2_750::HEIGHT / 8
-//PROGMEM unsigned char displayImageBuffer[FRAME_BUFFERBUFFE_SIZE];
-
 HTTPClient http;
 
-void pullData();
+void requestCloud();
+bool isCloudSetupComplete();
+void updateInterval(unsigned long interval);
 
 void setupCloud()
 {
 	Serial.println("setup cloud");
 
-	// load settings
-	//config_PullServer = NVS.getString("cloud_gateway");
-	config_UUID = NVS.getString("cloud_uuid");
+	updateInterval(10);
+
+	SPIFFS.begin();
 
 	http.useHTTP10(true); // http1.1 chunked übertragung funktioniert irgendwie nicht
 	http.setTimeout(7000);
@@ -48,7 +48,55 @@ void setupCloud()
 
 void loopCloud()
 {
-	pullData();
+	if (isCloudSetupComplete())
+	{
+		if (NVS.getString("device_mode") == "passive")
+		{
+			Serial.println("requestCloud()");
+
+			Serial.println("passive, after this, we go to deep sleep and startover here again");
+		}
+		else
+		{
+			unsigned long currentTime = millis();
+
+			if (currentTime - previousTime >= requestInterval)
+			{
+				/* Update the timing for the next time around */
+				previousTime = currentTime;
+
+				Serial.println("requestCloud()");
+				requestCloud();
+			}
+		}
+
+	}
+}
+
+bool isCloudSetupComplete()
+{
+	return NVS.getString("cloud_server") != "" && config_UUID != "";
+}
+
+/**
+ * interval in seconds
+ */
+void updateInterval(unsigned long interval)
+{
+	//Serial.print("updateInterval: ");
+	//Serial.println(interval);
+
+	// update config
+	Serial.println("###### config update");
+	Serial.println("   set deep sleep interval from: " + String(deviceGetSleepInterval()) + " to " + interval);
+	Serial.println("###### config update");
+
+
+	// active wait state
+	requestInterval = interval * 1000;
+
+	// passive deep sleep state
+	deviceSetSleepInterval(interval);
 }
 
 /**
@@ -56,10 +104,11 @@ void loopCloud()
  * 2. neues bild vom server laden und anzeigen sofern vorhanden
  * @return bool true on new data to display
  */
-void pullData()
+void requestCloud()
 {
 
-	String pullUrl = String(config_PullServer) + "/" + config_UUID; // + "?deep-sleep=" + String(config_DeepSleepInterval) + "&wakeup=" + getWakeupReason();
+	//String pullUrl = String(config_PullServer) + "/" + config_UUID; // + "?deep-sleep=" + String(config_DeepSleepInterval) + "&wakeup=" + getWakeupReason();
+	String pullUrl = NVS.getString("cloud_server") + "/" + config_UUID; // + "?deep-sleep=" + String(config_DeepSleepInterval) + "&wakeup=" + getWakeupReason();
 
 	Serial.println(pullUrl);
 	http.begin(pullUrl);
@@ -75,17 +124,12 @@ void pullData()
 		if (false && DeepSleepInterval.toInt() == 0)
 		{
 			// disable deep sleep
-			Serial.println("###### deep sleep disabled");
-			deviceSetSleepInterval(0);
+			//Serial.println("###### deep sleep disabled");
+			//deviceSetSleepInterval(0);
 		}
 		else if (DeepSleepInterval.toInt() > 5 && DeepSleepInterval.toInt() != deviceGetSleepInterval())
 		{
-			// update config
-			Serial.println("###### config update");
-			Serial.println("   set deep sleep interval from: " + String(deviceGetSleepInterval()) + " to " + DeepSleepInterval);
-			Serial.println("###### config update");
-
-			deviceSetSleepInterval(DeepSleepInterval.toInt());
+			updateInterval(DeepSleepInterval.toInt());
 		}
 
 		// update to new firmware
