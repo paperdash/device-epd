@@ -14,6 +14,8 @@ void setupImageWBMP()
 
 void wbmpOpenFramebuffer()
 {
+	Serial.println("wbmpOpenFramebuffer");
+	displayOpen();
 	memset(_buffer, 0, sizeof(_buffer));
 }
 
@@ -21,10 +23,10 @@ void wbmpOpenFramebuffer()
 // TODO do it better :-)
 void wbmpWriteFramebuffer(int offset, uint8_t bitmap[], int c)
 {
+	Serial.println("wbmpWriteFramebuffer");
 	for (int i = 0; i < c; i++)
 	{
-		_buffer[offset] = bitmap[i];
-		offset++;
+		_buffer[offset + i] = bitmap[i];
 	}
 
 	/*

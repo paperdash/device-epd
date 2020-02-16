@@ -185,30 +185,6 @@ void requestCloud()
 					// write display frame
 					wbmpWriteFramebuffer(imageBufferOffset, buff, c);
 					imageBufferOffset += c;
-					/*
-					for (int i = 0; i < c; i++)
-					{
-						// write to display buffer
-						displayImageBuffer[imageBufferOffset] = buff[i];
-						imageBufferOffset++;
-
-						// update display if image buffer is full
-						if (imageBufferOffset == FRAME_BUFFERBUFFE_SIZE)
-						{
-							// TODO update display?
-							Serial.printf("TODO update display");
-
-							// update...
-							updateDisplay_Neu(displayImageBuffer);
-
-							// reset image buffer
-							memset(displayImageBuffer, 0, sizeof(displayImageBuffer));
-							imageBufferOffset = 0;
-
-							break;
-						}
-					}
-					*/
 
 					if (len > 0)
 					{

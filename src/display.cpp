@@ -45,7 +45,7 @@ void displayWriteFramebuffer(uint8_t bitmap[])
 
 void displayFlush()
 {
-	Serial.println("displayFlushFramebuffer");
+	Serial.println("displayFlush");
 	display.nextPage();
 }
 
