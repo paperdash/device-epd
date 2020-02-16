@@ -5,6 +5,7 @@
 
 #include "settings.h"
 #include "display.h"
+#include "imageWBMP.h"
 #include "device.h"
 
 // TODO SMART SIGN CONFIG ========
@@ -155,7 +156,7 @@ void requestCloud()
 			// reset image buffer
 			//memset(displayImageBuffer, 0, sizeof(displayImageBuffer));
 			int imageBufferOffset = 0;
-			displayOpenFramebuffer();
+			wbmpOpenFramebuffer();
 
 			// persist image to display
 			File file = SPIFFS.open("/currentImage.bin", FILE_WRITE);
@@ -182,7 +183,7 @@ void requestCloud()
 					}
 
 					// write display frame
-					displayWriteFramebuffer(imageBufferOffset, buff, c);
+					wbmpWriteFramebuffer(imageBufferOffset, buff, c);
 					imageBufferOffset += c;
 					/*
 					for (int i = 0; i < c; i++)
@@ -224,7 +225,7 @@ void requestCloud()
 			}
 
 			// done
-			displayFlushFramebuffer();
+			wbmpFlushFramebuffer();
 		}
 	}
 }

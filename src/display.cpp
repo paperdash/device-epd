@@ -12,9 +12,7 @@
 // enable or disable GxEPD2_GFX base class
 #define ENABLE_GxEPD2_GFX 0
 
-
-GxEPD2_BW<GxEPD2_750, GxEPD2_750::HEIGHT> display(GxEPD2_750(/*CS=*/ 5, /*DC=*/ 17, /*RST=*/ 16, /*BUSY=*/ 4));
-uint8_t _buffer[(GxEPD2_750::WIDTH / 8) * GxEPD2_750::HEIGHT];
+GxEPD2_BW<GxEPD2_750, GxEPD2_750::HEIGHT> display(GxEPD2_750(/*CS=*/5, /*DC=*/17, /*RST=*/16, /*BUSY=*/4));
 
 void setupDisplay()
 {
@@ -25,49 +23,31 @@ void setupDisplay()
 	Serial.println("setup done");
 }
 
-
-void displayOpenFramebuffer()
+void displayOpen()
 {
-	memset(_buffer, 0, sizeof(_buffer));
-	//display.setFullWindow();
-	//display.firstPage();
-	//display.fillScreen(GxEPD_WHITE);
-}
-
-// TODO
-void displayWriteFramebuffer(int offset, uint8_t bitmap[], int c)
-{
-	for (int i = 0; i < c; i++)
-	{
-		_buffer[offset] = bitmap[i];
-		offset++;
-	}
-
-	/*
-	//if (offset + sizeof(*bitmap) <= sizeof(_buffer))
-	if (true)
-	{
-		memcpy((&_buffer) + offset, bitmap, 128);
-	}
-	else
-	{
-		Serial.println("!!!!! displayWriteFramebuffer overflow");
-	}
-	*/
-}
-
-
-void displayFlushFramebuffer()
-{
-	Serial.println("displayFlushFramebuffer");
 	display.setRotation(0);
 	display.setFullWindow();
 	display.firstPage();
 	display.fillScreen(GxEPD_WHITE);
-	display.drawInvertedBitmap(0, 0, _buffer, display.epd2.WIDTH, display.epd2.HEIGHT, GxEPD_BLACK);
-	display.nextPage();
 }
 
+void displayWritePixel(int16_t x, int16_t y, uint16_t color)
+{
+	display.drawPixel(x, y, color);
+}
+
+
+void displayWriteFramebuffer(uint8_t bitmap[])
+{
+	display.drawInvertedBitmap(0, 0, bitmap, display.epd2.WIDTH, display.epd2.HEIGHT, GxEPD_BLACK);
+}
+
+
+void displayFlush()
+{
+	Serial.println("displayFlushFramebuffer");
+	display.nextPage();
+}
 
 
 void printSplash()
