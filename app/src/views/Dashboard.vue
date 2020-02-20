@@ -4,7 +4,14 @@
         grid-list-md
         pa-2
     >
-        dashboard...
+		<v-card
+			class="mx-auto my-12"
+			max-width="400"
+			elevation="24"
+			>
+			<v-img :aspect-ratio="16/9" src="/current-image"></v-img>
+		</v-card>
+
     </v-container>
 </template>
 

@@ -2,7 +2,7 @@
 #include "settings.h"
 
 #define uS_TO_S_FACTOR 1000000 /* Conversion factor for micro seconds to seconds */
-RTC_DATA_ATTR int bootCount = 0;
+RTC_DATA_ATTR unsigned int bootCount = 0;
 RTC_DATA_ATTR long config_DeepSleepInterval = 10; // sec
 
 unsigned long bootTime = 0;
@@ -52,6 +52,12 @@ long deviceGetSleepInterval()
 {
 	return config_DeepSleepInterval;
 }
+
+unsigned int deviceGetBootCount()
+{
+	return bootCount;
+}
+
 
 bool isBootTimeOver()
 {

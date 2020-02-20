@@ -35,6 +35,18 @@
 							placeholder="i8n:https://"
 						></v-text-field>
 
+						<v-text-field
+							label="i8n:Cloud Token"
+							v-model="settings.cloud_uuid"
+							placeholder="########-####-####-####-############"
+						></v-text-field>
+
+						<v-text-field
+							label="i8n:Cloud User"
+							v-model="settings.cloud_user"
+							placeholder="user@domain.io"
+						></v-text-field>
+
 						<v-btn class="mr-4 primary" @click="onSave">i8n:save</v-btn>
 					</v-card-text>
 				</v-card>

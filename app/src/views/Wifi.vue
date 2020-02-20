@@ -17,6 +17,118 @@
 					i8n:saved
 				</v-snackbar>
 
+				<!-- status current wifi -->
+				<v-card
+					max-width="344"
+					class="mx-auto"
+					_color="grey lighten-4"
+					_flat _height="200px"
+					>
+					<v-template v-if="!wifiStats.connected">
+						<v-card-text>
+							<v-icon>$signalWifi0</v-icon>
+							not connected
+
+							<v-btn color="primary" depressed small>
+								i8n:scan
+							</v-btn>
+						</v-card-text>
+					</v-template>
+					<v-template v-else>
+						<v-toolbar flat>
+							<v-toolbar-title class="title font-weight-light">
+								<v-icon left>$signalWifi3Lock</v-icon>
+								xd-design.info
+							</v-toolbar-title>
+
+							<v-spacer></v-spacer>
+
+							<v-menu offset-y>
+								<template v-slot:activator="{ on }">
+									<v-btn icon small v-on="on">
+										<v-icon>mdi-dots-vertical</v-icon>
+									</v-btn>
+								</template>
+								<v-list>
+									<v-list-item @click="scan()">
+										<v-list-item-title>i8n:scan</v-list-item-title>
+									</v-list-item>
+								</v-list>
+							</v-menu>
+						</v-toolbar>
+
+						<v-divider class="mx-4"></v-divider>
+
+						<v-list dense>
+							<v-list-item
+								v-for="(value, key) in wifiStats"
+								:key="key"
+							>
+								<v-list-item-title>{{ key }}</v-list-item-title>
+
+								<v-list-item-subtitle class="text-right">
+									{{ value }}
+								</v-list-item-subtitle>
+							</v-list-item>
+						</v-list>
+					</v-template>
+				</v-card>
+
+
+				<v-card
+					style="display:none"
+					max-width="344"
+					class="mx-auto"
+				>
+					<v-card-title>
+						<v-icon
+							large
+							left
+						>
+							$signalWifi3Lock
+						</v-icon>
+						<span class="title font-weight-light">xd-design.info</span>
+						</v-card-title>
+
+					<v-divider></v-divider>
+						<v-card-text>
+						<div>connected to</div>
+						<p class="display-1 text--primary">
+							xd-design.info
+						</p>
+						</v-card-text>
+
+					<v-divider></v-divider>
+					<v-list-item>
+						<v-list-item-avatar color="grey_">
+							<v-icon size="25">$signalWifi3Lock</v-icon>
+						</v-list-item-avatar>
+						<v-list-item-content>
+							<v-list-item-title class="headline">xd-design.info</v-list-item-title>
+							<v-list-item-subtitle>connected to</v-list-item-subtitle>
+						</v-list-item-content>
+					</v-list-item>
+
+					<v-divider class="mx-4"></v-divider>
+
+					<v-list dense>
+						<v-list-item
+							v-for="(value, key) in wifiStats"
+							:key="key"
+						>
+							<v-list-item-title>{{ key }}</v-list-item-title>
+
+							<v-list-item-subtitle class="text-right">
+								{{ value }}
+							</v-list-item-subtitle>
+						</v-list-item>
+					</v-list>
+				</v-card>
+
+<br/><br/>
+
+				<!-- connect to wifi -->
+
 				<v-dialog v-model="wifiConnectModal" max-width="400">
 					<v-card>
 						<v-card-title class="headline">
@@ -25,7 +137,7 @@
 
 						<v-card-text>
 							<v-text-field
-								v-model="password"
+								v-model="wifiConnectPassword"
 								:append-icon="show1 ? 'mdi-eye' : 'mdi-eye-off'"
 								:type="show1 ? 'text' : 'password'"
 								label="i8n:Password"
@@ -36,14 +148,21 @@
 						<v-card-actions>
 							<v-spacer></v-spacer>
 							<v-btn text @click="wifiConnectModal = false">i8n:Cancel</v-btn>
-							<v-btn color="primary darken-1" text @click="onWifiConnect()">i8n:Connect</v-btn>
+							<v-btn
+								depressed
+								:loading="isConnecting"
+								color="primary darken-1"
+								@click="onWifiConnect()"
+							>
+								i8n:Connect
+							</v-btn>
 						</v-card-actions>
 					</v-card>
 				</v-dialog>
 
 				<v-card
 					class="mx-auto"
-					max-width="300"
+					max-width="344"
 					tile
 				>
 					<v-list >
@@ -86,10 +205,21 @@
 		data: () => ({
 			isLoading: true,
 			isSnackbar: false,
+			isConnecting: false,
+
+			wifiStats: {
+				connected: true,
+				ip: 'xxx.xxx.xxx.xxx',
+				mac: 'xxxx-xxxx-xxxx-xxxx',
+				channel: 11,
+				dns: 'xxx.xxx.xxx.xxx',
+				gateway: 'xxx.xxx.xxx.xxx',
+			},
 
 			wifiAvailable: [],
-			wifiConnectSSID: null,
 			wifiConnectModal: false,
+			wifiConnectSSID: null,
+			wifiConnectPassword: null,
 			show1: false,
 		}),
 		created () {
@@ -141,11 +271,9 @@
 			},
 
 			onWifiConnect() {
-				// TODO
-				//this.isLoading = true
-				//alert("onWifiConnect")
+				this.isConnecting = true
 
-				//apiDevice.wifiConnect()
+				apiDevice.wifiConnect(this.wifiConnectSSID, this.wifiConnectPassword)
 			}
 		}
     }

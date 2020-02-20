@@ -31,7 +31,8 @@ void setupApp()
 	server
 		.serveStatic("/", SPIFFS, "/dist/")
 		.setDefaultFile("index.html")
-		.setCacheControl("max-age=600");
+		//.setCacheControl("max-age=600")
+		;
 
 	setupSettingsGet();
 	setupSettingsPost();
@@ -42,13 +43,28 @@ void setupApp()
 	// TODO response
 	server.on("/stats", HTTP_GET, [](AsyncWebServerRequest *request) {
 		AsyncResponseStream *response = request->beginResponseStream("application/json");
-		DynamicJsonDocument root(1024);
+		DynamicJsonDocument doc(1024);	// TODO
 
-		root["heap"] = ESP.getFreeHeap();
-		root["wifi"] = WiFi.SSID();
-		root["sleep"] = 97;
+		doc["wifi"]["ssid"] = WiFi.SSID();
+		doc["wifi"]["connected"] = WiFi.isConnected();
+		doc["wifi"]["ip"] = WiFi.localIP();
+		doc["wifi"]["mac"] = WiFi.macAddress();
+		doc["wifi"]["channel"] = WiFi.channel();
+		doc["wifi"]["dns"] = WiFi.dnsIP();
+		doc["wifi"]["gateway"] = WiFi.gatewayIP();
 
-		serializeJson(root, *response);
+		doc["device"]["heap"] = ESP.getFreeHeap();
+		doc["device"]["bootCycle"] = deviceGetBootCount();
+		doc["device"]["screen"]["width"] = 640;
+		doc["device"]["height"]["screen"] = 384;
+
+		JsonArray capability = doc.createNestedArray("capability");
+		capability.add("png");
+		capability.add("wbmp");
+
+		doc["cloud"]["sleep"] = deviceGetSleepInterval();
+
+		serializeJson(doc, *response);
 		request->send(response);
 	});
 
@@ -65,10 +81,11 @@ void setupSettingsGet()
 		AsyncResponseStream *response = request->beginResponseStream("application/json");
 		DynamicJsonDocument root(1024);
 
-		//root["wifi_ssid"] = NVS.getString("wifi_ssid");
 		root["device_mode"] = NVS.getString("device_mode");
 		root["device_rotation"] = 0;
 		root["cloud_server"] = NVS.getString("cloud_server");
+		root["cloud_uuid"] = NVS.getString("cloud_uuid");
+		root["cloud_user"] = NVS.getString("cloud_user");
 
 		serializeJson(root, *response);
 		request->send(response);
@@ -96,6 +113,12 @@ void setupSettingsPost()
 				NVS.setString("cloud_server", doc["cloud_server"]);
 				//Serial.println(doc["cloud_server"].as<char*>());
 			}
+			if (doc.containsKey("cloud_uuid")) {
+				NVS.setString("cloud_uuid", doc["cloud_uuid"]);
+			}
+			if (doc.containsKey("cloud_user")) {
+				NVS.setString("cloud_user", doc["cloud_user"]);
+			}
 
 			request->send(200, "application/ld+json; charset=utf-8", "{}");
 		} });
@@ -104,15 +127,15 @@ void setupSettingsPost()
 /**
  * @todo
  */
-
 void setupCurrentImage()
 {
 	server.on("/current-image", HTTP_GET, [](AsyncWebServerRequest *request) {
 		Serial.println("/current-image");
-		request->send(SPIFFS, "/currentImage.bin", "image/x-bmp");
+		//request->send(SPIFFS, "/currentImage.bin", "image/x-bmp");
+		request->send(SPIFFS, "/blackPNG.png");
 	});
 
-/*
+	/*
 	server.on("/current-image2", HTTP_GET, [](AsyncWebServerRequest *request) {
 		AsyncWebServerResponse *response = request->beginResponse(SPIFFS, "/currentImage.bin", "image/x-bmp"); // image/x-bmp | image/vnd.wap.wbmp
 		//response->addHeader("Content-Encoding", "gzip");
@@ -173,9 +196,8 @@ void setupWifiScan()
  */
 void setupWifiConnect()
 {
-	server.on("/api/wifi/connect", HTTP_PUT, [](AsyncWebServerRequest *request) { /* nothing and dont remove it */ }, NULL, [](AsyncWebServerRequest *request, uint8_t *data, size_t len, size_t index, size_t total) {
+	server.on("/api/wifi/connect", HTTP_POST, [](AsyncWebServerRequest *request) { /* nothing and dont remove it */ }, NULL, [](AsyncWebServerRequest *request, uint8_t *data, size_t len, size_t index, size_t total) {
 		DynamicJsonDocument doc(1024);
-		Serial.println("/api/wifi/connect");
 
 		DeserializationError error = deserializeJson(doc, data);
 		if (error) {
@@ -186,14 +208,17 @@ void setupWifiConnect()
 		}
 		else
 		{
-			if (doc.containsKey("user")) {
-				//NVS.setString("device_mode", doc["device_mode"]);
+			if (doc.containsKey("ssid")) {
+				NVS.setString("wifi_ssid", doc["ssid"]);
+				Serial.println(doc["ssid"].as<char*>());
 			}
 			if (doc.containsKey("password")) {
-				//NVS.setString("cloud_server", doc["cloud_server"]);
-				//Serial.println(doc["cloud_server"].as<char*>());
+				NVS.setString("wifi_password", doc["password"]);
+				Serial.println(doc["password"].as<char*>());
 			}
 
 			request->send(200, "application/ld+json; charset=utf-8", "{}");
+
+			ESP.restart();
 		} });
 }

@@ -23,7 +23,6 @@ void wbmpOpenFramebuffer()
 // TODO do it better :-)
 void wbmpWriteFramebuffer(int offset, uint8_t bitmap[], int c)
 {
-	Serial.println("wbmpWriteFramebuffer");
 	for (int i = 0; i < c; i++)
 	{
 		_buffer[offset + i] = bitmap[i];

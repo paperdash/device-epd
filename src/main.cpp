@@ -7,6 +7,9 @@
 #include "cloud.h"
 #include "app.h"
 
+#include "imagePNG.h"
+#include "imageWBMP.h"
+
 
 void gotoDeepSleep();
 String getWakeupReason();
@@ -23,8 +26,13 @@ void setup()
 	Serial.println();
 
 	setupDisplay();
+
+	//setupImagePNG();
+	//setupImageWBMP();
+
 	setupSettings();
 	setupDevice();
+
 	setupWlan();
 
 	if (wlan_isConnected())

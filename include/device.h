@@ -10,6 +10,7 @@ void loopDevice();
 
 void deviceSetSleepInterval(long interval);
 long deviceGetSleepInterval();
+unsigned int deviceGetBootCount();
 
 
 #endif

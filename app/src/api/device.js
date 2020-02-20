@@ -67,7 +67,7 @@ export default {
 
 	wifiConnect(ssid, password, cb) {
 		return axios
-			.put('/api/wifi/connect', {
+			.post('/api/wifi/connect', {
 				ssid: ssid,
 				password: password
 			}, {
