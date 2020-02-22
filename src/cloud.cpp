@@ -4,17 +4,11 @@
 #include <SPIFFS.h>
 
 #include "settings.h"
-#include "display.h"
-#include "imageWBMP.h"
 #include "device.h"
+#include "display.h"
 
-// TODO SMART SIGN CONFIG ========
-//#define config_PullServer "http://paperdash.sonic.da-tom.com/gateway.php/" // pull server address
-String config_UUID = "22805938-2280-8022-3822-385980225980"; // TODO
-
-//#define config_PullServer = NVS.getString("cloud_server");
-//String config_UUID = NVS.getString("cloud_server");
-// SMART SIGN CONFIG ========
+#include "imageWBMP.h"
+#include "imagePNG.h"
 
 unsigned long requestInterval = 1000; // 1 sec
 unsigned long previousTime = 0;
@@ -22,9 +16,9 @@ unsigned long previousTime = 0;
 // runtime data
 const char *setting_HeaderKeys[] = {
 	// update deep sleep interval
-	"DeepSleepInterval",
+	"X-DeepSleepInterval",
 	// execute firmware update url
-	"UpdateFirmware"};
+	"X-UpdateFirmware"};
 
 HTTPClient http;
 
@@ -43,6 +37,13 @@ void setupCloud()
 	http.useHTTP10(true); // http1.1 chunked übertragung funktioniert irgendwie nicht
 	http.setTimeout(7000);
 	http.collectHeaders(setting_HeaderKeys, sizeof(setting_HeaderKeys) / sizeof(char *));
+
+	if (isCloudSetupComplete())
+	{
+		//config_Url = NVS.getString("cloud_server"); // + "/" + NVS.getString("cloud_uuid");
+		//config_Url = "http://paperdash.sonic.da-tom.com/api/device/22805938-2280-8022-3822-385980225980/image.png";
+		Serial.println("  cloud setup complete");
+	}
 
 	Serial.println("setup cloud - done");
 }
@@ -70,13 +71,12 @@ void loopCloud()
 				requestCloud();
 			}
 		}
-
 	}
 }
 
 bool isCloudSetupComplete()
 {
-	return NVS.getString("cloud_server") != "" && config_UUID != "";
+	return NVS.getString("cloud_server") != "" && NVS.getString("cloud_uuid") != "";
 }
 
 /**
@@ -92,7 +92,6 @@ void updateInterval(unsigned long interval)
 	Serial.println("   set deep sleep interval from: " + String(deviceGetSleepInterval()) + " to " + interval);
 	Serial.println("###### config update");
 
-
 	// active wait state
 	requestInterval = interval * 1000;
 
@@ -107,12 +106,10 @@ void updateInterval(unsigned long interval)
  */
 void requestCloud()
 {
+	String config_Url = NVS.getString("cloud_server");
 
-	//String pullUrl = String(config_PullServer) + "/" + config_UUID; // + "?deep-sleep=" + String(config_DeepSleepInterval) + "&wakeup=" + getWakeupReason();
-	String pullUrl = NVS.getString("cloud_server") + "/" + config_UUID; // + "?deep-sleep=" + String(config_DeepSleepInterval) + "&wakeup=" + getWakeupReason();
-
-	Serial.println(pullUrl);
-	http.begin(pullUrl);
+	Serial.println(config_Url);
+	http.begin(config_Url);
 	int httpCode = http.GET();
 	if (httpCode != HTTP_CODE_OK && httpCode != HTTP_CODE_NOT_MODIFIED)
 	{
@@ -121,7 +118,7 @@ void requestCloud()
 	else
 	{
 		// update poll interval
-		String DeepSleepInterval = http.header("DeepSleepInterval");
+		String DeepSleepInterval = http.header("X-DeepSleepInterval");
 		if (false && DeepSleepInterval.toInt() == 0)
 		{
 			// disable deep sleep
@@ -144,6 +141,9 @@ void requestCloud()
 		{
 			// update image
 
+			// track duration
+			long startMills = millis();
+
 			// get lenght of document (is -1 when Server sends no Content-Length header)
 			int len = http.getSize();
 
@@ -154,12 +154,10 @@ void requestCloud()
 			WiFiClient *stream = http.getStreamPtr();
 
 			// reset image buffer
-			//memset(displayImageBuffer, 0, sizeof(displayImageBuffer));
-			int imageBufferOffset = 0;
-			wbmpOpenFramebuffer();
+			size_t imageFormat = 0;
 
 			// persist image to display
-			File file = SPIFFS.open("/currentImage.bin", FILE_WRITE);
+			File file = SPIFFS.open("/currentImage.tmp", FILE_WRITE);
 			if (!file)
 			{
 				Serial.println("Failed to open file for writing");
@@ -182,9 +180,48 @@ void requestCloud()
 						file.write(buff, c);
 					}
 
+					// initial detect format
+					if (imageFormat == 0)
+					{
+						if (memcmp(buff, ImageHeaderWBMP, sizeof(ImageHeaderWBMP) - 1) == 0)
+						{
+							Serial.println(" image format: WBMP");
+							imageFormat = 2;
+
+							wbmpOpenFramebuffer();
+						}
+						else if (memcmp(buff, ImageHeaderPNG, sizeof(ImageHeaderPNG) - 1) == 0)
+						{
+							Serial.println(" image format: PNG");
+							imageFormat = 3;
+
+							pngOpenFramebuffer();
+						}
+						else
+						{
+							imageFormat = 1;
+							Serial.println(" unkown image format. first header are:");
+							Serial.println(buff[0]);
+							Serial.println(buff[1]);
+							Serial.println(buff[2]);
+							Serial.println(buff[3]);
+							Serial.println(buff[4]);
+							Serial.println(buff[5]);
+						}
+					}
+
 					// write display frame
-					wbmpWriteFramebuffer(imageBufferOffset, buff, c);
-					imageBufferOffset += c;
+					switch (imageFormat)
+					{
+					// WBMP
+					case 2:
+						wbmpWriteFramebuffer(0, buff, c);
+						break;
+					// PNG
+					case 3:
+						pngWriteFramebuffer(0, buff, c);
+						break;
+					}
 
 					if (len > 0)
 					{
@@ -195,13 +232,29 @@ void requestCloud()
 				delay(1);
 			}
 
+			// done
 			if (file)
 			{
 				file.close();
+				SPIFFS.remove("/currentImage.bin");
+				SPIFFS.rename("/currentImage.tmp", "/currentImage.bin");
 			}
 
-			// done
-			wbmpFlushFramebuffer();
+			// update display
+			switch (imageFormat)
+			{
+			// WBMP
+			case 2:
+				wbmpFlushFramebuffer();
+				break;
+			// PNG
+			case 3:
+				pngFlushFramebuffer();
+				break;
+			}
+
+			Serial.print("update completed in: ");
+			Serial.println(millis() - startMills);
 		}
 	}
 }
