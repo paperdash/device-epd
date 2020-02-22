@@ -4,18 +4,22 @@
 
 // eslint-disable-next-line
 const _settings = {
-	// connected wifi
-	"wifi_ssid": "",
+	device: {
+		orientation: 0,
+		theme: "black",
+	},
+	playlist: {
+		interval: 60
+	},
+	credentials: {
 
-	// oparation mode
-	"device_mode": "active",
-
-	// Set rotation setting for display
-	// 0 thru 3 corresponding to 4 cardinal rotations
-	"device_rotation": 0,
-
-	// clound server endpoint
-	"cloud_server": ""
+	},
+	cloud: {
+		mode: "active",
+		url: "http://",
+		token: "###",
+		user: ""
+	}
 }
 
 // eslint-disable-next-line
@@ -30,6 +34,9 @@ export default {
      * @returns {PromiseLike<any> | Promise<any>}
      */
 	getSettings(cb) {
+		return cb(_settings);
+
+		// eslint-disable-next-line
 		return axios
 			.get('/api/settings')
 			.then(response => cb(response.data))
@@ -64,7 +71,12 @@ export default {
 	},
 
 
-
+	/**
+	 * connect to wifi
+	 * @param {*} ssid
+	 * @param {*} password
+	 * @param {*} cb
+	 */
 	wifiConnect(ssid, password, cb) {
 		return axios
 			.post('/api/wifi/connect', {
