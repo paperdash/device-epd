@@ -21,8 +21,6 @@
 				<v-card
 					max-width="344"
 					class="mx-auto"
-					_color="grey lighten-4"
-					_flat _height="200px"
 					>
 					<v-template v-if="!wifiStats.connected">
 						<v-card-text>
@@ -75,57 +73,7 @@
 				</v-card>
 
 
-				<v-card
-					style="display:none"
-					max-width="344"
-					class="mx-auto"
-				>
-					<v-card-title>
-						<v-icon
-							large
-							left
-						>
-							$signalWifi3Lock
-						</v-icon>
-						<span class="title font-weight-light">xd-design.info</span>
-						</v-card-title>
-
-					<v-divider></v-divider>
-						<v-card-text>
-						<div>connected to</div>
-						<p class="display-1 text--primary">
-							xd-design.info
-						</p>
-						</v-card-text>
-
-					<v-divider></v-divider>
-					<v-list-item>
-						<v-list-item-avatar color="grey_">
-							<v-icon size="25">$signalWifi3Lock</v-icon>
-						</v-list-item-avatar>
-						<v-list-item-content>
-							<v-list-item-title class="headline">xd-design.info</v-list-item-title>
-							<v-list-item-subtitle>connected to</v-list-item-subtitle>
-						</v-list-item-content>
-					</v-list-item>
-
-					<v-divider class="mx-4"></v-divider>
-
-					<v-list dense>
-						<v-list-item
-							v-for="(value, key) in wifiStats"
-							:key="key"
-						>
-							<v-list-item-title>{{ key }}</v-list-item-title>
-
-							<v-list-item-subtitle class="text-right">
-								{{ value }}
-							</v-list-item-subtitle>
-						</v-list-item>
-					</v-list>
-				</v-card>
-
-<br/><br/>
+				<br/><br/>
 
 				<!-- connect to wifi -->
 
@@ -201,12 +149,14 @@
 	import apiDevice from '../api/device'
 
     export default {
-		name: "Settings",
+		name: "Wifi",
 		data: () => ({
 			isLoading: true,
 			isSnackbar: false,
 			isConnecting: false,
+			mode: 'AP_initial',	// AP_initial, AP_lost, Default
 
+			// todo load
 			wifiStats: {
 				connected: true,
 				ip: 'xxx.xxx.xxx.xxx',

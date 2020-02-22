@@ -55,16 +55,12 @@ void ___connectToNetwork()
 
 void initClientMode(const char *ssid, const char *password)
 {
-	uint8_t veces = 10;
+	uint8_t veces = 5;
 	long startMills = millis();
 
 	Serial.print("  Connecting to: ");
 	Serial.print(ssid);
-
-	// print try count
-	Serial.print(" (");
-	Serial.print(wifiFailedCount);
-	Serial.print("x)");
+	Serial.print(" ");
 
 	// connecting
 	WiFi.mode(WIFI_STA);
@@ -74,27 +70,16 @@ void initClientMode(const char *ssid, const char *password)
 	while (WiFi.status() != WL_CONNECTED)
 	{
 		delay(500);
-		Serial.println(veces);
+		Serial.print(".");
 		if (!veces--)
 		{
-			veces = 10;
+			veces = 5;
 			WiFi.disconnect();
-			Serial.println("Wifi reset...");
+			Serial.println("  wifi reset...");
 			delay(500);
 			WiFi.begin(ssid, password);
-			Serial.println("Establishing connection to WiFi..");
 		}
 	}
-
-	/*
-	while (WiFi.waitForConnectResult() != WL_CONNECTED)
-	{
-		wifiFailedCount++;
-		Serial.println("Connection Failed! Rebooting...");
-		delay(100);
-		ESP.restart();
-	}
-	*/
 
 	Serial.println(" ...connected");
 	Serial.print("  IP address: ");

@@ -47,11 +47,11 @@ void setupApp()
 
 		doc["wifi"]["ssid"] = WiFi.SSID();
 		doc["wifi"]["connected"] = WiFi.isConnected();
-		doc["wifi"]["ip"] = WiFi.localIP();
+		doc["wifi"]["ip"] = WiFi.localIP().toString();
 		doc["wifi"]["mac"] = WiFi.macAddress();
 		doc["wifi"]["channel"] = WiFi.channel();
-		doc["wifi"]["dns"] = WiFi.dnsIP();
-		doc["wifi"]["gateway"] = WiFi.gatewayIP();
+		doc["wifi"]["dns"] = WiFi.dnsIP().toString();
+		doc["wifi"]["gateway"] = WiFi.gatewayIP().toString();
 
 		doc["device"]["heap"] = ESP.getFreeHeap();
 		doc["device"]["bootCycle"] = deviceGetBootCount();
