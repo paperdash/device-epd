@@ -43,7 +43,7 @@ void setupApp()
 	// TODO response
 	server.on("/stats", HTTP_GET, [](AsyncWebServerRequest *request) {
 		AsyncResponseStream *response = request->beginResponseStream("application/json");
-		DynamicJsonDocument doc(1024);	// TODO
+		DynamicJsonDocument doc(1024); // TODO
 
 		doc["wifi"]["ssid"] = WiFi.SSID();
 		doc["wifi"]["connected"] = WiFi.isConnected();
@@ -125,25 +125,13 @@ void setupSettingsPost()
 }
 
 /**
- * @todo
+ *
  */
 void setupCurrentImage()
 {
 	server.on("/current-image", HTTP_GET, [](AsyncWebServerRequest *request) {
-		Serial.println("/current-image");
-		//request->send(SPIFFS, "/currentImage.bin", "image/x-bmp");
-		request->send(SPIFFS, "/blackPNG.png");
+		request->send(SPIFFS, "/currentImage.bin");
 	});
-
-	/*
-	server.on("/current-image2", HTTP_GET, [](AsyncWebServerRequest *request) {
-		AsyncWebServerResponse *response = request->beginResponse(SPIFFS, "/currentImage.bin", "image/x-bmp"); // image/x-bmp | image/vnd.wap.wbmp
-		//response->addHeader("Content-Encoding", "gzip");
-		//response->addHeader("Content-Disposition", "inline; filename=\"image.wbmp\"");
-
-		request->send(response);
-	});
-*/
 }
 
 /**
