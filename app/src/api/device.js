@@ -5,20 +5,19 @@
 // eslint-disable-next-line
 const _settings = {
 	device: {
-		orientation: 0,
+		angle: 0,
 		theme: "black",
 	},
 	playlist: {
-		interval: 60
+		timer: 60
 	},
-	credentials: {
-
+	api: {
+		owm: ""
 	},
 	cloud: {
 		mode: "active",
 		url: "http://",
-		token: "###",
-		user: ""
+		token: "###"
 	}
 }
 
@@ -34,7 +33,7 @@ export default {
      * @returns {PromiseLike<any> | Promise<any>}
      */
 	getSettings(cb) {
-		return cb(_settings);
+		//return cb(_settings);
 
 		// eslint-disable-next-line
 		return axios

@@ -76,7 +76,7 @@ void loopCloud()
 
 bool isCloudSetupComplete()
 {
-	return NVS.getString("cloud_server") != "" && NVS.getString("cloud_uuid") != "";
+	return NVS.getString("cloud.url") != ""; // && NVS.getString("cloud_uuid") != "";
 }
 
 /**
@@ -106,7 +106,7 @@ void updateInterval(unsigned long interval)
  */
 void requestCloud()
 {
-	String config_Url = NVS.getString("cloud_server");
+	String config_Url = NVS.getString("cloud.url");
 
 	Serial.println(config_Url);
 	http.begin(config_Url);

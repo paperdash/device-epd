@@ -23,6 +23,7 @@
 			</v-tabs>
 
 			<v-card
+				v-if="settings"
 				class="mx-auto"
 				width="400"
 				>
@@ -31,7 +32,7 @@
 						<v-card-text>
 							<v-select
 								:items="deviceOrientation"
-								v-model="settings.device.orientation"
+								v-model="settings.device.angle"
 								label="i8n:Orientation"
 								placeholder=""
 							></v-select>
@@ -53,7 +54,7 @@
 								</v-col>
 								<v-col cols="6" class="text-center pb-0">
 									<v-text-field
-										v-model="settings.playlist.interval"
+										v-model="settings.playlist.timer"
 										label="Switch every"
 										type="number"
 										dense
@@ -80,13 +81,13 @@
 						<v-card-text>
 							<v-text-field
 								label="i8n:OpenWeatherMap"
-								v-model="settings.credentials.open_weather_map"
+								v-model="settings.api.owm"
 								placeholder="###"
 							></v-text-field>
 
 							<v-text-field
 								label="i8n:Calendar"
-								v-model="settings.credentials._"
+								v-model="settings.api.abc"
 								placeholder="###"
 							></v-text-field>
 						</v-card-text>
@@ -111,15 +112,21 @@
 								v-model="settings.cloud.token"
 								placeholder="########-####-####-####-############"
 							></v-text-field>
-
-							<v-text-field
-								label="i8n:Cloud User"
-								v-model="settings.cloud_user"
-								placeholder="user@domain.io"
-							></v-text-field>
 						</v-card-text>
 					</v-tab-item>
 				</v-tabs-items>
+
+				<v-card-actions>
+					<v-spacer></v-spacer>
+
+					<v-btn
+						text
+						color="primary"
+						@click="onSave()"
+					>
+						i8n:Save
+					</v-btn>
+				</v-card-actions>
 			</v-card>
 		</v-container>
     </v-layout>

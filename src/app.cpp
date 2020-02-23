@@ -81,11 +81,16 @@ void setupSettingsGet()
 		AsyncResponseStream *response = request->beginResponseStream("application/json");
 		DynamicJsonDocument root(1024);
 
-		root["device_mode"] = NVS.getString("device_mode");
-		root["device_rotation"] = 0;
-		root["cloud_server"] = NVS.getString("cloud_server");
-		root["cloud_uuid"] = NVS.getString("cloud_uuid");
-		root["cloud_user"] = NVS.getString("cloud_user");
+		root["device"]["angle"] = NVS.getInt("device.angle");
+		root["device"]["theme"] = NVS.getString("device.theme");
+
+		root["playlist"]["timer"] = NVS.getInt("playlist.timer");
+
+		root["api"]["owm"] = NVS.getString("api.owm");
+
+		root["cloud"]["mode"] = NVS.getString("cloud.mode");
+		root["cloud"]["url"] = NVS.getString("cloud.url");
+		root["cloud"]["token"] = NVS.getString("cloud.token");
 
 		serializeJson(root, *response);
 		request->send(response);
@@ -95,7 +100,7 @@ void setupSettingsGet()
 void setupSettingsPost()
 {
 	server.on("/api/settings", HTTP_PUT, [](AsyncWebServerRequest *request) { /* nothing and dont remove it */ }, NULL, [](AsyncWebServerRequest *request, uint8_t *data, size_t len, size_t index, size_t total) {
-		DynamicJsonDocument doc(1024);
+		DynamicJsonDocument doc(2048);
 
 		DeserializationError error = deserializeJson(doc, data);
 		if (error) {
@@ -106,19 +111,18 @@ void setupSettingsPost()
 		}
 		else
 		{
-			if (doc.containsKey("device_mode")) {
-				NVS.setString("device_mode", doc["device_mode"]);
-			}
-			if (doc.containsKey("cloud_server")) {
-				NVS.setString("cloud_server", doc["cloud_server"]);
-				//Serial.println(doc["cloud_server"].as<char*>());
-			}
-			if (doc.containsKey("cloud_uuid")) {
-				NVS.setString("cloud_uuid", doc["cloud_uuid"]);
-			}
-			if (doc.containsKey("cloud_user")) {
-				NVS.setString("cloud_user", doc["cloud_user"]);
-			}
+			NVS.setInt("device.angle", doc["device"]["angle"].as<unsigned int>());
+			NVS.setString("device.theme", doc["device"]["theme"]);
+
+			NVS.setInt("playlist.timer", doc["playlist"]["timer"].as<unsigned int>());
+
+			NVS.setString("api.owm", doc["api"]["owm"]);
+
+			NVS.setString("cloud.mode", doc["cloud"]["mode"]);
+			NVS.setString("cloud.url", doc["cloud"]["url"]);
+			NVS.setString("cloud.token", doc["cloud"]["token"]);
+
+			NVS.commit();
 
 			request->send(200, "application/ld+json; charset=utf-8", "{}");
 		} });
