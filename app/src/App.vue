@@ -104,7 +104,7 @@
         name: 'App',
         data: () => ({
 			isLoading: false,
-            drawer: false,
+            drawer: true,
             items: [
                 {title: 'Dashboard', icon: '$dashboard', to: '/'},
                 {title: 'Sandbox', icon: '$sandbox', to: '/sandbox'},
