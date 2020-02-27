@@ -2,23 +2,19 @@
 #define DATETIME_H
 
 #include <arduino.h>
+#include <time.h>
 
 // TODO
-struct time_struct
+// @see http://www.cplusplus.com/reference/ctime/tm/
+// @see http://www.cplusplus.com/reference/ctime/strftime/
+struct datetime_struct : tm
 {
-	char wday[4];
-	char month[4];
 	uint8_t month_num;
-	uint8_t mday;
-	uint8_t mil_hour;
-	uint8_t hour;
-	uint8_t min;
-	uint8_t sec;
 	uint8_t day_offset; // 1st day of the month offset, Monday = 0
-	int year;
+	uint8_t days_in_month;
 };
 
-extern RTC_DATA_ATTR struct time_struct now;
+extern RTC_DATA_ATTR struct datetime_struct now;
 
 void setupDateTime();
 
