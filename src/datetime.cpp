@@ -28,13 +28,13 @@ int getNumberOfDays(int month, int year)
 		return 30;
 }
 
-void setupDateTime()
+bool setupDateTime()
 {
 	configTime(gmtOffset_sec, daylightOffset_sec, ntpServer);
 	if (!getLocalTime(&now))
 	{
 		Serial.println("Failed to obtain time");
-		return;
+		return false;
 	}
 	Serial.println(&now, "%A, %B %d %Y %H:%M:%S");
 
@@ -48,4 +48,6 @@ void setupDateTime()
 	uint16_t y = (now.tm_year + 1900) - a;
 	uint16_t m = now.month_num + (12 * a) - 2;
 	now.day_offset = (((1 + y + (y / 4) - (y / 100) + (y / 400) + ((31 * m) / 12)) % 7) + 7) % 7;
+
+	return true;
 }

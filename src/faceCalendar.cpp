@@ -3,16 +3,19 @@
 #include "datetime.h"
 #include "SPIFFS.h"
 #include "pngle.h"
+#include "tools.h"
 
 #include <Fonts/FreeMono12pt7b.h>	 // weekday - month year
 #include <Fonts/FreeSansBold24pt7b.h> // current day
 
+void downloadRandomePicture();
 void display_calender();
 void display_picture();
 void display_time();
 void on_draw2(pngle_t *pngle, uint32_t x, uint32_t y, uint32_t w, uint32_t h, uint8_t rgba[4]);
 
 using std::uint8_t;
+// TODO use dynamic display width
 static constexpr int MAX_WIDTH = 640 - 250;
 static constexpr int MAX_HEIGHT = 384;
 static int16_t curRowDelta[MAX_WIDTH + 1];
@@ -20,9 +23,15 @@ static int16_t nextRowDelta[MAX_WIDTH + 1];
 
 void setupFaceCalendar()
 {
-	Serial.println("setupFaceWeather");
+}
 
-	setupDateTime();
+void loopFaceCalendar()
+{
+	EVERY_N_SECONDS(300)
+	{
+		Serial.println("TODO download new image");
+	}
+
 
 	display.setRotation(0);
 	display.setFullWindow();
@@ -30,24 +39,18 @@ void setupFaceCalendar()
 	display.fillScreen(GxEPD_WHITE);
 
 	// draw...
-	//display_time();
 	display_picture();
 	display_calender();
 
 	Serial.println("displayFlush");
 	display.nextPage();
+}
 
-	// https://raw.githubusercontent.com/rgujju/paperdink/master/Images/full.jpg
-	// https://github.com/rgujju/paperdink/blob/master/Software/paperd.ink/GUI.cpp
+void downloadRandomePicture()
+{
 	// https://images.unsplash.com/photo-1580886349729-1bd109928600?ixlib=rb-1.2.1&ixid=eyJhcHBfaWQiOjExMDM0OH0&w=640&h=200&fm=png&fit=crop
 	// https://images.unsplash.com/photo-1580886349729-1bd109928600?ixlib=rb-1.2.1&ixid=eyJhcHBfaWQiOjExMDM0OH0&w=390&h=384&fm=png&fit=crop&colorquant=2
 	// final filter: &w=390&h=384&fm=png&fit=crop&duotone=000000,FFFFFF
-	// display_weather
-
-}
-
-void loopFaceCalendar()
-{
 }
 
 void display_calender()
@@ -126,7 +129,6 @@ void display_picture()
 	pngle_t *pngle = pngle_new();
 	pngle_set_draw_callback(pngle, on_draw2);
 
-	//File file = SPIFFS.open("/blackPNG.png", "r");
 	File file = SPIFFS.open("/calendarPhoto.png", "r");
 	if (!file)
 	{
@@ -151,14 +153,13 @@ void display_picture()
 }
 
 /**
- * Floyd-Steinberg-Algorithmus
+ * render picture
  */
 void on_draw2(pngle_t *pngle, uint32_t x, uint32_t y, uint32_t w, uint32_t h, uint8_t rgba[4])
 {
 	uint8_t r = rgba[0]; // 0 - 255
 	uint8_t g = rgba[1]; // 0 - 255
 	uint8_t b = rgba[2]; // 0 - 255
-	//uint8_t a = rgba[3]; // 0: fully transparent, 255: fully opaque
 
 	int16_t gray = round(r * 0.3 + g * 0.59 + b * 0.11);
 	int16_t blackOrWhite;
@@ -181,7 +182,9 @@ void on_draw2(pngle_t *pngle, uint32_t x, uint32_t y, uint32_t w, uint32_t h, ui
 	int err = oldPixel - newPixel;
 
 	if (x > 0)
+	{
 		nextRowDelta[x - 1] += err * 3 / 16;
+	}
 	nextRowDelta[x] += err * 5 / 16;
 	nextRowDelta[x + 1] += err * 1 / 16;
 	curRowDelta[x + 1] += err * 7 / 16;

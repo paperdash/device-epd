@@ -1,10 +1,11 @@
 #include "app.h"
 #include "SPIFFS.h"
 #include "ESPAsyncWebServer.h"
-#include "AsyncJson.h"
+//#include "AsyncJson.h"
 #include "ArduinoJson.h"
 #include "settings.h"
 #include "device.h"
+#include "playlist.h"
 
 AsyncWebServer server(80);
 
@@ -56,7 +57,10 @@ void setupApp()
 		doc["device"]["heap"] = ESP.getFreeHeap();
 		doc["device"]["bootCycle"] = deviceGetBootCount();
 		doc["device"]["screen"]["width"] = 640;
-		doc["device"]["height"]["screen"] = 384;
+		doc["device"]["screen"]["height"] = 384;
+
+		doc["playlist"]["current"] = PlaylistGetCurrentFace();
+		doc["playlist"]["remaining"] = PlaylistGetRemainingTimeMs() / 1000;
 
 		JsonArray capability = doc.createNestedArray("capability");
 		capability.add("png");
