@@ -1,10 +1,16 @@
 #include <Arduino.h>
 #include "imagePNG.h"
 #include "pngle.h"
-//#include "SPIFFS.h"
 #include "display.h"
 
 pngle_t *pngle;
+
+// TODO use dynamic display width
+static constexpr int MAX_WIDTH = 640;
+static int16_t curRowDelta[MAX_WIDTH + 1];
+static int16_t nextRowDelta[MAX_WIDTH + 1];
+
+bool dithering = true;
 
 void on_draw(pngle_t *pngle, uint32_t x, uint32_t y, uint32_t w, uint32_t h, uint8_t rgba[4]);
 
@@ -19,16 +25,28 @@ void pngOpenFramebuffer()
 {
 	displayOpen();
 
+	if (pngle)
+	{
+		pngle_destroy(pngle);
+	}
+
 	pngle = pngle_new();
 	pngle_set_draw_callback(pngle, on_draw);
 }
 
 void pngWriteFramebuffer(int offset, uint8_t bitmap[], int c)
 {
-	int fed = pngle_feed(pngle, bitmap, c);
-	if (fed < 0)
+	if (pngle)
 	{
-		Serial.println(pngle_error(pngle));
+		int fed = pngle_feed(pngle, bitmap, c);
+		if (fed < 0)
+		{
+			Serial.println(pngle_error(pngle));
+		}
+	}
+	else
+	{
+		Serial.println("forgot pngle_new() ?");
 	}
 }
 
@@ -38,63 +56,52 @@ void pngFlushFramebuffer()
 	displayFlush();
 }
 
-/*
-void setupImagePNG__demo()
-{
-	SPIFFS.begin();
-	displayOpen();
-
-	pngle_t *pngle = pngle_new();
-	pngle_set_draw_callback(pngle, on_draw);
-
-	File file = SPIFFS.open("/blackPNG.png", "r");
-	if (!file)
-	{
-		Serial.println(" file not found");
-	}
-
-	// get filesize
-	long size = file.size();
-
-	// read contents of the file into the vector
-	char *buffer = (char *)malloc((unsigned long)size);
-	if (!buffer)
-	{
-		file.close();
-		Serial.println(" allow failedd");
-	}
-	file.readBytes(buffer, (size_t)size);
-	file.close();
-
-	Serial.println("  read png");
-	int ret = pngle_feed(pngle, buffer, size);
-
-	//Serial.println("  return: " + ret);
-	//Serial.println("  width: " + pngle_get_width(pngle));
-	//Serial.println("  height: " + pngle_get_height(pngle));
-
-	Serial.println("  read png done");
-	pngle_destroy(pngle);
-
-	displayFlush();
-}
-*/
-
 void on_draw(pngle_t *pngle, uint32_t x, uint32_t y, uint32_t w, uint32_t h, uint8_t rgba[4])
 {
 	uint8_t r = rgba[0]; // 0 - 255
-	//uint8_t g = rgba[1]; // 0 - 255
-	//uint8_t b = rgba[2]; // 0 - 255
-	uint8_t a = rgba[3]; // 0: fully transparent, 255: fully opaque
+	uint8_t g = rgba[1]; // 0 - 255
+	uint8_t b = rgba[2]; // 0 - 255
 
-	if (a)
+	int16_t gray = round(r * 0.3 + g * 0.59 + b * 0.11);
+	int16_t blackOrWhite;
+
+	// Add errors to color if there are
+	if (dithering)
 	{
-		// 640 x 384
-		if (true) // x == 0
-		{
-			//printf("put pixel at (%d, %d) with color #%02x%02x%02x\n", x, y, r, g, b);
-		}
-
-		displayWritePixel(x, y, r);
+		gray += curRowDelta[x];
 	}
+
+	if (gray <= 127)
+	{
+		blackOrWhite = 0;
+	}
+	else
+	{
+		blackOrWhite = 255;
+	}
+
+	if (dithering)
+	{
+		int16_t oldPixel = gray;
+		int16_t newPixel = blackOrWhite;
+
+		int err = oldPixel - newPixel;
+
+		if (x > 0)
+		{
+			nextRowDelta[x - 1] += err * 3 / 16;
+		}
+		nextRowDelta[x] += err * 5 / 16;
+		nextRowDelta[x + 1] += err * 1 / 16;
+		curRowDelta[x + 1] += err * 7 / 16;
+
+		if (x == 0 && y > 0)
+		{
+			// new line
+			memcpy(curRowDelta, nextRowDelta, sizeof(&curRowDelta));
+			memset(nextRowDelta, 0, sizeof(&nextRowDelta));
+		}
+	}
+
+	displayWritePixel(x, y, blackOrWhite);
 }
