@@ -1,5 +1,6 @@
 #include <Arduino.h>
 #include "display.h"
+#include <SPIFFS.h>
 
 // mapping suggestion for ESP32, e.g. LOLIN32, see .../variants/.../pins_arduino.h for your board
 // NOTE: there are variants with different pins for SPI ! CHECK SPI PINS OF YOUR BOARD
@@ -36,19 +37,16 @@ void displayWritePixel(int16_t x, int16_t y, uint16_t color)
 	display.drawPixel(x, y, color);
 }
 
-
 void displayWriteFramebuffer(uint8_t bitmap[])
 {
 	display.drawInvertedBitmap(0, 0, bitmap, display.epd2.WIDTH, display.epd2.HEIGHT, GxEPD_BLACK);
 }
-
 
 void displayFlush()
 {
 	Serial.println("displayFlush");
 	display.nextPage();
 }
-
 
 void printSplash()
 {

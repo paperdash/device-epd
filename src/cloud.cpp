@@ -257,4 +257,7 @@ void requestCloud()
 			Serial.println(millis() - startMills);
 		}
 	}
+
+	// clean up
+	http.end();
 }
