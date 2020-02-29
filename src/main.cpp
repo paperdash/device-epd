@@ -4,16 +4,16 @@
 #include "wlan.h"
 #include "display.h"
 #include "settings.h"
-#include "cloud.h"
+//#include "cloud.h"
+#include "datetime.h"
+#include "playlist.h"
 #include "app.h"
 
 #include "imagePNG.h"
 #include "imageWBMP.h"
 
-
 void gotoDeepSleep();
 String getWakeupReason();
-
 
 void setup()
 {
@@ -26,18 +26,21 @@ void setup()
 	Serial.println();
 
 	setupDisplay();
-
-	//setupImagePNG();
-	//setupImageWBMP();
-
 	setupSettings();
 	setupDevice();
 
 	setupWlan();
-
 	if (wlan_isConnected())
 	{
-		setupCloud();
+		if (!setupDateTime())
+		{
+			// re-try
+			setupDateTime();
+		}
+
+		setupPlaylist();
+
+		//setupCloud();
 	}
 
 	setupApp();
@@ -52,8 +55,9 @@ void loop()
 
 	if (wlan_isConnected())
 	{
-		loopCloud();
+		loopPlaylist();
+		//loopCloud();
 	}
 
-	loopDevice();
+	//loopDevice();
 }

@@ -20,7 +20,6 @@ const char *setting_HeaderKeys[] = {
 	// execute firmware update url
 	"X-UpdateFirmware"};
 
-HTTPClient http;
 
 void requestCloud();
 bool isCloudSetupComplete();
@@ -28,6 +27,8 @@ void updateInterval(unsigned long interval);
 
 void setupCloud()
 {
+HTTPClient http;
+
 	Serial.println("setup cloud");
 
 	updateInterval(10);
@@ -106,6 +107,9 @@ void updateInterval(unsigned long interval)
  */
 void requestCloud()
 {
+	/*
+HTTPClient http;
+
 	String config_Url = NVS.getString("cloud.url");
 
 	Serial.println(config_Url);
@@ -260,4 +264,5 @@ void requestCloud()
 
 	// clean up
 	http.end();
+	*/
 }

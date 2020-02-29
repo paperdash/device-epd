@@ -1,23 +1,27 @@
+#include <HTTPClient.h>
+#include <SPIFFS.h>
+#include <pngle.h>
 #include "faceCalendar.h"
 #include "display.h"
 #include "datetime.h"
-#include "SPIFFS.h"
-#include "pngle.h"
 #include "tools.h"
+#include "image.h"
+#include "download.h"
 
 #include <Fonts/FreeMono12pt7b.h>	 // weekday - month year
 #include <Fonts/FreeSansBold24pt7b.h> // current day
 
 void downloadRandomePicture();
+void showFaceCalendar();
 void display_calender();
 void display_picture();
 void display_time();
 void on_draw2(pngle_t *pngle, uint32_t x, uint32_t y, uint32_t w, uint32_t h, uint8_t rgba[4]);
 
-using std::uint8_t;
+const char faceCalendarPicture[] = "/calendarPhoto.png";
+
 // TODO use dynamic display width
 static constexpr int MAX_WIDTH = 640 - 250;
-static constexpr int MAX_HEIGHT = 384;
 static int16_t curRowDelta[MAX_WIDTH + 1];
 static int16_t nextRowDelta[MAX_WIDTH + 1];
 
@@ -27,22 +31,20 @@ void setupFaceCalendar()
 
 void loopFaceCalendar()
 {
-	EVERY_N_SECONDS(300)
-	{
-		Serial.println("TODO download new image");
-	}
+	// TODO update picture every x seconds
+	showFaceCalendar();
+}
 
-
+void showFaceCalendar()
+{
 	display.setRotation(0);
 	display.setFullWindow();
 	display.firstPage();
 	display.fillScreen(GxEPD_WHITE);
 
-	// draw...
 	display_picture();
 	display_calender();
 
-	Serial.println("displayFlush");
 	display.nextPage();
 }
 
@@ -50,7 +52,21 @@ void downloadRandomePicture()
 {
 	// https://images.unsplash.com/photo-1580886349729-1bd109928600?ixlib=rb-1.2.1&ixid=eyJhcHBfaWQiOjExMDM0OH0&w=640&h=200&fm=png&fit=crop
 	// https://images.unsplash.com/photo-1580886349729-1bd109928600?ixlib=rb-1.2.1&ixid=eyJhcHBfaWQiOjExMDM0OH0&w=390&h=384&fm=png&fit=crop&colorquant=2
+	// https://images.unsplash.com/photo-1581307385098-a0338263e357?ixlib=rb-1.2.1&ixid=eyJhcHBfaWQiOjExMDM0OH0&w=640&h=384&fm=png&fit=crop&duotone=000000,FFFFFF
 	// final filter: &w=390&h=384&fm=png&fit=crop&duotone=000000,FFFFFF
+	Serial.println("TODO download new image");
+
+	// TODO download json file
+
+	String pictureUrl = "https://images.unsplash.com/photo-1582910587039-b4f085805c86?ixlib=rb-1.2.1&ixid=eyJhcHBfaWQiOjExMDM0OH0";
+	pictureUrl += "&w=390&h=384";			// size
+	pictureUrl += "&fm=png";				// format
+	pictureUrl += "&fit=crop";				// crop to needed size
+	pictureUrl += "&duotone=000000,FFFFFF"; // grayscale to save bytes
+
+	downloadFile(pictureUrl, faceCalendarPicture); // /face/calendar/bg.png
+
+	Serial.println("TODO download new image ---- done");
 }
 
 void display_calender()
@@ -129,7 +145,7 @@ void display_picture()
 	pngle_t *pngle = pngle_new();
 	pngle_set_draw_callback(pngle, on_draw2);
 
-	File file = SPIFFS.open("/calendarPhoto.png", "r");
+	File file = SPIFFS.open(faceCalendarPicture, "r");
 	if (!file)
 	{
 		Serial.println(" file not found");
@@ -143,12 +159,14 @@ void display_picture()
 	}
 	file.close();
 
+	/*
 	Serial.print("  width: ");
 	Serial.print(pngle_get_width(pngle));
 	Serial.print("  height: ");
 	Serial.println(pngle_get_height(pngle));
-
 	Serial.println("  read png done");
+	*/
+
 	pngle_destroy(pngle);
 }
 
