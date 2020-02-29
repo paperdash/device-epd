@@ -36,6 +36,7 @@ void setupApp()
 		.setDefaultFile("index.html")
 		//.setCacheControl("max-age=600")
 		;
+	server.serveStatic("/fs/", SPIFFS, "/");
 
 	setupSettingsGet();
 	setupSettingsPost();
@@ -61,6 +62,9 @@ void setupApp()
 		doc["device"]["bootCycle"] = deviceGetBootCount();
 		doc["device"]["screen"]["width"] = 640;
 		doc["device"]["screen"]["height"] = 384;
+		doc["device"]["fs"]["total"] = SPIFFS.totalBytes();
+		doc["device"]["fs"]["used"] = SPIFFS.usedBytes();
+		doc["device"]["fs"]["free"] = SPIFFS.totalBytes() - SPIFFS.usedBytes();
 
 		doc["playlist"]["current"] = PlaylistGetCurrentFace();
 		doc["playlist"]["remaining"] = PlaylistGetRemainingTimeMs() / 1000;
@@ -222,7 +226,6 @@ void setupWifiConnect()
 		} });
 }
 
-
 static void handle_update_progress_cb(AsyncWebServerRequest *request, String filename, size_t index, uint8_t *data, size_t len, bool final)
 {
 	if (!index)
@@ -248,6 +251,6 @@ void setupApiFace()
 {
 	server.on("/api/face", HTTP_POST, [](AsyncWebServerRequest *request) {
 		request->send(200, "application/ld+json; charset=utf-8", "{}");
-
-	}, handle_update_progress_cb);
+	},
+			  handle_update_progress_cb);
 }
