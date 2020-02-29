@@ -6,6 +6,7 @@
 #include "settings.h"
 #include "device.h"
 #include "playlist.h"
+#include "image.h"
 
 AsyncWebServer server(80);
 
@@ -14,6 +15,7 @@ void setupSettingsPost();
 void setupWifiScan();
 void setupWifiConnect();
 void setupCurrentImage();
+void setupApiFace();
 
 void setupApp()
 {
@@ -40,6 +42,7 @@ void setupApp()
 	setupWifiScan();
 	setupWifiConnect();
 	setupCurrentImage();
+	setupApiFace();
 
 	// TODO response
 	server.on("/stats", HTTP_GET, [](AsyncWebServerRequest *request) {
@@ -217,4 +220,34 @@ void setupWifiConnect()
 
 			ESP.restart();
 		} });
+}
+
+
+static void handle_update_progress_cb(AsyncWebServerRequest *request, String filename, size_t index, uint8_t *data, size_t len, bool final)
+{
+	if (!index)
+	{
+		Serial.printf("UploadStart: %s\n", filename.c_str());
+
+		// stop playlist to show the new image
+		PlaylistResetTimer();
+
+		ImageNew(0, 0, 0, 0, true);
+	}
+
+	ImageWriteBuffer(data, len);
+
+	if (final)
+	{
+		Serial.printf("UploadEnd: %s, %u B\n", filename.c_str(), index + len);
+		ImageFlushBuffer();
+	}
+}
+
+void setupApiFace()
+{
+	server.on("/api/face", HTTP_POST, [](AsyncWebServerRequest *request) {
+		request->send(200, "application/ld+json; charset=utf-8", "{}");
+
+	}, handle_update_progress_cb);
 }
