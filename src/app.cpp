@@ -64,9 +64,11 @@ void setupApp()
 		doc["device"]["bootCycle"] = deviceGetBootCount();
 		doc["device"]["screen"]["width"] = 640;
 		doc["device"]["screen"]["height"] = 384;
+		SPIFFS.begin();
 		doc["device"]["fs"]["total"] = SPIFFS.totalBytes();
 		doc["device"]["fs"]["used"] = SPIFFS.usedBytes();
 		doc["device"]["fs"]["free"] = SPIFFS.totalBytes() - SPIFFS.usedBytes();
+		SPIFFS.end();
 
 		doc["playlist"]["current"] = PlaylistGetCurrentFace();
 		doc["playlist"]["remaining"] = PlaylistGetRemainingTimeMs() / 1000;
