@@ -6,6 +6,7 @@
 #include "download.h"
 
 #include <Fonts/FreeSansBold24pt7b.h> // current day
+#include <Fonts/FreeSansBold18pt7b.h> // current day
 
 const char faceWeatherCurrent[] = "/weatherCurrent.json";
 const char faceWeatherForecast[] = "/weatherForecast.json";
@@ -13,32 +14,13 @@ faceWeatherData weatherData;
 
 // TODO use theme color
 
-void display_current();
-void display_forecast();
+void render_current();
+void render_forecast();
+bool downloadWeatherData();
+void readWeatherData();
 
 void setupFaceWeather()
 {
-}
-
-void updateData()
-{
-	String url;
-	// http://api.openweathermap.org/data/2.5/weather?id=2766824&APPID=883b3c87223430d6f3a399645f8ba12b&lang=de&cnt=3&units=metric
-	// http://api.openweathermap.org/data/2.5/forecast?id=2766824&APPID=883b3c87223430d6f3a399645f8ba12b&lang=de
-
-	// https://openweathermap.org/current
-	url = "http://api.openweathermap.org/data/2.5/weather?";
-	url += "APPID=883b3c87223430d6f3a399645f8ba12b"; // api key
-	url += "&id=2766824";							 // location
-	url += "&lang=de&units=metric";					 // settings
-	downloadFile(url, faceWeatherCurrent);
-
-	// https://openweathermap.org/forecast5
-	url = "http://api.openweathermap.org/data/2.5/forecast?";
-	url += "APPID=883b3c87223430d6f3a399645f8ba12b"; // api key
-	url += "&id=2766824";							 // location
-	url += "&lang=de&cnt=3&units=metric";			 // settings
-	downloadFile(url, faceWeatherForecast);
 }
 
 void loopFaceWeather()
@@ -50,13 +32,13 @@ void loopFaceWeather()
 	display.setTextColor(GxEPD_WHITE);
 	display.setTextSize(1);
 
-	display_current();
-	display_forecast();
+	render_current();
+	render_forecast();
 
 	display.nextPage();
 }
 
-void display_current()
+void render_current()
 {
 	// temperature
 	display.setFont(&FreeSansBold24pt7b);
@@ -68,7 +50,8 @@ void display_current()
 	const uint *icon = getIconById("02n", 192); // 192
 	if (icon)
 	{
-		display.drawBitmap(272, 30, (uint8_t *)icon + 4, icon[0], icon[1], GxEPD_WHITE);
+		//display.drawInvertedBitmap(224, 30, myIcon, 192, 192, GxEPD_WHITE);
+		display.drawBitmap(224, 30, (uint8_t *)icon + 4, icon[0], icon[1], GxEPD_WHITE);
 	}
 
 	// text
@@ -86,41 +69,112 @@ void display_current()
 	display.println("-3°");
 }
 
-void display_forecast()
+void render_forecast()
 {
 	const uint *icon;
 
 	// line forecast
-	//display.drawLine(0, 250, 640, 250, GxEPD_WHITE);
 	display.drawRect(0, 250, 640, 2, GxEPD_WHITE);
 
-	display.drawLine(210, 250, 210, 384, GxEPD_WHITE);
-	display.drawLine(420, 250, 420, 384, GxEPD_WHITE);
-	// 210 per block
+	display.drawLine(160, 250, 160, 384, GxEPD_WHITE);
+	display.drawLine(320, 250, 320, 384, GxEPD_WHITE);
+	display.drawLine(480, 250, 480, 384, GxEPD_WHITE);
+	// 160 per block
+
+	display.setTextSize(1);
+	display.setFont(&FreeSansBold18pt7b);
+
+	char label[20];
+	int16_t tbx, tby;
+	uint16_t tbw, tbh, x;
+	uint16_t tempRangeY = 260 + 64 + 40;
 
 	// day +1
-	icon = getIconById("03d", 96);
+	icon = getIconById("03d", 64);
 	if (icon)
 	{
-		display.drawBitmap(0 + 57, 260, (uint8_t *)icon + 4, icon[0], icon[1], GxEPD_WHITE);
+		display.drawBitmap(0 + 48, 260, (uint8_t *)icon + 4, icon[0], icon[1], GxEPD_WHITE);
+
+		sprintf(label, "%2d ... %2d", -3, 11);
+		display.getTextBounds(label, 0, 0, &tbx, &tby, &tbw, &tbh);
+		x = ((160 - tbw) / 2) - tbx;
+		display.setCursor(x, tempRangeY);
+		display.print(label);
 	}
 
 	// day +2
-	icon = getIconById("09d", 96);
+	icon = getIconById("09d", 64);
 	if (icon)
 	{
-		display.drawBitmap(210 + 57, 260, (uint8_t *)icon + 4, icon[0], icon[1], GxEPD_WHITE);
+		display.drawBitmap(160 + 48, 260, (uint8_t *)icon + 4, icon[0], icon[1], GxEPD_WHITE);
+
+		sprintf(label, "%2d ... %2d", 0, 7);
+		display.getTextBounds(label, 0, 0, &tbx, &tby, &tbw, &tbh);
+		x = ((160 - tbw) / 2) - tbx;
+		display.setCursor(160 + x, tempRangeY);
+		display.print(label);
 	}
 
 	// day +3
-	icon = getIconById("13d", 96);
+	icon = getIconById("13d", 64);
 	if (icon)
 	{
-		display.drawBitmap(410 + 57, 260, (uint8_t *)icon + 4, icon[0], icon[1], GxEPD_WHITE);
+		display.drawBitmap(320 + 48, 260, (uint8_t *)icon + 4, icon[0], icon[1], GxEPD_WHITE);
+
+		sprintf(label, "%2d ... %2d", 1, 21);
+		display.getTextBounds(label, 0, 0, &tbx, &tby, &tbw, &tbh);
+		x = ((160 - tbw) / 2) - tbx;
+		display.setCursor(320 + x, tempRangeY);
+		display.print(label);
+	}
+
+	// day +4
+	icon = getIconById("13d", 64);
+	if (icon)
+	{
+		display.drawBitmap(480 + 48, 260, (uint8_t *)icon + 4, icon[0], icon[1], GxEPD_WHITE);
+
+		sprintf(label, "%2d ... %2d", 19, 35);
+		display.getTextBounds(label, 0, 0, &tbx, &tby, &tbw, &tbh);
+		x = ((160 - tbw) / 2) - tbx;
+		display.setCursor(480 + x, tempRangeY);
+		display.print(label);
 	}
 }
 
-void loadConfiguration()
+// @todo load params from settings
+// @see https://openweathermap.org/appid#work
+// @note no more than one time every 10 minutes for one location
+bool downloadWeatherData()
+{
+	String url;
+	// http://api.openweathermap.org/data/2.5/weather?id=2766824&APPID=883b3c87223430d6f3a399645f8ba12b&lang=de&cnt=3&units=metric
+	// http://api.openweathermap.org/data/2.5/forecast?id=2766824&APPID=883b3c87223430d6f3a399645f8ba12b&lang=de
+
+	// https://openweathermap.org/current
+	url = "http://api.openweathermap.org/data/2.5/weather?";
+	url += "APPID=883b3c87223430d6f3a399645f8ba12b"; // api key
+	url += "&id=2766824";							 // location
+	url += "&lang=de&units=metric";					 // settings
+	if (!downloadFile(url, faceWeatherCurrent))
+	{
+		return false;
+	}
+
+	// https://openweathermap.org/forecast5
+	url = "http://api.openweathermap.org/data/2.5/forecast?";
+	url += "APPID=883b3c87223430d6f3a399645f8ba12b"; // api key
+	url += "&id=2766824";							 // location
+	url += "&lang=de&cnt=3&units=metric";			 // settings
+	if (!downloadFile(url, faceWeatherForecast))
+	{
+		return false;
+	}
+
+	return true;
+}
+
+void readWeatherData()
 {
 	SPIFFS.begin();
 	File file;
