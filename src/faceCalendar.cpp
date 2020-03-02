@@ -16,14 +16,8 @@ void showFaceCalendar();
 void display_calender();
 void display_picture();
 void display_time();
-void on_draw2(pngle_t *pngle, uint32_t x, uint32_t y, uint32_t w, uint32_t h, uint8_t rgba[4]);
 
 const char faceCalendarPicture[] = "/calendarPhoto.png";
-
-// TODO use dynamic display width
-static constexpr int MAX_WIDTH = 640 - 250;
-static int16_t curRowDelta[MAX_WIDTH + 1];
-static int16_t nextRowDelta[MAX_WIDTH + 1];
 
 void setupFaceCalendar()
 {
@@ -140,10 +134,6 @@ void display_calender()
 void display_picture()
 {
 	SPIFFS.begin();
-	displayOpen();
-
-	pngle_t *pngle = pngle_new();
-	pngle_set_draw_callback(pngle, on_draw2);
 
 	File file = SPIFFS.open(faceCalendarPicture, "r");
 	if (!file)
@@ -151,70 +141,19 @@ void display_picture()
 		Serial.println(" file not found");
 	}
 
+	ImageNew(250, 0, 0, 0, true);
+
 	// TODO check why a small buffer is not working correct
-	char buff[1280] = {0};
-	while (int c = file.readBytes(buff, sizeof(buff)))
+	uint8_t buff[1280] = {0};
+	while (int c = file.read(buff, sizeof(buff)))
 	{
-		pngle_feed(pngle, buff, c);
+		ImageWriteBuffer(buff, c);
 	}
 	file.close();
 
-	/*
-	Serial.print("  width: ");
-	Serial.print(pngle_get_width(pngle));
-	Serial.print("  height: ");
-	Serial.println(pngle_get_height(pngle));
-	Serial.println("  read png done");
-	*/
+	ImageFlushBuffer();
 
-	pngle_destroy(pngle);
-}
-
-/**
- * render picture
- */
-void on_draw2(pngle_t *pngle, uint32_t x, uint32_t y, uint32_t w, uint32_t h, uint8_t rgba[4])
-{
-	uint8_t r = rgba[0]; // 0 - 255
-	uint8_t g = rgba[1]; // 0 - 255
-	uint8_t b = rgba[2]; // 0 - 255
-
-	int16_t gray = round(r * 0.3 + g * 0.59 + b * 0.11);
-	int16_t blackOrWhite;
-
-	// Add errors to color if there are
-	gray += curRowDelta[x];
-
-	if (gray <= 127)
-	{
-		blackOrWhite = 0;
-	}
-	else
-	{
-		blackOrWhite = 255;
-	}
-
-	int16_t oldPixel = gray;
-	int16_t newPixel = blackOrWhite;
-
-	int err = oldPixel - newPixel;
-
-	if (x > 0)
-	{
-		nextRowDelta[x - 1] += err * 3 / 16;
-	}
-	nextRowDelta[x] += err * 5 / 16;
-	nextRowDelta[x + 1] += err * 1 / 16;
-	curRowDelta[x + 1] += err * 7 / 16;
-
-	if (x == 0 && y > 0)
-	{
-		// new line
-		memcpy(curRowDelta, nextRowDelta, sizeof(curRowDelta));
-		memset(nextRowDelta, 0, sizeof(nextRowDelta));
-	}
-
-	displayWritePixel(x + 250, y, blackOrWhite);
+	SPIFFS.end();
 }
 
 void display_time()
