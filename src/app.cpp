@@ -7,6 +7,7 @@
 #include "device.h"
 #include "playlist.h"
 #include "image.h"
+#include "display.h"
 
 AsyncWebServer server(80);
 
@@ -16,6 +17,7 @@ void setupWifiScan();
 void setupWifiConnect();
 void setupCurrentImage();
 void setupApiFace();
+bool updateDisplayRequired = false;
 
 void setupApp()
 {
@@ -84,6 +86,20 @@ void setupApp()
 	server.begin();
 
 	Serial.println("setup configure - done");
+}
+
+void loopApp()
+{
+	if (updateDisplayRequired)
+	{
+		Serial.println("loop app update display");
+
+		// stop playlist to show the new image
+		PlaylistResetTimer();
+
+		updateDisplayRequired = false;
+		display.nextPage();
+	}
 }
 
 void setupSettingsGet()
@@ -231,10 +247,6 @@ static void handle_update_progress_cb(AsyncWebServerRequest *request, String fil
 	if (!index)
 	{
 		Serial.printf("UploadStart: %s\n", filename.c_str());
-
-		// stop playlist to show the new image
-		PlaylistResetTimer();
-
 		ImageNew(0, 0, 0, 0, true);
 	}
 
@@ -244,12 +256,43 @@ static void handle_update_progress_cb(AsyncWebServerRequest *request, String fil
 	{
 		Serial.printf("UploadEnd: %s, %u B\n", filename.c_str(), index + len);
 		ImageFlushBuffer();
+
+		updateDisplayRequired = true;
 	}
 }
 
 void setupApiFace()
 {
 	server.on("/api/face", HTTP_POST, [](AsyncWebServerRequest *request) {
+		Serial.println("post request");
+
+/*
+		int params = request->params();
+		for (int i = 0; i < params; i++)
+		{
+			AsyncWebParameter *p = request->getParam(i);
+			if (p->isFile())
+			{
+				Serial.printf("<li>FILE[%s]: %s, size: %u</li>", p->name().c_str(), p->value().c_str(), p->size());
+			}
+			else if (p->isPost())
+			{
+				Serial.printf("<li>POST[%s]: %s</li>", p->name().c_str(), p->value().c_str());
+			}
+			else
+			{
+				Serial.printf("<li>GET[%s]: %s</li>", p->name().c_str(), p->value().c_str());
+			}
+		}
+
+		if (request->hasParam("dithering", true))
+		{
+			AsyncWebParameter *p = request->getParam("dithering", true);
+			Serial.println(p->value());
+			dithering = p->value().toInt() == 1;
+		}
+		*/
+
 		request->send(200, "application/ld+json; charset=utf-8", "{}");
 	},
 			  handle_update_progress_cb);

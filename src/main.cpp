@@ -29,6 +29,8 @@ void setup()
 	setupSettings();
 	setupDevice();
 
+	setupImagePNG();
+
 	setupWlan();
 	if (wlan_isConnected())
 	{
@@ -58,6 +60,8 @@ void loop()
 		loopPlaylist();
 		//loopCloud();
 	}
+
+	loopApp();
 
 	//loopDevice();
 }

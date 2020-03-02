@@ -10,13 +10,14 @@ static constexpr int MAX_WIDTH = 640;
 static int16_t curRowDelta[MAX_WIDTH + 1];
 static int16_t nextRowDelta[MAX_WIDTH + 1];
 
-bool dithering = true;
-
 void on_draw(pngle_t *pngle, uint32_t x, uint32_t y, uint32_t w, uint32_t h, uint8_t rgba[4]);
 
 void setupImagePNG()
 {
 	Serial.println("setupPNG");
+
+	pngle = pngle_new();
+	pngle_set_draw_callback(pngle, on_draw);
 
 	Serial.println("setupPNG done");
 }
@@ -24,36 +25,25 @@ void setupImagePNG()
 void pngOpenFramebuffer()
 {
 	displayOpen();
+	pngle_reset(pngle);
 
-	if (pngle)
-	{
-		pngle_destroy(pngle);
-	}
-
-	pngle = pngle_new();
-	pngle_set_draw_callback(pngle, on_draw);
+	memset(curRowDelta, 0, sizeof(curRowDelta));
+	memset(nextRowDelta, 0, sizeof(nextRowDelta));
 }
 
 void pngWriteFramebuffer(int offset, uint8_t bitmap[], int c)
 {
-	if (pngle)
+	int fed = pngle_feed(pngle, bitmap, c);
+	if (fed < 0)
 	{
-		int fed = pngle_feed(pngle, bitmap, c);
-		if (fed < 0)
-		{
-			Serial.println(pngle_error(pngle));
-		}
-	}
-	else
-	{
-		Serial.println("forgot pngle_new() ?");
+		Serial.println(pngle_error(pngle));
 	}
 }
 
 void pngFlushFramebuffer()
 {
-	pngle_destroy(pngle);
-	displayFlush();
+	Serial.println("pngFlushFramebuffer");
+	pngle_reset(pngle);
 }
 
 void on_draw(pngle_t *pngle, uint32_t x, uint32_t y, uint32_t w, uint32_t h, uint8_t rgba[4])
@@ -66,7 +56,7 @@ void on_draw(pngle_t *pngle, uint32_t x, uint32_t y, uint32_t w, uint32_t h, uin
 	int16_t blackOrWhite;
 
 	// Add errors to color if there are
-	if (dithering)
+	if (ImageProcess.dithering)
 	{
 		gray += curRowDelta[x];
 	}
@@ -80,7 +70,7 @@ void on_draw(pngle_t *pngle, uint32_t x, uint32_t y, uint32_t w, uint32_t h, uin
 		blackOrWhite = 255;
 	}
 
-	if (dithering)
+	if (ImageProcess.dithering)
 	{
 		int16_t oldPixel = gray;
 		int16_t newPixel = blackOrWhite;
@@ -98,10 +88,10 @@ void on_draw(pngle_t *pngle, uint32_t x, uint32_t y, uint32_t w, uint32_t h, uin
 		if (x == 0 && y > 0)
 		{
 			// new line
-			memcpy(curRowDelta, nextRowDelta, sizeof(&curRowDelta));
-			memset(nextRowDelta, 0, sizeof(&nextRowDelta));
+			memcpy(curRowDelta, nextRowDelta, sizeof(curRowDelta));
+			memset(nextRowDelta, 0, sizeof(nextRowDelta));
 		}
 	}
 
-	displayWritePixel(x, y, blackOrWhite);
+	displayWritePixel(ImageProcess.x + x, ImageProcess.y + y, blackOrWhite);
 }

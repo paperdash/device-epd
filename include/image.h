@@ -3,11 +3,18 @@
 
 #include <Arduino.h>
 
-#include "imageWBMP.h"
-#include "imagePNG.h"
+typedef struct
+{
+	size_t format;
+	int x;
+	int y;
+	int w;
+	int h;
+	bool dithering;
+} structImageProcess;
 
 void ImageNew(int x, int y, int w, int h, bool dithering);
 void ImageWriteBuffer(uint8_t buff[], size_t c);
 void ImageFlushBuffer();
 
-#endif
+#endif /* IMAGE_H */

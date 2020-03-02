@@ -2,5 +2,6 @@
 #define APP_H
 
 void setupApp();
+void loopApp();
 
 #endif

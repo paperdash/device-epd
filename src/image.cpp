@@ -1,47 +1,42 @@
 #include "image.h"
+#include "imageWBMP.h"
+#include "imagePNG.h"
 
-typedef struct
-{
-	size_t format;
-	int x;
-	int y;
-	int w;
-	int h;
-	bool dithering;
-} ImageProcess;
-ImageProcess Image;
+structImageProcess ImageProcess;
 
 void ImageNew(int x, int y, int w, int h, bool dithering)
 {
-	Image.x = x;
-	Image.y = y;
-	Image.w = w;
-	Image.h = h;
-	Image.dithering = dithering;
+	Serial.printf("ImageNew: x: %d, y: %d, dithering: %d \n", x, y, dithering);
+
+	ImageProcess.x = x;
+	ImageProcess.y = y;
+	ImageProcess.w = w;
+	ImageProcess.h = h;
+	ImageProcess.dithering = dithering;
 }
 
 void ImageWriteBuffer(uint8_t buff[], size_t c)
 {
 	// initial detect format
-	if (Image.format == 0)
+	if (ImageProcess.format == 0)
 	{
 		if (memcmp(buff, ImageHeaderWBMP, sizeof(ImageHeaderWBMP) - 1) == 0)
 		{
 			Serial.println(" image format: WBMP");
-			Image.format = 2;
+			ImageProcess.format = 2;
 
 			wbmpOpenFramebuffer();
 		}
 		else if (memcmp(buff, ImageHeaderPNG, sizeof(ImageHeaderPNG) - 1) == 0)
 		{
 			Serial.println(" image format: PNG");
-			Image.format = 3;
+			ImageProcess.format = 3;
 
 			pngOpenFramebuffer();
 		}
 		else
 		{
-			Image.format = 1;
+			ImageProcess.format = 1;
 			Serial.println(" unkown image format. first header are:");
 			Serial.println(buff[0]);
 			Serial.println(buff[1]);
@@ -53,7 +48,7 @@ void ImageWriteBuffer(uint8_t buff[], size_t c)
 	}
 
 	// write display frame
-	switch (Image.format)
+	switch (ImageProcess.format)
 	{
 	// WBMP
 	case 2:
@@ -69,7 +64,7 @@ void ImageWriteBuffer(uint8_t buff[], size_t c)
 void ImageFlushBuffer()
 {
 	// update display
-	switch (Image.format)
+	switch (ImageProcess.format)
 	{
 	// WBMP
 	case 2:
@@ -82,10 +77,10 @@ void ImageFlushBuffer()
 	}
 
 	// clear settings
-	Image.format = 0;
-	Image.x = 0;
-	Image.y = 0;
-	Image.w = 0;
-	Image.h = 0;
-	Image.dithering = false;
+	ImageProcess.format = 0;
+	ImageProcess.x = 0;
+	ImageProcess.y = 0;
+	ImageProcess.w = 0;
+	ImageProcess.h = 0;
+	ImageProcess.dithering = false;
 }
