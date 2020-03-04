@@ -35,7 +35,7 @@ void loopFaceWeather()
 	render_current();
 	render_forecast();
 
-	display.nextPage();
+	displayFlush();
 }
 
 void render_current()
@@ -176,7 +176,6 @@ bool downloadWeatherData()
 
 void readWeatherData()
 {
-	SPIFFS.begin();
 	File file;
 	DeserializationError error;
 
@@ -212,6 +211,4 @@ void readWeatherData()
 	// TODO get values
 
 	file.close();
-
-	SPIFFS.end();
 }
