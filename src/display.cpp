@@ -15,7 +15,7 @@
 
 GxEPD2_BW<GxEPD2_750, GxEPD2_750::HEIGHT> display(GxEPD2_750(/*CS=*/5, /*DC=*/17, /*RST=*/16, /*BUSY=*/4));
 
-void printScreen();
+void saveScreen();
 void writeBitmap(const char filename[], const uint8_t bitmap[], int16_t w, int16_t h, uint16_t depth = 1);
 uint8_t filldata[] = {0x0, 0x23, 0x0, 0x0, 0x0, 0x0, 0x0, 0x0, 0x0, 0x0, 0x0, 0x0, 0x0, 0x0, 0x0, 0x0, 0x0, 0x0, 0x0, 0x0, 0x0, 0x0, 0x0, 0x0, 0xFF, 0xFF, 0xFF, 0x0};
 void write16(File &f, uint16_t v);
@@ -51,10 +51,7 @@ void displayWriteFramebuffer(uint8_t bitmap[])
 void displayFlush()
 {
 	display.nextPage();
-
-	unsigned long startMills = millis();
-	writeBitmap("/screen.bmp", display.getBuffer(), 640, 384);
-	Serial.println(millis() - startMills);
+	saveScreen();
 }
 
 void printSplash()
@@ -80,8 +77,11 @@ void printSplash()
 	} while (display.nextPage());
 }
 
-void printScreen()
+void saveScreen()
 {
+	unsigned long startMills = millis();
+	writeBitmap("/screen.bmp", display.getBuffer(), display.width(), display.height());
+	Serial.println(millis() - startMills);
 }
 
 void writeBitmap(const char filename[], const uint8_t bitmap[], int16_t w, int16_t h, uint16_t depth)
