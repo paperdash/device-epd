@@ -47,6 +47,10 @@ void setupApp()
 	setupCurrentImage();
 	setupApiFace();
 
+	server.onNotFound([](AsyncWebServerRequest *request) {
+		request->send(404);
+	});
+
 	// TODO response
 	server.on("/stats", HTTP_GET, [](AsyncWebServerRequest *request) {
 		AsyncResponseStream *response = request->beginResponseStream("application/json");
@@ -64,11 +68,10 @@ void setupApp()
 		doc["device"]["bootCycle"] = deviceGetBootCount();
 		doc["device"]["screen"]["width"] = 640;
 		doc["device"]["screen"]["height"] = 384;
-		SPIFFS.begin();
+
 		doc["device"]["fs"]["total"] = SPIFFS.totalBytes();
 		doc["device"]["fs"]["used"] = SPIFFS.usedBytes();
 		doc["device"]["fs"]["free"] = SPIFFS.totalBytes() - SPIFFS.usedBytes();
-		SPIFFS.end();
 
 		doc["playlist"]["current"] = PlaylistGetCurrentFace();
 		doc["playlist"]["remaining"] = PlaylistGetRemainingTimeMs() / 1000;
@@ -268,7 +271,7 @@ void setupApiFace()
 	server.on("/api/face", HTTP_POST, [](AsyncWebServerRequest *request) {
 		Serial.println("post request");
 
-/*
+		/*
 		int params = request->params();
 		for (int i = 0; i < params; i++)
 		{

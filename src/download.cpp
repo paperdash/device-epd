@@ -38,7 +38,6 @@ bool downloadFile(String url, const char *path)
 		WiFiClient *stream = http.getStreamPtr();
 
 		// persist image
-		SPIFFS.begin();
 		File file = SPIFFS.open(tmpFile, FILE_WRITE);
 		if (!file)
 		{
@@ -78,8 +77,6 @@ bool downloadFile(String url, const char *path)
 			file.close();
 			SPIFFS.remove(path);
 			SPIFFS.rename(tmpFile, path);
-
-			SPIFFS.end();
 		}
 
 		Serial.print("download completed in: ");

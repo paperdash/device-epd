@@ -39,7 +39,7 @@ void showFaceCalendar()
 	display_picture();
 	display_calender();
 
-	display.nextPage();
+	displayFlush();
 }
 
 void downloadRandomePicture()
@@ -133,8 +133,6 @@ void display_calender()
 
 void display_picture()
 {
-	SPIFFS.begin();
-
 	File file = SPIFFS.open(faceCalendarPicture, "r");
 	if (!file)
 	{
@@ -152,8 +150,6 @@ void display_picture()
 	file.close();
 
 	ImageFlushBuffer();
-
-	SPIFFS.end();
 }
 
 void display_time()
