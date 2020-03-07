@@ -2,7 +2,7 @@
 
 #define NELEMENTS(array) (sizeof(array) / sizeof((array)[0]))
 
-const uint *getIconById(const char id[], int size)
+const unsigned char *getIconById(const char id[], int size)
 {
 	for (int i = 0; i < NELEMENTS(IconIds); i++)
 	{
@@ -12,12 +12,8 @@ const uint *getIconById(const char id[], int size)
 			{
 			case 64:
 				return IconIds[i].icon64;
-			case 96:
-				return IconIds[i].icon96;
-			case 128:
-				return IconIds[i].icon128;
-			case 192:
-				return IconIds[i].icon192;
+			case 256:
+				return IconIds[i].icon256;
 			default:
 				return NULL;
 			}
