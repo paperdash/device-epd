@@ -16,11 +16,11 @@ faceWeatherData weatherData;
 
 void render_current();
 void render_forecast();
-bool downloadWeatherData();
-void readWeatherData();
+bool readWeatherData();
 
 void setupFaceWeather()
 {
+	readWeatherData();
 }
 
 void loopFaceWeather()
@@ -40,38 +40,39 @@ void loopFaceWeather()
 
 void render_current()
 {
+	// name
+	display.setFont(&FreeSansBold18pt7b);
+	display.setTextSize(1);
+	display.setCursor(20, 220);
+	display.println(weatherData.location);
+
 	// temperature
 	display.setFont(&FreeSansBold24pt7b);
 	display.setTextSize(2);
 	display.setCursor(50, 120);
-	display.println("3°");
+	display.println(weatherData.current_temp);
 
 	// icon
-	const uint *icon = getIconById("02n", 192); // 192
+	const unsigned char *icon = getIconById(weatherData.current_icon, 256);
 	if (icon)
 	{
-		//display.drawInvertedBitmap(224, 30, myIcon, 192, 192, GxEPD_WHITE);
-		display.drawBitmap(224, 30, (uint8_t *)icon + 4, icon[0], icon[1], GxEPD_WHITE);
+		display.drawInvertedBitmap(192, 0, icon, 256, 256, GxEPD_WHITE);
 	}
 
-	// text
-	display.setTextSize(1);
-	display.setCursor(400, 300);
-	//display.println("Ein paar Wolken");
-
+	// 250 height
 	// high
 	display.setTextSize(1);
-	display.setCursor(500, 30);
-	display.println("5°");
+	display.setCursor(500, 100);
+	display.println(weatherData.current_max);
 
 	// low
-	display.setCursor(500, 60);
-	display.println("-3°");
+	display.setCursor(500, 180);
+	display.println(weatherData.current_min);
 }
 
 void render_forecast()
 {
-	const uint *icon;
+	const unsigned char *icon;
 
 	// line forecast
 	display.drawRect(0, 250, 640, 2, GxEPD_WHITE);
@@ -90,12 +91,12 @@ void render_forecast()
 	uint16_t tempRangeY = 260 + 64 + 40;
 
 	// day +1
-	icon = getIconById("03d", 64);
+	icon = getIconById(weatherData.forecast_1_icon, 64);
 	if (icon)
 	{
-		display.drawBitmap(0 + 48, 260, (uint8_t *)icon + 4, icon[0], icon[1], GxEPD_WHITE);
+		display.drawInvertedBitmap(0 + 48, 260, icon, 64, 64, GxEPD_WHITE);
 
-		sprintf(label, "%2d ... %2d", -3, 11);
+		sprintf(label, "%2d ... %2d", weatherData.forecast_1_min, weatherData.forecast_1_max);
 		display.getTextBounds(label, 0, 0, &tbx, &tby, &tbw, &tbh);
 		x = ((160 - tbw) / 2) - tbx;
 		display.setCursor(x, tempRangeY);
@@ -103,12 +104,12 @@ void render_forecast()
 	}
 
 	// day +2
-	icon = getIconById("09d", 64);
+	icon = getIconById(weatherData.forecast_2_icon, 64);
 	if (icon)
 	{
-		display.drawBitmap(160 + 48, 260, (uint8_t *)icon + 4, icon[0], icon[1], GxEPD_WHITE);
+		display.drawInvertedBitmap(160 + 48, 260, icon, 64, 64, GxEPD_WHITE);
 
-		sprintf(label, "%2d ... %2d", 0, 7);
+		sprintf(label, "%2d ... %2d", weatherData.forecast_2_min, weatherData.forecast_2_max);
 		display.getTextBounds(label, 0, 0, &tbx, &tby, &tbw, &tbh);
 		x = ((160 - tbw) / 2) - tbx;
 		display.setCursor(160 + x, tempRangeY);
@@ -116,12 +117,12 @@ void render_forecast()
 	}
 
 	// day +3
-	icon = getIconById("13d", 64);
+	icon = getIconById(weatherData.forecast_3_icon, 64);
 	if (icon)
 	{
-		display.drawBitmap(320 + 48, 260, (uint8_t *)icon + 4, icon[0], icon[1], GxEPD_WHITE);
+		display.drawInvertedBitmap(320 + 48, 260, icon, 64, 64, GxEPD_WHITE);
 
-		sprintf(label, "%2d ... %2d", 1, 21);
+		sprintf(label, "%2d ... %2d", weatherData.forecast_3_min, weatherData.forecast_3_max);
 		display.getTextBounds(label, 0, 0, &tbx, &tby, &tbw, &tbh);
 		x = ((160 - tbw) / 2) - tbx;
 		display.setCursor(320 + x, tempRangeY);
@@ -129,12 +130,12 @@ void render_forecast()
 	}
 
 	// day +4
-	icon = getIconById("13d", 64);
+	icon = getIconById(weatherData.forecast_4_icon, 64);
 	if (icon)
 	{
-		display.drawBitmap(480 + 48, 260, (uint8_t *)icon + 4, icon[0], icon[1], GxEPD_WHITE);
+		display.drawInvertedBitmap(480 + 48, 260, icon, 64, 64, GxEPD_WHITE);
 
-		sprintf(label, "%2d ... %2d", 19, 35);
+		sprintf(label, "%2d ... %2d", weatherData.forecast_4_min, weatherData.forecast_4_max);
 		display.getTextBounds(label, 0, 0, &tbx, &tby, &tbw, &tbh);
 		x = ((160 - tbw) / 2) - tbx;
 		display.setCursor(480 + x, tempRangeY);
@@ -162,10 +163,11 @@ bool downloadWeatherData()
 	}
 
 	// https://openweathermap.org/forecast5
-	url = "http://api.openweathermap.org/data/2.5/forecast?";
+	// http://api.openweathermap.org/data/2.5/forecast/daily?id=2766824&APPID=883b3c87223430d6f3a399645f8ba12b&lang=de&cnt=3
+	url = "http://api.openweathermap.org/data/2.5/forecast/daily?";
 	url += "APPID=883b3c87223430d6f3a399645f8ba12b"; // api key
 	url += "&id=2766824";							 // location
-	url += "&lang=de&cnt=3&units=metric";			 // settings
+	url += "&lang=de&cnt=4&units=metric";			 // settings
 	if (!downloadFile(url, faceWeatherForecast))
 	{
 		return false;
@@ -174,41 +176,106 @@ bool downloadWeatherData()
 	return true;
 }
 
-void readWeatherData()
+/**
+ * download and update weather data
+ */
+bool updateWeatherData()
 {
+	if (downloadWeatherData())
+	{
+		readWeatherData();
+
+		return true;
+	}
+
+	return false;
+}
+
+/**
+ * read weather data from json file
+ */
+bool readWeatherData()
+{
+	Serial.println("  readWeatherData");
 	File file;
 	DeserializationError error;
 
 	// current weather
 	file = SPIFFS.open(faceWeatherCurrent);
-	StaticJsonDocument<976> docCurrent; // Use arduinojson.org/v6/assistant to compute the capacity.
-	error = deserializeJson(docCurrent, file);
-	if (error)
+	if (!file)
 	{
-		Serial.println(F("Failed to read file, using default configuration"));
+		Serial.print("Failed to open file: ");
+		Serial.println(faceWeatherCurrent);
+
+		return false;
 	}
 
-	// TODO Copy values from the JsonDocument to the Config
-	weatherData.current_temp = 12;
-
-	/*
-	config.port = doc["port"] | 2731;
-	strlcpy(config.hostname,				 // <- destination
-			doc["hostname"] | "example.com", // <- source
-			sizeof(config.hostname));		 // <- destination's capacity
-	*/
+	StaticJsonDocument<976> docCurrent; // Use arduinojson.org/v6/assistant to compute the capacity.
+	error = deserializeJson(docCurrent, file);
 	file.close();
+	if (error)
+	{
+		Serial.print("Failed to read file: ");
+		Serial.println(faceWeatherCurrent);
+
+		Serial.println(error.c_str());
+		return false;
+	}
+
+	//serializeJsonPretty(docCurrent, Serial);
+	//Serial.println(docCurrent["weather"][0]["icon"].as<char *>());
+	//Serial.println(docCurrent["weather"][0]["main"].as<char *>());
+	//Serial.println(docCurrent["sys"]["country"].as<char *>());
+	//Serial.println(docCurrent["main"]["temp"].as<int>());
+
+	// copy required values
+
+	strlcpy(weatherData.location, docCurrent["name"] | "?", sizeof(weatherData.location));
+
+	weatherData.current_temp = round(docCurrent["main"]["temp"].as<int>());
+	weatherData.current_min = floor(docCurrent["main"]["temp_min"].as<int>());
+	weatherData.current_max = ceil(docCurrent["main"]["temp_max"].as<int>());
+	strlcpy(weatherData.current_icon, docCurrent["weather"][0]["icon"] | "50n", sizeof(weatherData.current_icon));
 
 	// forecast
 	file = SPIFFS.open(faceWeatherForecast);
-	StaticJsonDocument<2180> docForecast; // Use arduinojson.org/v6/assistant to compute the capacity.
-	error = deserializeJson(docForecast, file);
-	if (error)
+	if (!file)
 	{
-		Serial.println(F("Failed to read file, using default configuration"));
+		Serial.print("Failed to open file: ");
+		Serial.println(faceWeatherForecast);
+
+		return false;
 	}
 
-	// TODO get values
-
+	StaticJsonDocument<3000> docForecast; // Use arduinojson.org/v6/assistant to compute the capacity.
+	error = deserializeJson(docForecast, file);
 	file.close();
+	if (error)
+	{
+		Serial.print("Failed to read file: ");
+		Serial.println(faceWeatherForecast);
+
+		Serial.println(error.c_str());
+
+		return false;
+	}
+
+	// copy required values
+	weatherData.forecast_1_min = round(docForecast["list"][0]["temp"]["min"].as<int>());
+	weatherData.forecast_1_max = round(docForecast["list"][0]["temp"]["max"].as<int>());
+	strlcpy(weatherData.forecast_1_icon, docForecast["list"][0]["weather"][0]["icon"] | "50n", sizeof(weatherData.forecast_1_icon));
+
+	weatherData.forecast_2_min = round(docForecast["list"][1]["temp"]["min"].as<int>());
+	weatherData.forecast_2_max = round(docForecast["list"][1]["temp"]["max"].as<int>());
+	strlcpy(weatherData.forecast_2_icon, docForecast["list"][1]["weather"][0]["icon"] | "50n", sizeof(weatherData.forecast_2_icon));
+
+	weatherData.forecast_3_min = round(docForecast["list"][2]["temp"]["min"].as<int>());
+	weatherData.forecast_3_max = round(docForecast["list"][2]["temp"]["max"].as<int>());
+	strlcpy(weatherData.forecast_3_icon, docForecast["list"][2]["weather"][0]["icon"] | "50n", sizeof(weatherData.forecast_3_icon));
+
+	weatherData.forecast_4_min = round(docForecast["list"][3]["temp"]["min"].as<int>());
+	weatherData.forecast_4_max = round(docForecast["list"][3]["temp"]["max"].as<int>());
+	strlcpy(weatherData.forecast_4_icon, docForecast["list"][3]["weather"][0]["icon"] | "50n", sizeof(weatherData.forecast_4_icon));
+
+	return true;
 }
