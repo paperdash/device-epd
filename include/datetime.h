@@ -4,7 +4,6 @@
 #include <arduino.h>
 #include <time.h>
 
-// TODO
 // @see http://www.cplusplus.com/reference/ctime/tm/
 // @see http://www.cplusplus.com/reference/ctime/strftime/
 struct datetime_struct : tm

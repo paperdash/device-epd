@@ -12,8 +12,6 @@ const char faceWeatherCurrent[] = "/weatherCurrent.json";
 const char faceWeatherForecast[] = "/weatherForecast.json";
 faceWeatherData weatherData;
 
-// TODO use theme color
-
 void render_current();
 void render_forecast();
 bool readWeatherData();
