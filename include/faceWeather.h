@@ -33,6 +33,8 @@ struct faceWeatherData
 	int forecast_4_max;
 };
 
+extern faceWeatherData weatherData;
+
 void setupFaceWeather();
 void loopFaceWeather();
 

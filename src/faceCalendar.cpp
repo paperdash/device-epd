@@ -1,5 +1,6 @@
 #include <HTTPClient.h>
 #include <SPIFFS.h>
+#include <ArduinoJson.h>
 #include <pngle.h>
 #include "faceCalendar.h"
 #include "display.h"
@@ -7,20 +8,25 @@
 #include "tools.h"
 #include "image.h"
 #include "download.h"
+#include "faceWeather.h"
+#include "faceWeatherIcons.h"
 
 #include <Fonts/FreeMono12pt7b.h>	 // weekday - month year
+#include <Fonts/FreeSans24pt7b.h>	 // current day
 #include <Fonts/FreeSansBold24pt7b.h> // current day
 
-void downloadRandomePicture();
+bool downloadRandomePicture();
 void showFaceCalendar();
 void display_calender();
 void display_picture();
 void display_time();
 
+const char faceCalendarPicutreJson[] = "/calendarPhoto.json";
 const char faceCalendarPicture[] = "/calendarPhoto.png";
 
 void setupFaceCalendar()
 {
+	downloadRandomePicture();
 }
 
 void loopFaceCalendar()
@@ -42,25 +48,67 @@ void showFaceCalendar()
 	displayFlush();
 }
 
-void downloadRandomePicture()
+bool downloadRandomePicture()
 {
-	// https://images.unsplash.com/photo-1580886349729-1bd109928600?ixlib=rb-1.2.1&ixid=eyJhcHBfaWQiOjExMDM0OH0&w=640&h=200&fm=png&fit=crop
-	// https://images.unsplash.com/photo-1580886349729-1bd109928600?ixlib=rb-1.2.1&ixid=eyJhcHBfaWQiOjExMDM0OH0&w=390&h=384&fm=png&fit=crop&colorquant=2
-	// https://images.unsplash.com/photo-1581307385098-a0338263e357?ixlib=rb-1.2.1&ixid=eyJhcHBfaWQiOjExMDM0OH0&w=640&h=384&fm=png&fit=crop&duotone=000000,FFFFFF
-	// final filter: &w=390&h=384&fm=png&fit=crop&duotone=000000,FFFFFF
-	Serial.println("TODO download new image");
+	// download json file
+	Serial.println("  download json");
+	String randomUrl = "https://api.unsplash.com/photos/random";
+	randomUrl += "&client_id=6cb16f348161f1c3e6bf21172c398893beec2d8d3ccf740bff4e72feac507422";
 
-	// TODO download json file
+	if (true) // downloadFile(randomUrl, faceCalendarPicutreJson)
+	{
+		Serial.println("  read json");
 
-	String pictureUrl = "https://images.unsplash.com/photo-1582910587039-b4f085805c86?ixlib=rb-1.2.1&ixid=eyJhcHBfaWQiOjExMDM0OH0";
-	pictureUrl += "&w=390&h=384";			// size
-	pictureUrl += "&fm=png";				// format
-	pictureUrl += "&fit=crop";				// crop to needed size
-	pictureUrl += "&duotone=000000,FFFFFF"; // grayscale to save bytes
+		File file = SPIFFS.open(faceCalendarPicutreJson);
+		if (!file)
+		{
+			Serial.print("Failed to open file: ");
+			Serial.println(faceCalendarPicutreJson);
 
-	downloadFile(pictureUrl, faceCalendarPicture); // /face/calendar/bg.png
+			return false;
+		}
 
-	Serial.println("TODO download new image ---- done");
+		StaticJsonDocument<5000> docPicutre; // Use arduinojson.org/v6/assistant to compute the capacity.
+		DeserializationError error = deserializeJson(docPicutre, file);
+		file.close();
+		if (error)
+		{
+			Serial.print("Failed to read file: ");
+			Serial.println(faceCalendarPicutreJson);
+
+			Serial.println(error.c_str());
+
+			return false;
+		}
+
+		//String pictureUrl = "https://images.unsplash.com/photo-1582910587039-b4f085805c86?ixlib=rb-1.2.1&ixid=eyJhcHBfaWQiOjExMDM0OH0";
+		String pictureUrl = docPicutre["urls"]["raw"];
+		pictureUrl += "&w=390&h=384";			// size
+		pictureUrl += "&fm=png";				// format
+		pictureUrl += "&fit=crop";				// crop to needed size
+		pictureUrl += "&duotone=000000,FFFFFF"; // grayscale to save bytes
+
+		//downloadFile(pictureUrl, faceCalendarPicture);
+
+		return true;
+	}
+
+	return false;
+}
+
+/**
+ * download and update calendar data
+ */
+bool updateCalendarData()
+{
+	if (downloadRandomePicture())
+	{
+		//readWeatherData();
+
+		return true;
+	}
+
+	return false;
 }
 
 void display_calender()
@@ -127,8 +175,21 @@ void display_calender()
 		}
 	}
 
-	// TODO current weather
+	// current weather
 	display.drawLine(15, 320, sideWidth - 15, 320, GxEPD_WHITE);
+
+	// icon
+	const unsigned char *icon = getIconById(weatherData.current_icon, 64);
+	if (icon)
+	{
+		display.drawInvertedBitmap(72, 325, icon, 64, 64, GxEPD_WHITE);
+	}
+
+	// temperature
+	display.setFont(&FreeSans24pt7b);
+	display.setTextSize(1);
+	display.setCursor(150, 367);
+	display.println(weatherData.current_temp);
 }
 
 void display_picture()

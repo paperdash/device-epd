@@ -4,5 +4,6 @@
 
 void setupFaceCalendar();
 void loopFaceCalendar();
+bool updateCalendarData();
 
 #endif
