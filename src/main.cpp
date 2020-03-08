@@ -1,5 +1,5 @@
 #include <Arduino.h>
-#include <SPI.h>
+#include <SPIFFS.h>
 #include "device.h"
 #include "wlan.h"
 #include "display.h"
@@ -24,6 +24,12 @@ void setup()
 	Serial.println();
 	Serial.println("setup...");
 	Serial.println();
+
+	if (!SPIFFS.begin())
+	{
+		Serial.println("An Error has occurred while mounting SPIFFS");
+		return;
+	}
 
 	setupDisplay();
 	setupSettings();
