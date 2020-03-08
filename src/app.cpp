@@ -1,13 +1,14 @@
+#include <SPIFFS.h>
 #include "app.h"
-#include "SPIFFS.h"
 #include "ESPAsyncWebServer.h"
-//#include "AsyncJson.h"
 #include "ArduinoJson.h"
 #include "settings.h"
 #include "device.h"
 #include "playlist.h"
 #include "image.h"
 #include "display.h"
+#include "faceWeather.h"
+#include "faceCalendar.h"
 
 AsyncWebServer server(80);
 
@@ -17,17 +18,12 @@ void setupWifiScan();
 void setupWifiConnect();
 void setupCurrentImage();
 void setupApiFace();
+void setupApiUpdate();
 bool updateDisplayRequired = false;
 
 void setupApp()
 {
 	Serial.println("setup configure");
-
-	if (!SPIFFS.begin())
-	{
-		Serial.println("An Error has occurred while mounting SPIFFS");
-		return;
-	}
 
 	// @see https://github.com/me-no-dev/ESPAsyncWebServer
 	// @see https://arduinojson.org/v6/assistant/
@@ -46,6 +42,7 @@ void setupApp()
 	setupWifiConnect();
 	setupCurrentImage();
 	setupApiFace();
+	setupApiUpdate();
 
 	server.onNotFound([](AsyncWebServerRequest *request) {
 		request->send(404);
@@ -301,4 +298,43 @@ void setupApiFace()
 		request->send(200, "application/ld+json; charset=utf-8", "{}");
 	},
 			  handle_update_progress_cb);
+}
+
+void setupApiUpdate()
+{
+	server.on("/api/update", HTTP_GET, [](AsyncWebServerRequest *request) {
+		int params = request->params();
+		for (int i = 0; i < params; i++)
+		{
+			AsyncWebParameter *p = request->getParam(i);
+			if (p->isFile())
+			{
+				Serial.printf("<li>FILE[%s]: %s, size: %u</li>", p->name().c_str(), p->value().c_str(), p->size());
+			}
+			else if (p->isPost())
+			{
+				Serial.printf("<li>POST[%s]: %s</li>", p->name().c_str(), p->value().c_str());
+			}
+			else
+			{
+				Serial.printf("<li>GET[%s]: %s</li>", p->name().c_str(), p->value().c_str());
+			}
+		}
+
+		if (request->hasParam("weather"))
+		{
+			Serial.println("update weather data...");
+
+			updateWeatherData();
+		}
+
+		if (request->hasParam("calendar"))
+		{
+			Serial.println("update calendar data...");
+
+			updateCalendarData();
+		}
+
+		request->send(200, "application/ld+json; charset=utf-8", "{}");
+	});
 }
