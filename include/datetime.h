@@ -15,6 +15,8 @@ struct datetime_struct : tm
 
 extern RTC_DATA_ATTR struct datetime_struct now;
 
-bool setupDateTime();
+void setupDateTime();
+void loopDateTime();
+bool updateDateTime();
 
 #endif
