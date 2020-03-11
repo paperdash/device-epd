@@ -7,8 +7,10 @@
 #include "playlist.h"
 #include "image.h"
 #include "display.h"
+#include "datetime.h"
 #include "faceWeather.h"
 #include "faceCalendar.h"
+#include "download.h"
 
 AsyncWebServer server(80);
 
@@ -303,6 +305,7 @@ void setupApiFace()
 void setupApiUpdate()
 {
 	server.on("/api/update", HTTP_GET, [](AsyncWebServerRequest *request) {
+		/*
 		int params = request->params();
 		for (int i = 0; i < params; i++)
 		{
@@ -320,6 +323,14 @@ void setupApiUpdate()
 				Serial.printf("<li>GET[%s]: %s</li>", p->name().c_str(), p->value().c_str());
 			}
 		}
+		*/
+
+		if (request->hasParam("datetime"))
+		{
+			Serial.println("update datetime...");
+
+			updateDateTime();
+		}
 
 		if (request->hasParam("weather"))
 		{
@@ -333,6 +344,13 @@ void setupApiUpdate()
 			Serial.println("update calendar data...");
 
 			updateCalendarData();
+		}
+
+		if (request->hasParam("file"))
+		{
+			Serial.println("file...");
+
+			downloadFile(request->getParam("url")->value().c_str(), request->getParam("file")->value().c_str());
 		}
 
 		request->send(200, "application/ld+json; charset=utf-8", "{}");

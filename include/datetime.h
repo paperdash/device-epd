@@ -9,7 +9,7 @@
 struct datetime_struct : tm
 {
 	uint8_t month_num;
-	uint8_t day_offset; // 1st day of the month offset, Monday = 0
+	uint8_t day_offset; // 1st day of the month offset, Monday = 1, Sunnday = 0
 	uint8_t days_in_month;
 };
 

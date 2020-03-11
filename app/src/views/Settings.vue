@@ -18,7 +18,7 @@
 			<v-tabs v-model="tab" centered icons-and-text>
 				<v-tab>Device <v-icon>$tv</v-icon></v-tab>
 				<v-tab>Playlist <v-icon>$playlist</v-icon></v-tab>
-				<v-tab>Keys <v-icon>$keys</v-icon></v-tab>
+				<v-tab>Weather <v-icon>$wb_sunny</v-icon></v-tab>
 				<v-tab>Cloud <v-icon>$cloud</v-icon></v-tab>
 			</v-tabs>
 
@@ -84,11 +84,20 @@
 								v-model="settings.api.owm"
 								placeholder="###"
 							></v-text-field>
-
 							<v-text-field
-								label="i8n:Calendar"
-								v-model="settings.api.abc"
-								placeholder="###"
+								label="i8n:Location"
+								v-model="settings.owm"
+								placeholder=""
+							></v-text-field>
+							<v-text-field
+								label="i8n:Lang"
+								v-model="settings.owm"
+								placeholder=""
+							></v-text-field>
+							<v-text-field
+								label="i8n:Units"
+								v-model="settings.owm"
+								placeholder=""
 							></v-text-field>
 						</v-card-text>
 					</v-tab-item>

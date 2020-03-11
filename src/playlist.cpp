@@ -16,7 +16,7 @@ typedef FaceAndName FaceAndNameList[];
 
 // List of faces to cycle through
 FaceAndNameList faces = {
-	{loopFaceWeather, "Weather"},
+	//{loopFaceWeather, "Weather"},
 	{loopFaceCalendar, "Calendar"},
 };
 

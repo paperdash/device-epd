@@ -13,12 +13,12 @@
 				app
 			>
 				<!-- https://cdn.vuetifyjs.com/images/parallax/material.jpg -->
-				<v-img :aspect-ratio="16/9" src="/current-image">
+				<v-img class="device-screen-image" :aspect-ratio="16/9" src="/fs/screen.bmp">
 					<v-row align="end" class="lightbox white--text pa-2 fill-height">
-					<v-col>
-						<!--<div class="subheading">update in 2min</div>-->
-						<!--<div class="body-1">heyfromjonathan@gmail.com</div>-->
-					</v-col>
+						<v-col>
+							<!--<div class="subheading">update in 2min</div>-->
+							<!--<div class="body-1">heyfromjonathan@gmail.com</div>-->
+						</v-col>
 					</v-row>
 				</v-img>
 
@@ -28,12 +28,60 @@
 							paperdash.io
 						</v-list-item-title>
 						<v-list-item-subtitle>
-							display
+							Weather
+						</v-list-item-subtitle>
+					</v-list-item-content>
+				</v-list-item>
+
+				<div class="d-flex justify-center py-5">
+					<v-progress-circular
+						class=""
+						:rotate="-90"
+						:size="100"
+						:width="15"
+						value="40"
+						color="teal"
+						>
+						40
+					</v-progress-circular>
+				</div>
+
+				<v-divider></v-divider>
+
+				<v-list-item>
+					<v-list-item-content>
+						<v-list-item-title class="title">
+							Weather
+						</v-list-item-title>
+						<v-list-item-subtitle>
+							6° Salzburg
 						</v-list-item-subtitle>
 					</v-list-item-content>
 				</v-list-item>
 
 				<v-divider></v-divider>
+
+				<v-list-item>
+					<v-list-item-content>
+						<v-list-item-title class="title">
+							Calendar
+						</v-list-item-title>
+						<v-list-item-subtitle>
+							8. March 2020
+						</v-list-item-subtitle>
+					</v-list-item-content>
+				</v-list-item>
+
+				<v-divider></v-divider>
+
+				<v-list-item>
+					<v-list-item-content>
+						<v-progress-linear value="74" height="20">
+							19%
+						</v-progress-linear>
+					</v-list-item-content>
+				</v-list-item>
+
 
 				<!--
 				<v-list>
@@ -95,6 +143,7 @@
 
 <script>
 
+	import "@/assets/app.css"
 	// eslint-disable-next-line
 	//import imageBmp from "@/assets/black.bmp"
 	// eslint-disable-next-line

@@ -51,7 +51,11 @@ void displayWriteFramebuffer(uint8_t bitmap[])
 void displayFlush()
 {
 	display.nextPage();
-	saveScreen();
+	// TODO setting ?
+	if (true)
+	{
+		saveScreen();
+	}
 }
 
 void printSplash()

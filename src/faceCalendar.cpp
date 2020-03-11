@@ -26,7 +26,8 @@ const char faceCalendarPicture[] = "/calendarPhoto.png";
 
 void setupFaceCalendar()
 {
-	downloadRandomePicture();
+	//downloadRandomePicture();
+	//downloadFile("https://images.unsplash.com/photo-1582225764554-a82806fe9f30?ixlib=rb-1.2.1&ixid=eyJhcHBfaWQiOjExMDM0OH0&w=390&h=384&fm=png&fit=crop&duotone=000000,FFFFFF", "/tom");
 }
 
 void loopFaceCalendar()
@@ -98,9 +99,13 @@ bool downloadRandomePicture()
 
 /**
  * download and update calendar data
+ * @todo is not working
  */
 bool updateCalendarData()
 {
+	//downloadFile("https://images.unsplash.com/photo-1582225764554-a82806fe9f30?ixlib=rb-1.2.1&ixid=eyJhcHBfaWQiOjExMDM0OH0&w=390&h=384&fm=png&fit=crop&duotone=000000,FFFFFF", "/tom");
+	return false;
+
 	if (downloadRandomePicture())
 	{
 		//readWeatherData();
@@ -158,7 +163,8 @@ void display_calender()
 	display.setCursor(20, 220);
 
 	// skip week days from previous month
-	for (uint8_t d = 1; d < now.day_offset; d++)
+	uint8_t skip = (now.day_offset == 0 ? 7 : now.day_offset);
+	for (uint8_t d = 1; d < skip; d++)
 	{
 		display.print("   ");
 	}

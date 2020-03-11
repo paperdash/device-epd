@@ -9,7 +9,7 @@
 			max-width="400"
 			elevation="24"
 			>
-			<v-img :aspect-ratio="16/9" src="/current-image"></v-img>
+			<v-img class="device-screen-image" :aspect-ratio="16/9" src="/fs/screen.bmp"></v-img>
 		</v-card>
 
     </v-container>

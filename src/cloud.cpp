@@ -33,7 +33,6 @@ HTTPClient http;
 
 	updateInterval(10);
 
-	SPIFFS.begin();
 
 	http.useHTTP10(true); // http1.1 chunked übertragung funktioniert irgendwie nicht
 	http.setTimeout(7000);
