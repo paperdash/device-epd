@@ -40,12 +40,7 @@ void setup()
 	setupWlan();
 	if (wlan_isConnected())
 	{
-		if (!setupDateTime())
-		{
-			// re-try
-			setupDateTime();
-		}
-
+		setupDateTime();
 		setupPlaylist();
 
 		//setupCloud();
