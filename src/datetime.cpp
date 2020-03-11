@@ -10,7 +10,6 @@ const char *ntpServer = "pool.ntp.org";
 const long gmtOffset_sec = 3600;
 const int daylightOffset_sec = 3600;
 
-
 int getNumberOfDays(int month, int year)
 {
 	// leap year condition, if month is 2
@@ -28,7 +27,7 @@ int getNumberOfDays(int month, int year)
 		return 30;
 }
 
-bool setupDateTime()
+bool updateDateTime()
 {
 	configTime(gmtOffset_sec, daylightOffset_sec, ntpServer);
 	if (!getLocalTime(&now))
@@ -50,4 +49,19 @@ bool setupDateTime()
 	now.day_offset = (((1 + y + (y / 4) - (y / 100) + (y / 400) + ((31 * m) / 12)) % 7) + 7) % 7;
 
 	return true;
+}
+
+void setupDateTime()
+{
+	if (!updateDateTime())
+	{
+		// re-try
+		updateDateTime();
+	}
+}
+
+void loopDateTime()
+{
+	// TODO update...
+	//setupDateTime();
 }
