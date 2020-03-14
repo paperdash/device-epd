@@ -117,7 +117,10 @@ void setupSettingsGet()
 
 		root["playlist"]["timer"] = NVS.getInt("playlist.timer");
 
-		root["api"]["owm"] = NVS.getString("api.owm");
+		root["weather"]["api"] = NVS.getString("weather.api");
+		root["weather"]["location"] = NVS.getInt("weather.loc");
+		root["weather"]["lang"] = NVS.getString("weather.lang");
+		root["weather"]["unit"] = NVS.getString("weather.unit");
 
 		root["cloud"]["mode"] = NVS.getString("cloud.mode");
 		root["cloud"]["url"] = NVS.getString("cloud.url");
@@ -147,7 +150,10 @@ void setupSettingsPost()
 
 			NVS.setInt("playlist.timer", doc["playlist"]["timer"].as<unsigned int>());
 
-			NVS.setString("api.owm", doc["api"]["owm"]);
+			NVS.setString("weather.api", doc["weather"]["api"]);
+			NVS.setInt("weather.loc", doc["weather"]["location"].as<unsigned int>());
+			NVS.setString("weather.lang", doc["weather"]["lang"]);
+			NVS.setString("weather.unit", doc["weather"]["unit"]);
 
 			NVS.setString("cloud.mode", doc["cloud"]["mode"]);
 			NVS.setString("cloud.url", doc["cloud"]["url"]);

@@ -4,6 +4,7 @@
 #include "faceWeatherIcons.h"
 #include "display.h"
 #include "download.h"
+#include "settings.h"
 
 #include <Fonts/FreeSansBold24pt7b.h> // current day
 #include <Fonts/FreeSansBold18pt7b.h> // current day
@@ -147,25 +148,27 @@ void render_forecast()
 bool downloadWeatherData()
 {
 	String url;
-	// http://api.openweathermap.org/data/2.5/weather?id=2766824&APPID=883b3c87223430d6f3a399645f8ba12b&lang=de&cnt=3&units=metric
-	// http://api.openweathermap.org/data/2.5/forecast?id=2766824&APPID=883b3c87223430d6f3a399645f8ba12b&lang=de
 
 	// https://openweathermap.org/current
 	url = "http://api.openweathermap.org/data/2.5/weather?";
-	url += "APPID=883b3c87223430d6f3a399645f8ba12b"; // api key
-	url += "&id=2766824";							 // location
-	url += "&lang=de&units=metric";					 // settings
+	url += "APPID=" + NVS.getString("weather.api");
+	url += "&id=";
+	url.concat((unsigned long)NVS.getInt("weather.loc"));
+	url += "&lang=" + NVS.getString("weather.lang");
+	url += "&units=" + NVS.getString("weather.unit");
 	if (!downloadFile(url, faceWeatherCurrent))
 	{
 		return false;
 	}
 
 	// https://openweathermap.org/forecast5
-	// http://api.openweathermap.org/data/2.5/forecast/daily?id=2766824&APPID=883b3c87223430d6f3a399645f8ba12b&lang=de&cnt=3
 	url = "http://api.openweathermap.org/data/2.5/forecast/daily?";
-	url += "APPID=883b3c87223430d6f3a399645f8ba12b"; // api key
-	url += "&id=2766824";							 // location
-	url += "&lang=de&cnt=4&units=metric";			 // settings
+	url += "APPID=" + NVS.getString("weather.api");
+	url += "&id=";
+	url.concat((unsigned long)NVS.getInt("weather.loc"));
+	url += "&lang=" + NVS.getString("weather.lang");
+	url += "&units=" + NVS.getString("weather.unit");
+	url += "&cnt=4";
 	if (!downloadFile(url, faceWeatherForecast))
 	{
 		return false;

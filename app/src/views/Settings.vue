@@ -81,24 +81,26 @@
 						<v-card-text>
 							<v-text-field
 								label="i8n:OpenWeatherMap"
-								v-model="settings.api.owm"
+								v-model="settings.weather.api"
 								placeholder="###"
 							></v-text-field>
 							<v-text-field
 								label="i8n:Location"
-								v-model="settings.owm"
+								v-model="settings.weather.location"
 								placeholder=""
 							></v-text-field>
-							<v-text-field
+							<v-select
+								:items="weatherLang"
+								v-model="settings.weather.lang"
 								label="i8n:Lang"
-								v-model="settings.owm"
 								placeholder=""
-							></v-text-field>
-							<v-text-field
+							></v-select>
+							<v-select
+								:items="weatherUnit"
+								v-model="settings.weather.unit"
 								label="i8n:Units"
-								v-model="settings.owm"
 								placeholder=""
-							></v-text-field>
+							></v-select>
 						</v-card-text>
 					</v-tab-item>
 					<v-tab-item>
@@ -167,7 +169,18 @@
 			deviceMode: [
 				{text: 'Active', value: 'active'},
                 {text: 'Passive', value: 'passive'}
-			]
+			],
+
+			// @see https://openweathermap.org/current#multi
+			weatherLang: [
+				{text: 'Deutsch', value: 'de'},
+                {text: 'English', value: 'en'}
+			],
+			weatherUnit: [
+				{text: 'Metrisch', value: 'metric'},
+                {text: 'Imperial', value: ''}
+			],
+
 		}),
 		created () {
 			this.$vuetify.icons.values.tv = {component: () => import(/* webpackChunkName: "icons" */'!vue-svg-loader!@material-icons/svg/svg/tv/baseline.svg')}
