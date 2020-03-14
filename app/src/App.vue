@@ -186,8 +186,7 @@
 		},
 		methods: {
 			reloadStats (cb) {
-				console.log("reloadStats")
-				this.device_screen_src = "/fs/screen.bmp?" + new Date()
+				this.device_screen_src = "/current-image?" + Date.now()
 
 				apiDevice.getStats(stats => {
 					this.stats = stats

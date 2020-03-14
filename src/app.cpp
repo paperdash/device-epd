@@ -23,6 +23,12 @@ void setupApiFace();
 void setupApiUpdate();
 bool updateDisplayRequired = false;
 
+// bmp
+void write16(AsyncResponseStream &f, uint16_t v);
+void write32(AsyncResponseStream &f, uint32_t v);
+uint8_t filldata2[] = {0x0, 0x23, 0x0, 0x0, 0x0, 0x0, 0x0, 0x0, 0x0, 0x0, 0x0, 0x0, 0x0, 0x0, 0x0, 0x0, 0x0, 0x0, 0x0, 0x0, 0x0, 0x0, 0x0, 0x0, 0xFF, 0xFF, 0xFF, 0x0};
+// bmp
+
 void setupApp()
 {
 	Serial.println("setup configure");
@@ -171,7 +177,57 @@ void setupSettingsPost()
 void setupCurrentImage()
 {
 	server.on("/current-image", HTTP_GET, [](AsyncWebServerRequest *request) {
-		request->send(SPIFFS, "/currentImage.bin");
+
+		uint8_t *bitmap = display.getBuffer();
+		int16_t w = display.width();
+		int16_t h = display.height();
+
+		uint16_t depth = 1;
+		uint32_t rowSizeCode = (w + 8 - depth) * depth / 8;
+
+		// BMP rows are padded (if needed) to 4-byte boundary
+		uint32_t rowSizeBMP = (w * depth / 8 + 3) & ~3;
+		uint32_t headerSize = 40;
+		uint32_t imageOffset = 62;
+		uint32_t fileSize = imageOffset + h * rowSizeBMP;
+
+		AsyncResponseStream *response = request->beginResponseStream("image/bmp", w * h / 8 + imageOffset);
+		//response->addHeader("Server", "ESP Async Web Server");
+
+		write16(*response, 0x4D42);		 // BMP signature
+		write32(*response, fileSize);	// fileSize
+		write32(*response, 0);			 // creator bytes
+		write32(*response, imageOffset); // image offset
+		write32(*response, headerSize);  // Header size
+		write32(*response, w);			 // image width
+		write32(*response, h);			 // image height
+		write16(*response, 1);			 // # planes
+		write16(*response, depth);		 // // bits per pixel
+		write32(*response, 0);			 // format uncompressed
+
+		uint32_t j = 0;
+		for (uint32_t i = 34; i < imageOffset; i++)
+		{
+			response->write(filldata2[j++]); // remaining header bytes
+		}
+
+		uint32_t rowidx = 0;
+		for (uint16_t row = 0; row < h; row++) // for each line
+		{
+			uint32_t colidx;
+			for (colidx = 0; colidx < rowSizeCode; colidx++)
+			{
+				uint8_t data = pgm_read_byte(&bitmap[rowidx + colidx]);
+				response->write(data);
+			}
+			rowidx += rowSizeCode;
+			while (colidx++ < rowSizeBMP)
+			{
+				response->write(uint8_t(0)); // padding
+			}
+		}
+
+		request->send(response);
 	});
 }
 
@@ -361,4 +417,18 @@ void setupApiUpdate()
 
 		request->send(200, "application/ld+json; charset=utf-8", "{}");
 	});
+}
+
+void write16(AsyncResponseStream &f, uint16_t v)
+{
+	f.write(uint8_t(v));
+	f.write(uint8_t(v >> 8));
+}
+
+void write32(AsyncResponseStream &f, uint32_t v)
+{
+	f.write(uint8_t(v));
+	f.write(uint8_t(v >> 8));
+	f.write(uint8_t(v >> 16));
+	f.write(uint8_t(v >> 24));
 }

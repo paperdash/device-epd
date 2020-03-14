@@ -51,11 +51,13 @@ void displayWriteFramebuffer(uint8_t bitmap[])
 void displayFlush()
 {
 	display.nextPage();
+	/*
 	// TODO setting ?
 	if (true)
 	{
 		saveScreen();
 	}
+	*/
 }
 
 void printSplash()
@@ -81,6 +83,7 @@ void printSplash()
 	} while (display.nextPage());
 }
 
+// @deprecated
 void saveScreen()
 {
 	unsigned long startMills = millis();
@@ -88,6 +91,7 @@ void saveScreen()
 	Serial.println(millis() - startMills);
 }
 
+// @deprecated
 void writeBitmap(const char filename[], const uint8_t bitmap[], int16_t w, int16_t h, uint16_t depth)
 {
 	File bitmapFile;
@@ -158,12 +162,14 @@ void writeBitmap(const char filename[], const uint8_t bitmap[], int16_t w, int16
 	}
 }
 
+// @deprecated
 void write16(File &f, uint16_t v)
 {
 	f.write(uint8_t(v));
 	f.write(uint8_t(v >> 8));
 }
 
+// @deprecated
 void write32(File &f, uint32_t v)
 {
 	f.write(uint8_t(v));
