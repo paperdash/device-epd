@@ -59,8 +59,9 @@ void setupApp()
 	// TODO response
 	server.on("/stats", HTTP_GET, [](AsyncWebServerRequest *request) {
 		AsyncResponseStream *response = request->beginResponseStream("application/json");
-		DynamicJsonDocument doc(1024); // TODO
+		DynamicJsonDocument doc(668); // https://arduinojson.org/v6/assistant/
 
+		doc["wifi"]["rssi"] = WiFi.RSSI();
 		doc["wifi"]["ssid"] = WiFi.SSID();
 		doc["wifi"]["connected"] = WiFi.isConnected();
 		doc["wifi"]["ip"] = WiFi.localIP().toString();
