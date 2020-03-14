@@ -89,7 +89,7 @@ bool downloadRandomePicture()
 		pictureUrl += "&fit=crop";				// crop to needed size
 		pictureUrl += "&duotone=000000,FFFFFF"; // grayscale to save bytes
 
-		//downloadFile(pictureUrl, faceCalendarPicture);
+		downloadFile(pictureUrl, faceCalendarPicture);
 
 		return true;
 	}
@@ -104,7 +104,7 @@ bool downloadRandomePicture()
 bool updateCalendarData()
 {
 	//downloadFile("https://images.unsplash.com/photo-1582225764554-a82806fe9f30?ixlib=rb-1.2.1&ixid=eyJhcHBfaWQiOjExMDM0OH0&w=390&h=384&fm=png&fit=crop&duotone=000000,FFFFFF", "/tom");
-	return false;
+	//return false;
 
 	if (downloadRandomePicture())
 	{

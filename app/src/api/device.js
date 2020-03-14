@@ -11,13 +11,56 @@ const _settings = {
 	playlist: {
 		timer: 60
 	},
-	api: {
-		owm: ""
+	weather: {
+		api: "",
+		location: 2766824,
+		lang: "de",
+		unit: "metric"
+	},
+	datetime: {
+		gmt_offset: 3600
 	},
 	cloud: {
 		mode: "active",
 		url: "http://",
 		token: "###"
+	}
+}
+
+// eslint-disable-next-line
+const _stats = {
+	"wifi": {
+		"ssid": "xd-design.info",
+		"connected": true,
+		"ip": "192.168.178.62",
+		"mac": "30:AE:A4:21:20:40",
+		"channel": 1,
+		"dns": "192.168.178.1",
+		"gateway": "192.168.178.1"
+	},
+	"device": {
+		"heap": 120496,
+		"bootCycle": 1,
+		"screen": {
+			"width": 640,
+			"height": 384
+		},
+		"fs": {
+			"total": 1860161,
+			"used": 1107663,
+			"free": 752498
+		}
+	},
+	"playlist": {
+		"current": "Calendar",
+		"remaining": 22
+	},
+	"capability": [
+		"png",
+		"wbmp"
+	],
+	"cloud": {
+		"sleep": 10
 	}
 }
 
@@ -87,5 +130,19 @@ export default {
 				}
 			})
 			.then(response => cb(response.data))
-	}
+	},
+
+
+	/**
+     * @param cb
+     * @returns {PromiseLike<any> | Promise<any>}
+     */
+	getStats(cb) {
+		//return cb(_stats);
+
+		// eslint-disable-next-line
+		return axios
+			.get('/stats')
+			.then(response => cb(response.data))
+	},
 }

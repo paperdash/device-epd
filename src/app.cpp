@@ -166,7 +166,7 @@ void setupSettingsPost()
 }
 
 /**
- *
+ * get current screen
  */
 void setupCurrentImage()
 {
