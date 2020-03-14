@@ -181,7 +181,7 @@
 			},
 
 			playlistProgress () {
-				return parseInt(100 / 60 * this.stats.playlist.remaining)
+				return parseInt(100 / 60 * this.playlistRemaining)
 			}
 		},
 		methods: {
@@ -192,7 +192,6 @@
 					this.stats = stats
 
 					this.playlistRemaining = stats.playlist.remaining
-					this.playlistTimerProgress = parseInt(100 / 60 * stats.playlist.remaining)
 
 					if (cb) {
 						cb()
