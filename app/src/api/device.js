@@ -144,15 +144,5 @@ export default {
 		return axios
 			.get('/stats')
 			.then(response => cb(response.data))
-	},
-
-	/**
-     * @param cb
-     * @returns {PromiseLike<any> | Promise<any>}
-     */
-	updateWeather(cb) {
-		return axios
-			.get('/api/update?weather=1')
-			.then(response => cb(response.data))
-	},
+	}
 }

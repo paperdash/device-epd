@@ -1,28 +1,33 @@
 <template>
-  <v-container fluid grid-list-md pa-2>
-    <v-card class="mx-auto my-12" max-width="400" elevation="24">
-      <!--<v-img class="device-screen-image" :aspect-ratio="16/9" src="/fs/screen.bmp"></v-img>-->
-    </v-card>
-    <v-btn class="ma-2" :loading="isLoading" color="secondary" @click="updateData">load weather data</v-btn>
+  <v-container fluid _grid-list-md _pa-2>
+    <v-row>
+      <v-col cols="12" md="6">
+        <screen-card></screen-card>
+      </v-col>
+      <v-col cols="12" sm="6" md="4">
+        <weather-card></weather-card>
+      </v-col>
+      <v-col cols="12" sm="6" md="4">
+        <device-card></device-card>
+      </v-col>
+    </v-row>
   </v-container>
 </template>
 
 <script>
-import apiDevice from "@/api/device";
+import screenCard from "@/components/ScreenCard";
+import weatherCard from "@/components/WeatherCard";
+import deviceCard from "@/components/DeviceCard";
 
 export default {
+  components: {
+    screenCard,
+    weatherCard,
+    deviceCard
+  },
   data: () => ({
     isLoading: false
-  }),
-  methods: {
-    updateData() {
-      this.isLoading = true;
-
-      apiDevice.updateWeather(() => {
-        this.isLoading = false;
-      });
-    }
-  }
+  })
 };
 </script>
 

@@ -173,15 +173,16 @@
 			show1: false,
 		}),
 		created () {
-			this.$vuetify.icons.values.signalWifi0 = {component: () => import(/* webpackChunkName: "icons" */'!vue-svg-loader!@material-icons/svg/svg/signal_wifi_0_bar/baseline.svg')}
-			this.$vuetify.icons.values.signalWifi1 = {component: () => import(/* webpackChunkName: "icons" */'!vue-svg-loader!@material-icons/svg/svg/signal_wifi_1_bar/baseline.svg')}
-			this.$vuetify.icons.values.signalWifi1Lock = {component: () => import(/* webpackChunkName: "icons" */'!vue-svg-loader!@material-icons/svg/svg/signal_wifi_1_bar_lock/baseline.svg')}
-			this.$vuetify.icons.values.signalWifi2 = {component: () => import(/* webpackChunkName: "icons" */'!vue-svg-loader!@material-icons/svg/svg/signal_wifi_2_bar/baseline.svg')}
-			this.$vuetify.icons.values.signalWifi2Lock = {component: () => import(/* webpackChunkName: "icons" */'!vue-svg-loader!@material-icons/svg/svg/signal_wifi_2_bar_lock/baseline.svg')}
-			this.$vuetify.icons.values.signalWifi3 = {component: () => import(/* webpackChunkName: "icons" */'!vue-svg-loader!@material-icons/svg/svg/signal_wifi_3_bar/baseline.svg')}
-			this.$vuetify.icons.values.signalWifi3Lock = {component: () => import(/* webpackChunkName: "icons" */'!vue-svg-loader!@material-icons/svg/svg/signal_wifi_3_bar_lock/baseline.svg')}
-			this.$vuetify.icons.values.signalWifi4 = {component: () => import(/* webpackChunkName: "icons" */'!vue-svg-loader!@material-icons/svg/svg/signal_wifi_4_bar/baseline.svg')}
-			this.$vuetify.icons.values.signalWifi4Lock = {component: () => import(/* webpackChunkName: "icons" */'!vue-svg-loader!@material-icons/svg/svg/signal_wifi_4_bar_lock/baseline.svg')}
+			//this.$vuetify.icons.values.signalWifi0 = {component: () => import(/* webpackChunkName: "icons" */'!vue-svg-loader!@material-icons/svg/svg/signal_wifi_0_bar/baseline.svg')}
+			//this.$vuetify.icons.values.signalWifi1 = {component: () => import(/* webpackChunkName: "icons" */'!vue-svg-loader!@material-icons/svg/svg/signal_wifi_1_bar/baseline.svg')}
+			//this.$vuetify.icons.values.signalWifi1Lock = {component: () => import(/* webpackChunkName: "icons" */'!vue-svg-loader!@material-icons/svg/svg/signal_wifi_1_bar_lock/baseline.svg')}
+			//this.$vuetify.icons.values.signalWifi2 = {component: () => import(/* webpackChunkName: "icons" */'!vue-svg-loader!@material-icons/svg/svg/signal_wifi_2_bar/baseline.svg')}
+			//this.$vuetify.icons.values.signalWifi2Lock = {component: () => import(/* webpackChunkName: "icons" */'!vue-svg-loader!@material-icons/svg/svg/signal_wifi_2_bar_lock/baseline.svg')}
+			//this.$vuetify.icons.values.signalWifi3 = {component: () => import(/* webpackChunkName: "icons" */'!vue-svg-loader!@material-icons/svg/svg/signal_wifi_3_bar/baseline.svg')}
+			//this.$vuetify.icons.values.signalWifi3Lock = {component: () => import(/* webpackChunkName: "icons" */'!vue-svg-loader!@material-icons/svg/svg/signal_wifi_3_bar_lock/baseline.svg')}
+			//this.$vuetify.icons.values.signalWifi4 = {component: () => import(/* webpackChunkName: "icons" */'!vue-svg-loader!@material-icons/svg/svg/signal_wifi_4_bar/baseline.svg')}
+			//this.$vuetify.icons.values.signalWifi4Lock = {component: () => import(/* webpackChunkName: "icons" */'!vue-svg-loader!@material-icons/svg/svg/signal_wifi_4_bar_lock/baseline.svg')}
+
 
             apiDevice.wifiScan(list => {
                 this.wifiAvailable = list

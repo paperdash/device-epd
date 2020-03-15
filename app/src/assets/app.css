@@ -1,3 +1,7 @@
-.device-screen-image {
+.device-screen-image > .v-image__image {
 	transform: scaleY(-1);
+}
+
+.v-icon {
+	fill: currentColor;
 }

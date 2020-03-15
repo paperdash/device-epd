@@ -1,5 +1,5 @@
 <template>
-    <v-app style="_background: #e2e2e2">
+    <v-app _style="background: #e2e2e2">
 		<template v-if="isLoading">
             <v-overlay :absolute="true" :value="true">
                 <v-progress-circular indeterminate size="64"></v-progress-circular>
@@ -7,97 +7,29 @@
         </template>
 
 		<template v-else>
-
+<!--
 			<v-navigation-drawer
 				v-model="drawer"
 				app
 			>
-				<!-- https://cdn.vuetifyjs.com/images/parallax/material.jpg -->
-				<v-img class="device-screen-image" :aspect-ratio="16/9" :src="device_screen_src">
-					<v-row align="end" class="lightbox white--text pa-2 fill-height">
-						<!--
-						<v-col>
-							<div class="subheading">update in 2min</div>
-							<div class="body-1">heyfromjonathan@gmail.com</div>
-						</v-col>
-						-->
-					</v-row>
-				</v-img>
-
-				<v-list-item>
-					<v-list-item-icon class="mr-3">
-						<v-progress-circular
-							:rotate="-90"
-							:size="50"
-							:width="5"
-							:value="playlistProgress"
-							>
-							{{ playlistRemaining }}
-						</v-progress-circular>
-					</v-list-item-icon>
-					<v-list-item-content>
-						<v-list-item-title class="title">
-							{{ stats.playlist.current }}
-						</v-list-item-title>
-						<v-list-item-subtitle>
-							8. March 2020
-						</v-list-item-subtitle>
-					</v-list-item-content>
-				</v-list-item>
-
-				<v-divider></v-divider>
-
-				<v-list-item>
-					<v-list-item-content>
-						<v-list-item-title class="title">
-							Weather
-						</v-list-item-title>
-						<v-list-item-subtitle>
-							6° Salzburg
-						</v-list-item-subtitle>
-					</v-list-item-content>
-				</v-list-item>
-
-				<v-divider></v-divider>
-
-				<v-list-item>
-					<v-list-item-content>
-						<v-list-item-title class="title">
-							Calendar
-						</v-list-item-title>
-						<v-list-item-subtitle>
-							8. March 2020
-						</v-list-item-subtitle>
-					</v-list-item-content>
-				</v-list-item>
-
-				<v-divider></v-divider>
-
-				<v-list-item>
-					<v-list-item-content>
-						Total: {{ stats.device.fs.total | prettyBytes }}<br/>
-						Free: {{ stats.device.fs.free | prettyBytes }}
-
-						<v-progress-linear :value="fsUsagePercent" height="25">
-							<template v-slot="{ value }">
-								<strong class="white--text">{{ Math.ceil(value) }}%</strong>
-							</template>
-						</v-progress-linear>
-					</v-list-item-content>
-				</v-list-item>
 			</v-navigation-drawer>
+			-->
 
-			<!--
 			<v-system-bar app dark color="primary">
+				<span>paperdash.io</span>
 				<v-spacer></v-spacer>
-				<v-icon>mdi-wifi-strength-4</v-icon>
+				<span>boxxi</span>
+				<v-spacer></v-spacer>
+				<v-icon>{{ stats.wifi.rssi | wifiIcon(stats.wifi.secure) }}</v-icon>
+				<!--
 				<v-icon>mdi-signal-cellular-outline</v-icon>
 				<v-icon>mdi-battery</v-icon>
 				<span>12:30</span>
+				-->
 			</v-system-bar>
-			-->
 
-			<v-app-bar app color="orange lighten-1" dark short>
+<!--
+			<v-app-bar _bottom dense app color="orange lighten-1" dark _short>
 				<v-app-bar-nav-icon @click="drawer = !drawer">
 					<v-icon>$device</v-icon>
 				</v-app-bar-nav-icon>
@@ -113,6 +45,26 @@
 				</template>
 
 			</v-app-bar>
+			-->
+
+<!--
+			<v-bottom-navigation
+				v-model="bottomNav"
+				dark
+				shift
+				app
+			>
+				<v-btn>
+				<span>Device</span>
+				<v-icon>$device</v-icon>
+				</v-btn>
+
+				<v-btn>
+				<span>Settings</span>
+				<v-icon>$settings</v-icon>
+				</v-btn>
+			</v-bottom-navigation>
+			-->
 
 			<v-content>
 				<v-container fluid fill-height class="align-start">
@@ -126,29 +78,20 @@
 <script>
 	import apiDevice from './api/device'
 	import "@/assets/app.css"
-	// eslint-disable-next-line
-	//import imageBmp from "@/assets/black.bmp"
-	// eslint-disable-next-line
-	//import imageJpg from "@/assets/black.jpg"
 
     export default {
         name: 'App',
         data: () => ({
 			isLoading: true,
 
-			stats: null,
+			bottomNav: 3,
 
-            drawer: true,
             items: [
                 {title: 'Dashboard', icon: '$dashboard', to: '/'},
                 //{title: 'Sandbox', icon: '$sandbox', to: '/sandbox'},
                 {title: 'Wifi', icon: '$wifi', to: '/wifi'},
                 {title: 'Settings', icon: '$settings', to: '/settings'},
 			],
-
-			playlistRemaining: 0,
-			playlistTimerProgress: 30,
-			device_screen_src: null
 		}),
 		created () {
 			this.$vuetify.icons.values.device = {component: () => import(/* webpackChunkName: "icons" */'!vue-svg-loader!@material-icons/svg/svg/cast/baseline.svg')}
@@ -157,45 +100,27 @@
 			this.$vuetify.icons.values.wifi = {component: () => import(/* webpackChunkName: "icons" */'!vue-svg-loader!@material-icons/svg/svg/wifi/baseline.svg')}
 			this.$vuetify.icons.values.sandbox = {component: () => import(/* webpackChunkName: "icons" */'!vue-svg-loader!@material-icons/svg/svg/gesture/baseline.svg')}	// gesture, brush, palette,
 
-			this.reloadStats(() => {
-				this.isLoading = false
-			})
+
+			this.autoReloadStats();
 		},
 		watch: {
-			playlistRemaining: {
-                handler(value) {
-                    if (value > 0) {
-                        setTimeout(() => {
-                            this.playlistRemaining--
-                        }, 1000)
-                    } else {
-						this.reloadStats()
-					}
-                },
+			stats () {
+				this.isLoading = false
 			}
 		},
 		computed: {
-			fsUsagePercent () {
-				let fs = this.stats.device.fs
-				return parseInt(100 / fs.total * fs.used)
+			stats () {
+				return this.$root._data.stats;
 			},
-
-			playlistProgress () {
-				return parseInt(100 / 60 * this.playlistRemaining)
-			}
 		},
 		methods: {
-			reloadStats (cb) {
-				this.device_screen_src = "/current-image?" + Date.now()
-
+			autoReloadStats () {
 				apiDevice.getStats(stats => {
-					this.stats = stats
+					this.$root._data.stats = stats
 
-					this.playlistRemaining = stats.playlist.remaining
-
-					if (cb) {
-						cb()
-					}
+					setTimeout(() => {
+						this.autoReloadStats()
+					}, (stats.playlist.remaining + 2) * 1000)
 				})
 			}
 		}
@@ -203,8 +128,4 @@
 </script>
 
 <style scoped>
-  .lightbox {
-    box-shadow: 0 0 20px inset rgba(0, 0, 0, 0.2);
-    background-image: linear-gradient(to top, rgba(0, 0, 0, 0.4) 0%, transparent 72px);
-  }
 </style>
