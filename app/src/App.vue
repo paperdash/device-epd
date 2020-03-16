@@ -116,11 +116,18 @@
 		methods: {
 			autoReloadStats () {
 				apiDevice.getStats(stats => {
+					// give esp some extra time befor fetch new data
+					stats.playlist.remaining += 2
+
+					// reset old so reactive watcher can detect a change
+					if (this.$root._data.stats) {
+						this.$root._data.stats.playlist.remaining = 0
+					}
 					this.$root._data.stats = stats
 
 					setTimeout(() => {
 						this.autoReloadStats()
-					}, (stats.playlist.remaining + 2) * 1000)
+					}, stats.playlist.remaining * 1000)
 				})
 			}
 		}

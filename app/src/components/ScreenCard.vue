@@ -32,23 +32,23 @@
     <v-skeleton-loader type="image" tile :loading="false">
       <v-img class="device-screen-image" :aspect-ratio="16/9" :src="device_screen_src"></v-img>
     </v-skeleton-loader>
-		<!--
+    <!--
     <v-btn absolute dark fab top right color="white">
       <v-icon>$settings</v-icon>
     </v-btn>
-		-->
-<!--
+    -->
+    <!--
     <v-card-text style="height: 100px; position: relative">
         <v-btn color="pink" dark absolute top right fab>
           <v-icon>mdi-plus</v-icon>
         </v-btn>
     </v-card-text>
-		-->
+    -->
 
     <v-card-actions style="position: relative">
-			<v-btn color="white" _dark absolute top right fab elevation="2">
-          <v-icon>$settings</v-icon>
-        </v-btn>
+      <v-btn color="white" _dark absolute top right fab elevation="2">
+        <v-icon>$settings</v-icon>
+      </v-btn>
 
       <v-progress-circular
         :rotate="-90"
@@ -70,6 +70,12 @@ export default {
   created() {
     this.playlistRemainingCountdown = this.playlistRemaining;
     this.device_screen_src = "/current-image?" + Date.now();
+
+    setInterval(() => {
+      if (this.playlistRemainingCountdown > 0) {
+        this.playlistRemainingCountdown--;
+      }
+    }, 1000);
   },
   computed: {
     playlistProgress() {
@@ -84,15 +90,9 @@ export default {
   },
   watch: {
     playlistRemaining(val) {
-      this.playlistRemainingCountdown = val;
-      this.device_screen_src = "/current-image?" + Date.now();
-    },
-
-    playlistRemainingCountdown(val) {
       if (val > 0) {
-        setTimeout(() => {
-          this.playlistRemainingCountdown--;
-        }, 1000);
+        this.playlistRemainingCountdown = val;
+        this.device_screen_src = "/current-image?" + Date.now();
       }
     }
   }
