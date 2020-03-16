@@ -41,12 +41,12 @@
     <v-list dense class="pb-0">
       <v-list-item>
         <v-list-item-title>Total</v-list-item-title>
-        <v-list-item-subtitle class="text-right">1.86 MB</v-list-item-subtitle>
+        <v-list-item-subtitle class="text-right">{{ fs.total | prettyBytes }}</v-list-item-subtitle>
       </v-list-item>
 
       <v-list-item>
         <v-list-item-title>Free</v-list-item-title>
-        <v-list-item-subtitle class="text-right">770KB</v-list-item-subtitle>
+        <v-list-item-subtitle class="text-right">{{ fs.free | prettyBytes }}</v-list-item-subtitle>
       </v-list-item>
     </v-list>
   </v-card>
@@ -65,6 +65,9 @@ export default {
       return Math.round(
         (100 / this.stats.device.fs.total) * this.stats.device.fs.used
       );
+    },
+    fs() {
+      return this.stats.device.fs;
     }
   }
 };
