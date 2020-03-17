@@ -10,6 +10,8 @@ const char *ntpServer = "pool.ntp.org";
 const long gmtOffset_sec = 3600;
 const int daylightOffset_sec = 3600;
 
+unsigned long lastUpdate = 0;
+
 int getNumberOfDays(int month, int year)
 {
 	// leap year condition, if month is 2
@@ -29,13 +31,12 @@ int getNumberOfDays(int month, int year)
 
 bool updateDateTime()
 {
-	configTime(gmtOffset_sec, daylightOffset_sec, ntpServer);
+	//configTime(gmtOffset_sec, daylightOffset_sec, ntpServer);
 	if (!getLocalTime(&now))
 	{
 		Serial.println("Failed to obtain time");
 		return false;
 	}
-	Serial.println(&now, "%A, %B %d %Y %H:%M:%S");
 
 	//
 	now.days_in_month = getNumberOfDays(now.tm_mon + 1, now.tm_year);
@@ -53,15 +54,23 @@ bool updateDateTime()
 
 void setupDateTime()
 {
+	configTime(gmtOffset_sec, daylightOffset_sec, ntpServer);
+
 	if (!updateDateTime())
 	{
 		// re-try
 		updateDateTime();
 	}
+
+	Serial.println(&now, "%A, %B %d %Y %H:%M:%S");
+	lastUpdate = millis();
 }
 
 void loopDateTime()
 {
-	// TODO update...
-	//setupDateTime();
+	if ((millis() - lastUpdate) >= 1000)
+	{
+		lastUpdate = millis();
+		updateDateTime();
+	}
 }
