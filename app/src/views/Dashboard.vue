@@ -6,9 +6,7 @@
       </v-col>
       <v-col cols="12" sm="6" md="4">
         <weather-card></weather-card>
-      </v-col>
-      <v-col cols="12" sm="6" md="4">
-        <device-card></device-card>
+        <device-card class="mt-5"></device-card>
       </v-col>
     </v-row>
   </v-container>

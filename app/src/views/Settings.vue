@@ -133,6 +133,10 @@
         </v-tabs-items>
 
         <v-card-actions>
+          <router-link to="/">
+            <v-btn text>i8n:cancel</v-btn>
+          </router-link>
+
           <v-spacer></v-spacer>
 
           <v-btn text color="primary" @click="onSave()">i8n:Save</v-btn>
@@ -242,6 +246,8 @@ export default {
         console.log(data);
         this.isLoading = false;
         this.isSnackbar = true;
+
+        this.$router.push("/");
       });
     }
   }

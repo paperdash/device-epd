@@ -1,54 +1,13 @@
 <template>
-  <v-card outlined>
-    <!--
-    <v-toolbar
-      extended
-      extension-height="100"
-      dark
-      prominent
-      src="https://cdn.vuetifyjs.com/images/backgrounds/vbanner.jpg"
-    >
-      <v-app-bar-nav-icon></v-app-bar-nav-icon>
-
-      <v-toolbar-title>Title</v-toolbar-title>
-
-      <v-spacer></v-spacer>
-
-      <v-btn icon>
-        <v-icon>mdi-magnify</v-icon>
-      </v-btn>
-
-      <v-btn icon>
-        <v-icon>mdi-heart</v-icon>
-      </v-btn>
-
-      <v-btn icon>
-        <v-icon>mdi-dots-vertical</v-icon>
-      </v-btn>
-    </v-toolbar>
-    -->
-
-    <!-- bug, border radius oben geht mit skeleton nicht -->
-    <v-skeleton-loader type="image" tile :loading="false">
-      <v-img class="device-screen-image" :aspect-ratio="16/9" :src="device_screen_src"></v-img>
-    </v-skeleton-loader>
-    <!--
-    <v-btn absolute dark fab top right color="white">
-      <v-icon>$settings</v-icon>
-    </v-btn>
-    -->
-    <!--
-    <v-card-text style="height: 100px; position: relative">
-        <v-btn color="pink" dark absolute top right fab>
-          <v-icon>mdi-plus</v-icon>
-        </v-btn>
-    </v-card-text>
-    -->
+  <v-card color="grey lighten-4" _outlined>
+    <v-img class="device-screen-image" :aspect-ratio="16/9" :src="device_screen_src"></v-img>
 
     <v-card-actions style="position: relative">
-      <v-btn color="white" _dark absolute top right fab elevation="2">
-        <v-icon>$settings</v-icon>
-      </v-btn>
+      <router-link to="/settings">
+        <v-btn color="orange" dark absolute top right fab elevation="2">
+          <v-icon>$settings</v-icon>
+        </v-btn>
+      </router-link>
 
       <v-progress-circular
         :rotate="-90"

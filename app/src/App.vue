@@ -68,7 +68,9 @@
 
 			<v-content>
 				<v-container fluid fill-height class="align-start">
-					<router-view></router-view>
+					<transition-page>
+						<router-view></router-view>
+					</transition-page>
 				</v-container>
 			</v-content>
 		</template>
@@ -78,9 +80,12 @@
 <script>
 	import apiDevice from './api/device'
 	import "@/assets/app.css"
+	import transitionPage from "@/components/TransitionPage"
 
     export default {
-        name: 'App',
+		components: {
+			transitionPage
+		},
         data: () => ({
 			isLoading: true,
 
