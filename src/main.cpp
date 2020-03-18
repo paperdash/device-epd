@@ -58,6 +58,8 @@ void loop()
 
 	if (wlan_isConnected())
 	{
+		loopDateTime();
+
 		loopPlaylist();
 		//loopCloud();
 	}
