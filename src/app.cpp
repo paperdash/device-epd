@@ -78,6 +78,7 @@ void setupApp()
 		doc["device"]["fs"]["total"] = SPIFFS.totalBytes();
 		doc["device"]["fs"]["used"] = SPIFFS.usedBytes();
 		doc["device"]["fs"]["free"] = SPIFFS.totalBytes() - SPIFFS.usedBytes();
+		doc["device"]["time"] = time(NULL);
 
 		doc["playlist"]["current"] = PlaylistGetCurrentFace();
 		doc["playlist"]["remaining"] = PlaylistGetRemainingTimeMs() / 1000;

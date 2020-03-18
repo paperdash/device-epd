@@ -21,11 +21,7 @@
 				<span>boxxi</span>
 				<v-spacer></v-spacer>
 				<v-icon>{{ stats.wifi.rssi | wifiIcon(stats.wifi.secure) }}</v-icon>
-				<!--
-				<v-icon>mdi-signal-cellular-outline</v-icon>
-				<v-icon>mdi-battery</v-icon>
-				<span>12:30</span>
-				-->
+				<span>{{ stats.device.time | moment("LT") }}</span>
 			</v-system-bar>
 
 <!--
