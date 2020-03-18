@@ -37,6 +37,7 @@ extern faceWeatherData weatherData;
 
 void setupFaceWeather();
 void loopFaceWeather();
+void playlistFaceWeather();
 
 bool updateWeatherData();
 

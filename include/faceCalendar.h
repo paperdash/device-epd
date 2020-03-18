@@ -4,6 +4,7 @@
 
 void setupFaceCalendar();
 void loopFaceCalendar();
+void playlistFaceCalendar();
 bool updateCalendarData();
 
 #endif

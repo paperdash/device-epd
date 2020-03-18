@@ -32,6 +32,12 @@ void setupFaceCalendar()
 
 void loopFaceCalendar()
 {
+	//downloadRandomePicture();
+	//downloadFile("https://images.unsplash.com/photo-1582225764554-a82806fe9f30?ixlib=rb-1.2.1&ixid=eyJhcHBfaWQiOjExMDM0OH0&w=390&h=384&fm=png&fit=crop&duotone=000000,FFFFFF", "/tom");
+}
+
+void playlistFaceCalendar()
+{
 	// TODO update picture every x seconds
 	showFaceCalendar();
 }

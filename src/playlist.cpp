@@ -16,8 +16,8 @@ typedef FaceAndName FaceAndNameList[];
 
 // List of faces to cycle through
 FaceAndNameList faces = {
-	{loopFaceWeather, "Weather"},
-	{loopFaceCalendar, "Calendar"},
+	{playlistFaceWeather, "Weather"},
+	{playlistFaceCalendar, "Calendar"},
 };
 
 const uint8_t faceCount = ARRAY_SIZE(faces);
@@ -51,6 +51,9 @@ void setupPlaylist()
 
 void loopPlaylist()
 {
+	loopFaceWeather();
+	loopFaceCalendar();
+
 	if (PlaylistGetRemainingTimeMs() <= 0) // && autoplayEnabled
 	{
 		PlaylistResetTimer();

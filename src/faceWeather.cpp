@@ -5,6 +5,7 @@
 #include "display.h"
 #include "download.h"
 #include "settings.h"
+#include "datetime.h"
 
 #include <Fonts/FreeSansBold24pt7b.h> // current day
 #include <Fonts/FreeSansBold18pt7b.h> // current day
@@ -13,6 +14,8 @@ const char faceWeatherCurrent[] = "/weatherCurrent.json";
 const char faceWeatherForecast[] = "/weatherForecast.json";
 faceWeatherData weatherData;
 
+unsigned long lastWeatherDataUpdate = 0;
+
 void render_current();
 void render_forecast();
 bool readWeatherData();
@@ -20,9 +23,21 @@ bool readWeatherData();
 void setupFaceWeather()
 {
 	readWeatherData();
+	lastWeatherDataUpdate = millis();
 }
 
 void loopFaceWeather()
+{
+	// update every 10 min
+	if ((millis() - lastWeatherDataUpdate) >= 600000)
+	{
+		Serial.println(&now, "update weather data @ %A, %B %d %Y %H:%M:%S");
+		lastWeatherDataUpdate = millis();
+		updateWeatherData();
+	}
+}
+
+void playlistFaceWeather()
 {
 	display.setRotation(0);
 	display.setFullWindow();
