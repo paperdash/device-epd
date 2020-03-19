@@ -1,8 +1,15 @@
 #include "image.h"
 #include "imageWBMP.h"
 #include "imagePNG.h"
+#include "imageJPEG.h"
 
 structImageProcess ImageProcess;
+
+void setupImage()
+{
+	setupImagePNG();
+	setupImageJPEG();
+}
 
 void ImageNew(int x, int y, int w, int h, bool dithering)
 {
@@ -34,6 +41,13 @@ void ImageWriteBuffer(uint8_t buff[], size_t c)
 
 			pngOpenFramebuffer();
 		}
+		else if (memcmp(buff, ImageHeaderJPEG, sizeof(ImageHeaderJPEG) - 1) == 0)
+		{
+			Serial.println(" image format: JPEG");
+			ImageProcess.format = 4;
+
+			jpegOpenFramebuffer();
+		}
 		else
 		{
 			ImageProcess.format = 1;
@@ -58,6 +72,10 @@ void ImageWriteBuffer(uint8_t buff[], size_t c)
 	case 3:
 		pngWriteFramebuffer(0, buff, c);
 		break;
+	// JPEG
+	case 4:
+		jpegWriteFramebuffer(0, buff, c);
+		break;
 	}
 }
 
@@ -73,6 +91,10 @@ void ImageFlushBuffer()
 	// PNG
 	case 3:
 		pngFlushFramebuffer();
+		break;
+	// JPEG
+	case 4:
+		jpegFlushFramebuffer();
 		break;
 	}
 

@@ -35,7 +35,7 @@ void setup()
 	setupSettings();
 	setupDevice();
 
-	setupImagePNG();
+	setupImage();
 
 	setupWlan();
 	if (wlan_isConnected())
