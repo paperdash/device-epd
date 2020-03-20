@@ -13,6 +13,8 @@ typedef struct
 	bool dithering;
 } structImageProcess;
 
+void setupImage();
+
 void ImageNew(int x, int y, int w, int h, bool dithering);
 void ImageWriteBuffer(uint8_t buff[], size_t c);
 void ImageFlushBuffer();
