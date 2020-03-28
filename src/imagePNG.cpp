@@ -5,12 +5,14 @@
 
 pngle_t *pngle;
 
-// TODO use dynamic display width
-static constexpr int MAX_WIDTH = 640;
-static int16_t curRowDelta[MAX_WIDTH + 1];
-static int16_t nextRowDelta[MAX_WIDTH + 1];
+void on_draw(pngle_t *pngle, uint32_t x, uint32_t y, uint32_t w, uint32_t h, uint8_t rgba[4])
+{
+	uint8_t r = rgba[0]; // 0 - 255
+	uint8_t g = rgba[1]; // 0 - 255
+	uint8_t b = rgba[2]; // 0 - 255
 
-void on_draw(pngle_t *pngle, uint32_t x, uint32_t y, uint32_t w, uint32_t h, uint8_t rgba[4]);
+	ImageProcessPixel(x, y, rgba);
+}
 
 void setupImagePNG()
 {
@@ -26,9 +28,6 @@ void pngOpenFramebuffer()
 {
 	displayOpen();
 	pngle_reset(pngle);
-
-	memset(curRowDelta, 0, sizeof(curRowDelta));
-	memset(nextRowDelta, 0, sizeof(nextRowDelta));
 }
 
 void pngWriteFramebuffer(int offset, uint8_t bitmap[], int c)
@@ -44,54 +43,4 @@ void pngFlushFramebuffer()
 {
 	Serial.println("pngFlushFramebuffer");
 	pngle_reset(pngle);
-}
-
-void on_draw(pngle_t *pngle, uint32_t x, uint32_t y, uint32_t w, uint32_t h, uint8_t rgba[4])
-{
-	uint8_t r = rgba[0]; // 0 - 255
-	uint8_t g = rgba[1]; // 0 - 255
-	uint8_t b = rgba[2]; // 0 - 255
-
-	int16_t gray = round(r * 0.3 + g * 0.59 + b * 0.11);
-	int16_t blackOrWhite;
-
-	// Add errors to color if there are
-	if (ImageProcess.dithering)
-	{
-		gray += curRowDelta[x];
-	}
-
-	if (gray <= 127)
-	{
-		blackOrWhite = 0;
-	}
-	else
-	{
-		blackOrWhite = 255;
-	}
-
-	if (ImageProcess.dithering)
-	{
-		int16_t oldPixel = gray;
-		int16_t newPixel = blackOrWhite;
-
-		int err = oldPixel - newPixel;
-
-		if (x > 0)
-		{
-			nextRowDelta[x - 1] += err * 3 / 16;
-		}
-		nextRowDelta[x] += err * 5 / 16;
-		nextRowDelta[x + 1] += err * 1 / 16;
-		curRowDelta[x + 1] += err * 7 / 16;
-
-		if (x == 0 && y > 0)
-		{
-			// new line
-			memcpy(curRowDelta, nextRowDelta, sizeof(curRowDelta));
-			memset(nextRowDelta, 0, sizeof(nextRowDelta));
-		}
-	}
-
-	displayWritePixel(ImageProcess.x + x, ImageProcess.y + y, blackOrWhite);
 }
