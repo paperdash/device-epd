@@ -141,7 +141,8 @@ void setupSettingsGet()
 
 void setupSettingsPost()
 {
-	server.on("/api/settings", HTTP_PUT, [](AsyncWebServerRequest *request) { /* nothing and dont remove it */ }, NULL, [](AsyncWebServerRequest *request, uint8_t *data, size_t len, size_t index, size_t total) {
+	server.on(
+		"/api/settings", HTTP_PUT, [](AsyncWebServerRequest *request) { /* nothing and dont remove it */ }, NULL, [](AsyncWebServerRequest *request, uint8_t *data, size_t len, size_t index, size_t total) {
 		DynamicJsonDocument doc(2048);
 
 		DeserializationError error = deserializeJson(doc, data);
@@ -179,7 +180,6 @@ void setupSettingsPost()
 void setupCurrentImage()
 {
 	server.on("/current-image", HTTP_GET, [](AsyncWebServerRequest *request) {
-
 		uint8_t *bitmap = display.getBuffer();
 		int16_t w = display.width();
 		int16_t h = display.height();
@@ -197,10 +197,10 @@ void setupCurrentImage()
 		//response->addHeader("Server", "ESP Async Web Server");
 
 		write16(*response, 0x4D42);		 // BMP signature
-		write32(*response, fileSize);	// fileSize
+		write32(*response, fileSize);	 // fileSize
 		write32(*response, 0);			 // creator bytes
 		write32(*response, imageOffset); // image offset
-		write32(*response, headerSize);  // Header size
+		write32(*response, headerSize);	 // Header size
 		write32(*response, w);			 // image width
 		write32(*response, h);			 // image height
 		write16(*response, 1);			 // # planes
@@ -283,7 +283,8 @@ void setupWifiScan()
  */
 void setupWifiConnect()
 {
-	server.on("/api/wifi/connect", HTTP_POST, [](AsyncWebServerRequest *request) { /* nothing and dont remove it */ }, NULL, [](AsyncWebServerRequest *request, uint8_t *data, size_t len, size_t index, size_t total) {
+	server.on(
+		"/api/wifi/connect", HTTP_POST, [](AsyncWebServerRequest *request) { /* nothing and dont remove it */ }, NULL, [](AsyncWebServerRequest *request, uint8_t *data, size_t len, size_t index, size_t total) {
 		DynamicJsonDocument doc(1024);
 
 		DeserializationError error = deserializeJson(doc, data);
@@ -316,6 +317,7 @@ static void handle_update_progress_cb(AsyncWebServerRequest *request, String fil
 	{
 		Serial.printf("UploadStart: %s\n", filename.c_str());
 		ImageNew(0, 0, 0, 0, true);
+		PlaylistResetTimer();
 	}
 
 	ImageWriteBuffer(data, len);
@@ -331,39 +333,11 @@ static void handle_update_progress_cb(AsyncWebServerRequest *request, String fil
 
 void setupApiFace()
 {
-	server.on("/api/face", HTTP_POST, [](AsyncWebServerRequest *request) {
-		Serial.println("post request");
-
-		/*
-		int params = request->params();
-		for (int i = 0; i < params; i++)
-		{
-			AsyncWebParameter *p = request->getParam(i);
-			if (p->isFile())
-			{
-				Serial.printf("<li>FILE[%s]: %s, size: %u</li>", p->name().c_str(), p->value().c_str(), p->size());
-			}
-			else if (p->isPost())
-			{
-				Serial.printf("<li>POST[%s]: %s</li>", p->name().c_str(), p->value().c_str());
-			}
-			else
-			{
-				Serial.printf("<li>GET[%s]: %s</li>", p->name().c_str(), p->value().c_str());
-			}
-		}
-
-		if (request->hasParam("dithering", true))
-		{
-			AsyncWebParameter *p = request->getParam("dithering", true);
-			Serial.println(p->value());
-			dithering = p->value().toInt() == 1;
-		}
-		*/
-
-		request->send(200, "application/ld+json; charset=utf-8", "{}");
-	},
-			  handle_update_progress_cb);
+	server.on(
+		"/api/face", HTTP_POST, [](AsyncWebServerRequest *request) {
+			request->send(200, "application/ld+json; charset=utf-8", "{}");
+		},
+		handle_update_progress_cb);
 }
 
 void setupApiUpdate()

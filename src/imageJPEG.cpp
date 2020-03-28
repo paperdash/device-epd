@@ -115,6 +115,7 @@ void on_drawPixel(uint32_t x, uint32_t y, uint32_t color)
 	{
 		// new block
 		uint32_t originOffsetY = ((y / 16) * 16);
+		//Serial.println("new block");
 
 		for (uint16_t _y = 0; _y <= BLOCK_SIZE; _y++)
 		{
@@ -123,7 +124,36 @@ void on_drawPixel(uint32_t x, uint32_t y, uint32_t color)
 				uint32_t originX = _x;
 				uint32_t originY = originOffsetY + _y + (blockPageY * 16);
 				uint8_t originColor = blockDelta[(_y * MAX_WIDTH) + _x];
-				draw_XXX(originX, originY, originColor);
+				//draw_XXX(originX, originY, originColor);
+
+				uint8_t blue = originColor & 0x001F;  // 5 bits blue
+				uint8_t green = originColor & 0x07E0; // 6 bits green
+				uint8_t red = originColor & 0xF800;	  // 5 bits red
+
+				if (false && originX <= 70)
+				{
+					//uint8_t r = ((((originColor >> 11) & 0x1F) * 527) + 23) >> 6;
+					//uint8_t g = ((((originColor >> 5) & 0x3F) * 259) + 33) >> 6;
+					//uint8_t b = (((originColor & 0x1F) * 527) + 23) >> 6;
+					uint8_t r = red;
+					uint8_t g = green;
+					uint8_t b = blue;
+
+					Serial.print("Pixel @ y: ");
+					Serial.print(y);
+					Serial.print(" x: ");
+					Serial.print(x);
+
+					Serial.print("  Color, R:");
+					Serial.print(r);
+					Serial.print(", G:");
+					Serial.print(g);
+					Serial.print(", B:");
+					Serial.println(b);
+				}
+
+				uint8_t rgba[4] = {red, green, blue, 0};
+				ImageProcessPixel(originX, originY, rgba);
 			}
 		}
 
@@ -173,7 +203,34 @@ bool tft_output(int16_t x, int16_t y, uint16_t w, uint16_t h, uint16_t *bitmap)
 			// geht richtig
 			//display.writePixel(x + i, y, bitmap[j * w + i]);
 
-			// geht auch aber letzte zeil fehlt
+			if (_y == 0 && x + i <= 70)
+			{
+				uint32_t originColor = bitmap[j * w + i];
+
+				uint8_t blue = originColor & 0x001F;  // 5 bits blue
+				uint8_t green = originColor & 0x07E0; // 6 bits green
+				uint8_t red = originColor & 0xF800;	  // 5 bits red
+
+				//uint8_t r = ((((originColor >> 11) & 0x1F) * 527) + 23) >> 6;
+				//uint8_t g = ((((originColor >> 5) & 0x3F) * 259) + 33) >> 6;
+				//uint8_t b = (((originColor & 0x1F) * 527) + 23) >> 6;
+				uint8_t r = red;
+				uint8_t g = green;
+				uint8_t b = blue;
+
+				Serial.print("Pixel @ y: ");
+				Serial.print(_y);
+				Serial.print(" x: ");
+				Serial.print(x + i);
+
+				Serial.print("  Color, R:");
+				Serial.print(r);
+				Serial.print(", G:");
+				Serial.print(g);
+				Serial.print(", B:");
+				Serial.println(b);
+			}
+
 			on_drawPixel(x + i, _y, bitmap[j * w + i]);
 		}
 	}
