@@ -1,8 +1,8 @@
 import Vue from 'vue'
 import VueRouter from 'vue-router'
 
-const Dashboard = () => import(/* webpackChunkName: "dashboard" */ '../views/Dashboard')
-const Settings = () => import(/* webpackChunkName: "settings" */ '../views/Settings')
+const Dashboard = () => import('../views/Dashboard')
+const Settings = () => import('../views/Settings')
 //const Wifi = () => import(/* webpackChunkName: "wifi" */ '../views/Wifi')
 //const Sandbox = () => import(/* webpackChunkName: "sandbox" */ '../views/Sandbox')
 
