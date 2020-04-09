@@ -1,6 +1,6 @@
 <template>
   <v-card color="grey lighten-4" _outlined>
-    <v-img class="device-screen-image" :aspect-ratio="16/9" :src="device_screen_src"></v-img>
+    <v-img :aspect-ratio="16/9" :src="device_screen_src"></v-img>
 
     <v-card-actions style="position: relative">
       <router-link to="/settings">
