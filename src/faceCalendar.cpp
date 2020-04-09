@@ -24,16 +24,22 @@ void display_time();
 const char faceCalendarPicutreJson[] = "/calendarPhoto.json";
 const char faceCalendarPicture[] = "/calendarPhoto.png";
 
+bool triggerUpdateCalendar = false;
+
 void setupFaceCalendar()
 {
-	//downloadRandomePicture();
-	//downloadFile("https://images.unsplash.com/photo-1582225764554-a82806fe9f30?ixlib=rb-1.2.1&ixid=eyJhcHBfaWQiOjExMDM0OH0&w=390&h=384&fm=png&fit=crop&duotone=000000,FFFFFF", "/tom");
+
 }
 
 void loopFaceCalendar()
 {
-	//downloadRandomePicture();
-	//downloadFile("https://images.unsplash.com/photo-1582225764554-a82806fe9f30?ixlib=rb-1.2.1&ixid=eyJhcHBfaWQiOjExMDM0OH0&w=390&h=384&fm=png&fit=crop&duotone=000000,FFFFFF", "/tom");
+	if (triggerUpdateCalendar)
+	{
+		triggerUpdateCalendar = false;
+		Serial.println("...triggerUpdateCalendar");
+
+		downloadRandomePicture();
+	}
 }
 
 void playlistFaceCalendar()
@@ -57,69 +63,20 @@ void showFaceCalendar()
 
 bool downloadRandomePicture()
 {
-	// download json file
-	Serial.println("  download json");
-	String randomUrl = "https://api.unsplash.com/photos/random";
-	randomUrl += "&client_id=6cb16f348161f1c3e6bf21172c398893beec2d8d3ccf740bff4e72feac507422";
+	String pictureUrl = "http://sonic/unsplash.php?"; // TODO
+	pictureUrl += "&w=390&h=384";			// size
+	pictureUrl += "&fm=png";				// format
 
-	if (true) // downloadFile(randomUrl, faceCalendarPicutreJson)
-	{
-		Serial.println("  read json");
-
-		File file = SPIFFS.open(faceCalendarPicutreJson);
-		if (!file)
-		{
-			Serial.print("Failed to open file: ");
-			Serial.println(faceCalendarPicutreJson);
-
-			return false;
-		}
-
-		StaticJsonDocument<5000> docPicutre; // Use arduinojson.org/v6/assistant to compute the capacity.
-		DeserializationError error = deserializeJson(docPicutre, file);
-		file.close();
-		if (error)
-		{
-			Serial.print("Failed to read file: ");
-			Serial.println(faceCalendarPicutreJson);
-
-			Serial.println(error.c_str());
-
-			return false;
-		}
-
-		//String pictureUrl = "https://images.unsplash.com/photo-1582910587039-b4f085805c86?ixlib=rb-1.2.1&ixid=eyJhcHBfaWQiOjExMDM0OH0";
-		String pictureUrl = docPicutre["urls"]["raw"];
-		pictureUrl += "&w=390&h=384";			// size
-		pictureUrl += "&fm=png";				// format
-		pictureUrl += "&fit=crop";				// crop to needed size
-		pictureUrl += "&duotone=000000,FFFFFF"; // grayscale to save bytes
-
-		downloadFile(pictureUrl, faceCalendarPicture);
-
-		return true;
-	}
-
-	return false;
+	return downloadFile(pictureUrl, faceCalendarPicture);
 }
 
 /**
  * download and update calendar data
- * @todo is not working
  */
 bool updateCalendarData()
 {
-	//downloadFile("https://images.unsplash.com/photo-1582225764554-a82806fe9f30?ixlib=rb-1.2.1&ixid=eyJhcHBfaWQiOjExMDM0OH0&w=390&h=384&fm=png&fit=crop&duotone=000000,FFFFFF", "/tom");
-	//return false;
-
-	if (downloadRandomePicture())
-	{
-		//readWeatherData();
-
-		return true;
-	}
-
-	return false;
+	triggerUpdateCalendar = true;
+	return true;
 }
 
 void display_calender()
