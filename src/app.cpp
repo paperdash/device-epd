@@ -194,7 +194,6 @@ void setupCurrentImage()
 		uint32_t fileSize = imageOffset + h * rowSizeBMP;
 
 		AsyncResponseStream *response = request->beginResponseStream("image/bmp", w * h / 8 + imageOffset);
-		//response->addHeader("Server", "ESP Async Web Server");
 
 		write16(*response, 0x4D42);		 // BMP signature
 		write32(*response, fileSize);	 // fileSize
@@ -204,7 +203,7 @@ void setupCurrentImage()
 		write32(*response, w);			 // image width
 		write32(*response, h);			 // image height
 		write16(*response, 1);			 // # planes
-		write16(*response, depth);		 // // bits per pixel
+		write16(*response, depth);		 // bits per pixel
 		write32(*response, 0);			 // format uncompressed
 
 		uint32_t j = 0;
@@ -213,16 +212,18 @@ void setupCurrentImage()
 			response->write(filldata2[j++]); // remaining header bytes
 		}
 
-		uint32_t rowidx = 0;
+		uint32_t rowidx = w * h / 8;
 		for (uint16_t row = 0; row < h; row++) // for each line
 		{
+			rowidx -= rowSizeCode;
+
 			uint32_t colidx;
 			for (colidx = 0; colidx < rowSizeCode; colidx++)
 			{
 				uint8_t data = pgm_read_byte(&bitmap[rowidx + colidx]);
 				response->write(data);
 			}
-			rowidx += rowSizeCode;
+
 			while (colidx++ < rowSizeBMP)
 			{
 				response->write(uint8_t(0)); // padding
