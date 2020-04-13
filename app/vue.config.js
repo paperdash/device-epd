@@ -1,4 +1,5 @@
 const webpack = require('webpack');
+const CompressionPlugin = require('compression-webpack-plugin');
 
 module.exports = {
 	"outputDir": "../data/dist",
@@ -21,8 +22,13 @@ module.exports = {
 			// optimize build for esp32
 			return {
 				plugins: [
+					// reduze total size of the app
 					new webpack.optimize.LimitChunkCountPlugin({
 						maxChunks: 1
+					}),
+					// use only pre compressed files
+					new CompressionPlugin({
+						deleteOriginalAssets: true
 					})
 				]
 			}
