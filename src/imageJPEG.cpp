@@ -151,18 +151,22 @@ void jpegFlushFramebuffer()
 
 		// initialise the decoder to give access to image information
 		int ret = JpegDec.decodeFile("/tmp.jpeg");
-		Serial.print("decodeFile ret = ");
-		Serial.println(ret);
+		if (ret == 1) {
+			Serial.print("decodeFile ret = ");
+			Serial.println(ret);
 
-		// print information about the image to the serial port
-		jpegInfo();
+			// print information about the image to the serial port
+			jpegInfo();
 
-		// render the image onto the screen at coordinate 0,0
-		if (JpegDec.width > 0 && JpegDec.height) {
+			// render the image onto the screen at coordinate 0,0
 			renderJPEG(0, 0);
+
 		} else {
 			Serial.println("!!!! unkown jpeg format !!!!");
 		}
+
+		// reset decoder
+		JpegDec.abort();
 	}
 }
 
