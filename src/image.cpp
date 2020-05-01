@@ -1,5 +1,4 @@
 #include "image.h"
-#include "imageWBMP.h"
 #include "imagePNG.h"
 #include "imageJPEG.h"
 #include "display.h"
@@ -35,14 +34,7 @@ void ImageWriteBuffer(uint8_t buff[], size_t c)
 	// initial detect format
 	if (ImageProcess.format == 0)
 	{
-		if (memcmp(buff, ImageHeaderWBMP, sizeof(ImageHeaderWBMP) - 1) == 0)
-		{
-			Serial.println(" image format: WBMP");
-			ImageProcess.format = 2;
-
-			wbmpOpenFramebuffer();
-		}
-		else if (memcmp(buff, ImageHeaderPNG, sizeof(ImageHeaderPNG) - 1) == 0)
+		if (memcmp(buff, ImageHeaderPNG, sizeof(ImageHeaderPNG) - 1) == 0)
 		{
 			Serial.println(" image format: PNG");
 			ImageProcess.format = 3;
@@ -72,10 +64,6 @@ void ImageWriteBuffer(uint8_t buff[], size_t c)
 	// write display frame
 	switch (ImageProcess.format)
 	{
-	// WBMP
-	case 2:
-		wbmpWriteFramebuffer(0, buff, c);
-		break;
 	// PNG
 	case 3:
 		pngWriteFramebuffer(0, buff, c);
@@ -92,10 +80,6 @@ void ImageFlushBuffer()
 	// update display
 	switch (ImageProcess.format)
 	{
-	// WBMP
-	case 2:
-		wbmpFlushFramebuffer();
-		break;
 	// PNG
 	case 3:
 		pngFlushFramebuffer();
@@ -117,9 +101,6 @@ void ImageFlushBuffer()
 
 void ImageProcessPixel(uint32_t x, uint32_t y, uint8_t rgba[4])
 {
-	//uint32_t b = color & 0x001F; // 5 bits blue
-	//uint32_t g = color & 0x07E0; // 6 bits green
-	//uint32_t r = color & 0xF800; // 5 bits red
 	uint8_t r = rgba[0]; // 0 - 255
 	uint8_t g = rgba[1]; // 0 - 255
 	uint8_t b = rgba[2]; // 0 - 255
@@ -166,20 +147,4 @@ void ImageProcessPixel(uint32_t x, uint32_t y, uint8_t rgba[4])
 	}
 
 	displayWritePixel(ImageProcess.x + x, ImageProcess.y + y, blackOrWhite);
-}
-
-uint16_t drawRGB24toRGB565(uint8_t r, uint8_t g, uint8_t b)
-{
-	return ((r / 8) << 11) | ((g / 4) << 5) | (b / 8);
-}
-
-uint32_t drawRGB565toBGRA32(uint16_t color)
-{
-	uint32_t bits = (uint32_t)color;
-	uint32_t blue = bits & 0x001F;	// 5 bits blue
-	uint32_t green = bits & 0x07E0; // 6 bits green
-	uint32_t red = bits & 0xF800;	// 5 bits red
-
-	// Return shifted bits with alpha set to 0xFF
-	return (red << 8) | (green << 5) | (blue << 3) | 0xFF000000;
 }
