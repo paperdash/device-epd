@@ -8,9 +8,7 @@
 #include "datetime.h"
 #include "playlist.h"
 #include "app.h"
-
-#include "imagePNG.h"
-#include "imageWBMP.h"
+#include "image.h"
 
 void gotoDeepSleep();
 String getWakeupReason();
