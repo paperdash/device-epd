@@ -12,7 +12,7 @@ bool tft_output(int16_t x, int16_t y, uint16_t w, uint16_t h, uint16_t *bitmap);
 
 static constexpr int MAX_WIDTH = 640;
 static constexpr uint8_t BLOCK_SIZE = 16;
-static uint8_t blockDelta[BLOCK_SIZE * MAX_WIDTH + 1];
+static uint32_t blockDelta[BLOCK_SIZE * MAX_WIDTH + 1];
 
 //static int16_t curRowDeltaJ[MAX_WIDTH + 1];
 
@@ -38,6 +38,7 @@ void jpegOpenFramebuffer()
 		Serial.println("Failed to open file for writing");
 	}
 
+	memset(blockDelta, 0, sizeof(blockDelta));
 	pixelCount = 0;
 }
 
@@ -197,29 +198,27 @@ void jpegFlushFramebuffer()
 
 void on_drawPixel(uint32_t x, uint32_t y, uint32_t color)
 {
-	// fill block
+	// collect all mcu blocks for current row
 	uint32_t blockPageY = y - ((y / JpegDec.MCUHeight) * JpegDec.MCUHeight);
 	blockDelta[(blockPageY * MAX_WIDTH) + x] = color;
 
 
-	// wir sind im letzten mcu block
-	// letzter pixel
+	// full mcu row complete
 	if (x == JpegDec.width -1 && (y +1) % JpegDec.MCUHeight == 0) {
-		// mcu block complete
-		//Serial.println("letzter pixel :-), der ganze block ist jetzt fertig und bereit zur ausgabe");
+		// MCU block sizes: 8x8, 16x8 or 16x16
 
 		uint32_t originOffsetY = ((y / JpegDec.MCUHeight) * JpegDec.MCUHeight);
-
-		Serial.printf("render block: y: %d - %d \n", originOffsetY, originOffsetY + JpegDec.MCUHeight);
+		//Serial.printf("render block: y: %d - %d \n", originOffsetY, originOffsetY + JpegDec.MCUHeight);
 
 		for (uint16_t _y = 0; _y < JpegDec.MCUHeight; _y++)
 		{
 			for (uint16_t _x = 0; _x < JpegDec.width; _x++)
 			{
 				uint32_t originX = _x;
-				uint32_t originY = originOffsetY + _y; // + (blockPageY * JpegDec.MCUHeight);
-				uint8_t originColor = blockDelta[(_y * MAX_WIDTH) + _x];
+				uint32_t originY = originOffsetY + _y;
+				uint32_t originColor = blockDelta[(_y * MAX_WIDTH) + _x];
 
+				// beste farbe
 				uint8_t r = ((((originColor >> 11) & 0x1F) * 527) + 23) >> 6;
 				uint8_t g = ((((originColor >> 5) & 0x3F) * 259) + 33) >> 6;
 				uint8_t b = (((originColor & 0x1F) * 527) + 23) >> 6;
