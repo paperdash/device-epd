@@ -143,7 +143,7 @@
           <v-tab-item>
             <v-card-text>
               <v-text-field
-                label="i8n:OpenWeatherMap"
+                label="i8n:OpenWeatherMap API key"
                 v-model="settings.weather.api"
                 placeholder="###"
               ></v-text-field>
@@ -196,9 +196,7 @@
         </v-tabs-items>
 
         <v-card-actions>
-          <router-link to="/">
-            <v-btn text>i8n:cancel</v-btn>
-          </router-link>
+					<v-btn text to="/">i8n:cancel</v-btn>
 
           <v-spacer></v-spacer>
 
