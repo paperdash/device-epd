@@ -332,7 +332,9 @@ static void handle_update_progress_cb(AsyncWebServerRequest *request, String fil
 	if (!index)
 	{
 		Serial.printf("UploadStart: %s\n", filename.c_str());
-		ImageNew(0, 0, 0, 0, true);
+		bool dither = strcmp(filename.c_str(), "dithering") == 0;
+
+		ImageNew(0, 0, 0, 0, dither);
 		PlaylistResetTimer();
 	}
 
@@ -351,7 +353,39 @@ void setupApiFace()
 {
 	server.on(
 		"/api/face", HTTP_POST, [](AsyncWebServerRequest *request) {
-			request->send(200, "application/ld+json; charset=utf-8", "{}");
+			AsyncResponseStream *response = request->beginResponseStream("application/json");
+			DynamicJsonDocument doc(117); // https://arduinojson.org/v6/assistant/
+
+			// todo
+			doc["status"] = true;
+			doc["image"]["format"] = "xxx";
+			doc["image"]["width"] = 0;
+			doc["image"]["height"] = 0;
+
+			//doc["jpg"]["comps"] = 0;
+
+			/*
+			Serial.println(JpegDec.width);
+			Serial.println(JpegDec.height);
+
+			Serial.print(F("Components :"));
+			Serial.println(JpegDec.comps);
+			Serial.print(F("MCU / row  :"));
+			Serial.println(JpegDec.MCUSPerRow);
+			Serial.print(F("MCU / col  :"));
+			Serial.println(JpegDec.MCUSPerCol);
+			Serial.print(F("Scan type  :"));
+			Serial.println(JpegDec.scanType);
+			Serial.print(F("MCU width  :"));
+			Serial.println(JpegDec.MCUWidth);
+			Serial.print(F("MCU height :"));
+			Serial.println(JpegDec.MCUHeight);
+			*/
+
+			serializeJson(doc, *response);
+			request->send(response);
+
+			//request->send(200, "application/ld+json; charset=utf-8", "{}");
 		},
 		handle_update_progress_cb);
 }
