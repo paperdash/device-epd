@@ -15,36 +15,35 @@
 #include <Fonts/FreeSans24pt7b.h>	 // current day
 #include <Fonts/FreeSansBold24pt7b.h> // current day
 
-bool downloadRandomePicture();
 void showFaceCalendar();
 void display_calender();
 void display_picture();
 void display_time();
 
 const char faceCalendarPicutreJson[] = "/calendarPhoto.json";
-const char faceCalendarPicture[] = "/calendarPhoto.png";
+const char faceCalendarPicture[] = "/calendarPhoto.bin";
+const char faceCalendarPictureUrl[] = "http://sonic/paperdash/unsplash.php?&w=390&h=384&fm=jpg"; // TODO load from settings
 
-bool triggerUpdateCalendar = false;
+unsigned long lastCalendarDataUpdate = 0;
 
 void setupFaceCalendar()
 {
-
+	lastCalendarDataUpdate = millis();
 }
 
 void loopFaceCalendar()
 {
-	if (triggerUpdateCalendar)
+	// update every 10 min
+	if ((millis() - lastCalendarDataUpdate) >= 600000)
 	{
-		triggerUpdateCalendar = false;
-		Serial.println("...triggerUpdateCalendar");
-
-		downloadRandomePicture();
+		Serial.println(&now, "update calendar data @ %A, %B %d %Y %H:%M:%S");
+		lastCalendarDataUpdate = millis();
+		updateCalendarData();
 	}
 }
 
 void playlistFaceCalendar()
 {
-	// TODO update picture every x seconds
 	showFaceCalendar();
 }
 
@@ -61,22 +60,12 @@ void showFaceCalendar()
 	displayFlush();
 }
 
-bool downloadRandomePicture()
-{
-	String pictureUrl = "http://sonic/unsplash.php?"; // TODO
-	pictureUrl += "&w=390&h=384";			// size
-	pictureUrl += "&fm=png";				// format
-
-	return downloadFile(pictureUrl, faceCalendarPicture);
-}
-
 /**
  * download and update calendar data
  */
 bool updateCalendarData()
 {
-	triggerUpdateCalendar = true;
-	return true;
+	return downloadFile(faceCalendarPictureUrl, faceCalendarPicture);
 }
 
 void display_calender()
