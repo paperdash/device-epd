@@ -1,4 +1,5 @@
 #include <SPIFFS.h>
+#include <Update.h>
 #include "app.h"
 #include "ESPAsyncWebServer.h"
 #include "ArduinoJson.h"
@@ -21,7 +22,13 @@ void setupWifiConnect();
 void setupCurrentImage();
 void setupApiFace();
 void setupApiUpdate();
+void setupOTA();
+
+//flag to use from web update to update display
 bool updateDisplayRequired = false;
+
+//flag to use from web update to reboot the ESP
+bool shouldReboot = false;
 
 // bmp
 void write16(AsyncResponseStream &f, uint16_t v);
@@ -51,6 +58,7 @@ void setupApp()
 	setupCurrentImage();
 	setupApiFace();
 	setupApiUpdate();
+	setupOTA();
 
 	server.onNotFound([](AsyncWebServerRequest *request) {
 		request->send(404);
@@ -102,6 +110,13 @@ void setupApp()
 
 void loopApp()
 {
+	if (shouldReboot)
+	{
+		Serial.println("Rebooting...");
+		delay(100);
+		ESP.restart();
+	}
+
 	if (updateDisplayRequired)
 	{
 		Serial.println("loop app update display");
@@ -394,6 +409,58 @@ void setupApiUpdate()
 
 		request->send(200, "application/ld+json; charset=utf-8", "{}");
 	});
+}
+
+void setupOTA()
+{
+	// Simple Firmware Update Form
+	/*
+	server.on("/update", HTTP_GET, [](AsyncWebServerRequest *request) {
+		// TODO in die pwa auslagern
+		request->send(200, "text/html", "<form method='POST' action='/update' enctype='multipart/form-data'><input type='file' name='update'><input type='submit' value='Update'></form>");
+	});
+	*/
+
+	server.on(
+		"/update", HTTP_POST, [](AsyncWebServerRequest *request) {
+			shouldReboot = !Update.hasError();
+			AsyncWebServerResponse *response = request->beginResponse(200, "application/ld+json; charset=utf-8", shouldReboot ? "{\"success\": true}" : "{\"success\": false}");
+
+			response->addHeader("Connection", "close");
+			request->send(response);
+		},
+		[](AsyncWebServerRequest *request, String filename, size_t index, uint8_t *data, size_t len, bool final) {
+			if (!index)
+			{
+				Serial.printf("Update Start: %s\n", filename.c_str());
+				// bool canBegin = Update.begin(contentLength, U_FLASH);
+				// bool canBegin = Update.begin(contentLength, U_SPIFFS);
+				if (!Update.begin((ESP.getFreeSketchSpace() - 0x1000) & 0xFFFFF000))
+				{
+					Update.printError(Serial);
+				}
+			}
+
+			if (!Update.hasError())
+			{
+				if (Update.write(data, len) != len)
+				{
+					Update.printError(Serial);
+				}
+			}
+
+			if (final)
+			{
+				if (Update.end(true))
+				{
+					Serial.printf("Update Success: %uB\n", index + len);
+				}
+				else
+				{
+					Update.printError(Serial);
+				}
+			}
+		});
 }
 
 void write16(AsyncResponseStream &f, uint16_t v)
