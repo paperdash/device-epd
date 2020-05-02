@@ -3,6 +3,7 @@
 
 #include <Arduino.h>
 #include <pgmspace.h>
+#include <ArduinoUniqueID.h>
 
 
 void setupDevice();
@@ -12,5 +13,6 @@ void deviceSetSleepInterval(long interval);
 long deviceGetSleepInterval();
 unsigned int deviceGetBootCount();
 
+extern char DeviceId[21 +1];
 
 #endif

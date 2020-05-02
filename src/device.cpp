@@ -6,6 +6,7 @@ RTC_DATA_ATTR unsigned int bootCount = 0;
 RTC_DATA_ATTR long config_DeepSleepInterval = 10; // sec
 
 unsigned long bootTime = 0;
+char DeviceId[21 + 1];
 
 // private methods
 void sleepDevice();
@@ -19,6 +20,9 @@ void setupDevice()
 	// increment boot number and print it every reboot
 	bootCount++;
 	bootTime = millis();
+
+	// create anonymous device id
+	sprintf(DeviceId, "%02X:%02X:%02X:%02X:%02X:%02X:%02X:%02X", UniqueID8[0], UniqueID8[1], UniqueID8[2], UniqueID8[3], UniqueID8[4], UniqueID8[5], UniqueID8[6], UniqueID8[7]);
 }
 
 void loopDevice()
@@ -57,7 +61,6 @@ unsigned int deviceGetBootCount()
 {
 	return bootCount;
 }
-
 
 bool isBootTimeOver()
 {

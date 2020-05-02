@@ -78,6 +78,7 @@ void setupApp()
 		doc["wifi"]["dns"] = WiFi.dnsIP().toString();
 		doc["wifi"]["gateway"] = WiFi.gatewayIP().toString();
 
+		doc["device"]["id"] = DeviceId;
 		doc["device"]["heap"] = ESP.getFreeHeap();
 		doc["device"]["bootCycle"] = deviceGetBootCount();
 		doc["device"]["screen"]["width"] = 640;
@@ -393,26 +394,6 @@ void setupApiFace()
 void setupApiUpdate()
 {
 	server.on("/api/update", HTTP_GET, [](AsyncWebServerRequest *request) {
-		/*
-		int params = request->params();
-		for (int i = 0; i < params; i++)
-		{
-			AsyncWebParameter *p = request->getParam(i);
-			if (p->isFile())
-			{
-				Serial.printf("<li>FILE[%s]: %s, size: %u</li>", p->name().c_str(), p->value().c_str(), p->size());
-			}
-			else if (p->isPost())
-			{
-				Serial.printf("<li>POST[%s]: %s</li>", p->name().c_str(), p->value().c_str());
-			}
-			else
-			{
-				Serial.printf("<li>GET[%s]: %s</li>", p->name().c_str(), p->value().c_str());
-			}
-		}
-		*/
-
 		if (request->hasParam("datetime"))
 		{
 			Serial.println("update datetime...");
@@ -434,7 +415,7 @@ void setupApiUpdate()
 			updateCalendarData();
 		}
 
-		if (request->hasParam("file"))
+		if (request->getParam("url") && request->hasParam("file"))
 		{
 			Serial.println("file...");
 

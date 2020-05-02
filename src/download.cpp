@@ -1,6 +1,7 @@
 #include <HTTPClient.h>
 #include <SPIFFS.h>
 #include "download.h"
+#include "device.h"
 
 HTTPClient http;
 
@@ -24,8 +25,13 @@ bool downloadFile(String url, const char *path)
 		return false;
 	}
 
-	http.useHTTP10(true); // http1.1 chunked übertragung funktioniert irgendwie nicht
+	http.useHTTP10(true); // http1.1 chunked is not working correctly
 	http.setTimeout(7000);
+	http.setUserAgent("paperdash esp");
+
+	// use the last 8 bytes of the unique serial id
+	http.addHeader("X-PaperDash-Id", DeviceId);
+
 	http.begin(url);
 	int httpCode = http.GET();
 	if (httpCode != HTTP_CODE_OK)
