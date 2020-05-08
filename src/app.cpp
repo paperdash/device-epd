@@ -136,8 +136,17 @@ void setupSettingsGet()
 		AsyncResponseStream *response = request->beginResponseStream("application/json");
 		DynamicJsonDocument root(1024);
 
-		root["device"]["angle"] = NVS.getInt("device.angle");
+		root["system"]["country"] = NVS.getString("system.country");
+		root["system"]["language"] = NVS.getString("system.language");
+		root["system"]["timezone"] = NVS.getString("system.timezone");
+		root["system"]["utc"] = NVS.getInt("system.utc");
+		root["system"]["dst"] = NVS.getInt("system.dst");
+		// gmtOffset_sec
+		// daylightOffset_sec
+
+		//root["device"]["angle"] = NVS.getInt("device.angle");
 		root["device"]["theme"] = NVS.getString("device.theme");
+		root["device"]["name"] = NVS.getString("device.name");
 
 		root["playlist"]["timer"] = NVS.getInt("playlist.timer");
 
@@ -146,9 +155,9 @@ void setupSettingsGet()
 		root["weather"]["lang"] = NVS.getString("weather.lang");
 		root["weather"]["unit"] = NVS.getString("weather.unit");
 
-		root["cloud"]["mode"] = NVS.getString("cloud.mode");
-		root["cloud"]["url"] = NVS.getString("cloud.url");
-		root["cloud"]["token"] = NVS.getString("cloud.token");
+		//root["cloud"]["mode"] = NVS.getString("cloud.mode");
+		//root["cloud"]["url"] = NVS.getString("cloud.url");
+		//root["cloud"]["token"] = NVS.getString("cloud.token");
 
 		serializeJson(root, *response);
 		request->send(response);
@@ -170,19 +179,39 @@ void setupSettingsPost()
 		}
 		else
 		{
-			NVS.setInt("device.angle", doc["device"]["angle"].as<unsigned int>());
-			NVS.setString("device.theme", doc["device"]["theme"]);
+			JsonVariant system = doc["system"];
+			if (!system.isNull()) {
+				NVS.setString("system.country", system["country"]);
+				NVS.setString("system.language", system["language"]);
+				NVS.setString("system.timezone", system["timezone"]);
+				NVS.setInt("system.utc", system["utc"].as<unsigned int>());
+				NVS.setInt("system.dst", system["dst"].as<unsigned int>());
+			}
 
-			NVS.setInt("playlist.timer", doc["playlist"]["timer"].as<unsigned int>());
+			JsonVariant device = doc["device"];
+			if (!device.isNull()) {
+				NVS.setInt("device.angle", device["angle"].as<unsigned int>());
+				NVS.setString("device.theme", device["theme"]);
+				NVS.setString("device.name", device["name"]);
+			}
 
-			NVS.setString("weather.api", doc["weather"]["api"]);
-			NVS.setInt("weather.loc", doc["weather"]["location"].as<unsigned int>());
-			NVS.setString("weather.lang", doc["weather"]["lang"]);
-			NVS.setString("weather.unit", doc["weather"]["unit"]);
+			JsonVariant playlist = doc["playlist"];
+			if (!playlist.isNull()) {
+				NVS.setInt("playlist.timer", playlist["timer"].as<unsigned int>());
+			}
 
+			JsonVariant weather = doc["weather"];
+			if (!doc["weather"].isNull()) {
+				NVS.setString("weather.api", weather["api"]);
+				NVS.setInt("weather.loc", weather["location"].as<unsigned int>());
+				NVS.setString("weather.lang", weather["lang"]);
+				NVS.setString("weather.unit", weather["unit"]);
+			}
+/*
 			NVS.setString("cloud.mode", doc["cloud"]["mode"]);
 			NVS.setString("cloud.url", doc["cloud"]["url"]);
 			NVS.setString("cloud.token", doc["cloud"]["token"]);
+			*/
 
 			NVS.commit();
 
@@ -442,8 +471,7 @@ void setupOTA()
 			AsyncWebServerResponse *response = request->beginResponse(200, "application/ld+json; charset=utf-8", shouldReboot ? "{\"success\": true}" : "{\"success\": false}");
 
 			response->addHeader("Connection", "close");
-			request->send(response);
-		},
+			request->send(response); },
 		[](AsyncWebServerRequest *request, String filename, size_t index, uint8_t *data, size_t len, bool final) {
 			if (!index)
 			{

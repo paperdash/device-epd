@@ -39,7 +39,7 @@ export default {
   props: {
     location: {
       type: Number,
-      required: true
+      required: false
     },
     api: {
       type: String,

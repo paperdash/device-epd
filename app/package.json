@@ -20,6 +20,8 @@
     "axios": "^0.19.2",
     "babel-eslint": "^10.0.3",
     "compression-webpack-plugin": "^3.1.0",
+    "countries-and-timezones": "^2.2.0",
+    "countries-list": "^2.5.4",
     "eslint": "^6.7.2",
     "eslint-plugin-vue": "^6.1.2",
     "sass": "^1.19.0",
