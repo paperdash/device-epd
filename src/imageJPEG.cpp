@@ -7,8 +7,8 @@
 File tmpFileBuffer;
 void renderMcuBlock(int16_t x, int16_t y, uint16_t w, uint16_t h, uint16_t *bitmap);
 
-static constexpr int MAX_WIDTH = 640;	// TODO get info from display
-static constexpr uint8_t BLOCK_SIZE = 16;	// max MCU block size
+static constexpr int MAX_WIDTH = 640;	  // TODO get info from display
+static constexpr uint8_t BLOCK_SIZE = 16; // max MCU block size
 static uint32_t blockDelta[BLOCK_SIZE * MAX_WIDTH + 1];
 
 #define minimum(a, b) (((a) < (b)) ? (a) : (b))
@@ -151,17 +151,16 @@ void jpegFlushFramebuffer()
 
 		// initialise the decoder to give access to image information
 		int ret = JpegDec.decodeFile("/tmp.jpeg");
-		if (ret == 1) {
-			Serial.print("decodeFile ret = ");
-			Serial.println(ret);
-
+		if (ret == 1)
+		{
 			// print information about the image to the serial port
-			jpegInfo();
+			//jpegInfo();
 
 			// render the image onto the screen at coordinate 0,0
 			renderJPEG(0, 0);
-
-		} else {
+		}
+		else
+		{
 			Serial.println("!!!! unkown jpeg format !!!!");
 		}
 
@@ -176,9 +175,9 @@ void renderMcuBlockPixel(uint32_t x, uint32_t y, uint32_t color)
 	uint32_t blockPageY = y - ((y / JpegDec.MCUHeight) * JpegDec.MCUHeight);
 	blockDelta[(blockPageY * MAX_WIDTH) + x] = color;
 
-
 	// full mcu row is complete now
-	if (x == JpegDec.width -1 && (y +1) % JpegDec.MCUHeight == 0) {
+	if (x == JpegDec.width - 1 && (y + 1) % JpegDec.MCUHeight == 0)
+	{
 		// MCU block sizes: 8x8, 16x8 or 16x16
 
 		uint32_t originOffsetY = ((y / JpegDec.MCUHeight) * JpegDec.MCUHeight);
