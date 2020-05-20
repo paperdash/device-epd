@@ -1,54 +1,58 @@
 <template>
   <v-container fluid _fill-height>
-    <template v-if="currentStep === 0">
-      <!-- country -->
-      <v-card flat class="mx-auto" width="520">
-        <v-card-title
-          class="display-2 mb-12 justify-center text-center"
-        >Select Your Country or Region</v-card-title>
+    <v-row no-gutters justify="center">
+      <v-col lg="5" md="6" sm="8">
+        <template v-if="currentStep === 0">
+          <!-- country -->
+          <v-card flat>
+            <v-card-title
+              class="display-2 mb-12 justify-center text-center"
+            >Select Your Country or Region</v-card-title>
 
-        <v-list class="ml-5 pa-0">
-          <template v-for="(country, code) in availableCountries">
-            <div :key="code">
+            <v-list class="ml-5 pa-0">
+              <template v-for="(country, code) in availableCountries">
+                <div :key="code">
+                  <v-divider></v-divider>
+
+                  <v-list-item class="pl-1" @click="commitCountry(code, country)">
+                    <!--<v-list-item-icon>{{ country.emoji }}</v-list-item-icon>-->
+                    <v-list-item-content>{{ country.native }}</v-list-item-content>
+
+                    <v-list-item-action>
+                      <v-icon>$next</v-icon>
+                    </v-list-item-action>
+                  </v-list-item>
+                </div>
+              </template>
+            </v-list>
+          </v-card>
+        </template>
+
+        <template v-else-if="currentStep === 1">
+          <!-- timezone if needed -->
+          <v-card flat>
+            <v-card-title class="display-2 mb-12 justify-center text-center">Select Your Timezone</v-card-title>
+
+            <v-list class="ml-5 pa-0">
+              <template v-for="(zone, i) in availableTimeZones">
+                <div :key="i">
+                  <v-divider></v-divider>
+
+                  <v-list-item class="pl-1" @click="commitTimezone(zone)">
+                    <v-list-item-content>{{ zone }}</v-list-item-content>
+
+                    <v-list-item-action>
+                      <v-icon>$next</v-icon>
+                    </v-list-item-action>
+                  </v-list-item>
+                </div>
+              </template>
               <v-divider></v-divider>
-
-              <v-list-item class="pl-1" @click="commitCountry(code, country)">
-                <!--<v-list-item-icon>{{ country.emoji }}</v-list-item-icon>-->
-                <v-list-item-content>{{ country.native }}</v-list-item-content>
-
-                <v-list-item-action>
-                  <v-icon>$next</v-icon>
-                </v-list-item-action>
-              </v-list-item>
-            </div>
-          </template>
-        </v-list>
-      </v-card>
-    </template>
-
-    <template v-else-if="currentStep === 1">
-      <!-- timezone if needed -->
-      <v-card flat class="mx-auto" width="520">
-        <v-card-title class="display-2 mb-12 justify-center text-center">Select Your Timezone</v-card-title>
-
-        <v-list class="ml-5 pa-0">
-          <template v-for="(zone, i) in availableTimeZones">
-            <div :key="i">
-              <v-divider></v-divider>
-
-              <v-list-item class="pl-1" @click="commitTimezone(zone)">
-                <v-list-item-content>{{ zone }}</v-list-item-content>
-
-                <v-list-item-action>
-                  <v-icon>$next</v-icon>
-                </v-list-item-action>
-              </v-list-item>
-            </div>
-          </template>
-          <v-divider></v-divider>
-        </v-list>
-      </v-card>
-    </template>
+            </v-list>
+          </v-card>
+        </template>
+      </v-col>
+    </v-row>
   </v-container>
 </template>
 
@@ -112,3 +116,11 @@ export default {
   }
 };
 </script>
+
+<style scoped>
+/* issue https://github.com/vuetifyjs/vuetify/issues/9130 */
+>>> .v-card__text,
+.v-card__title {
+  word-break: normal;
+}
+</style>
