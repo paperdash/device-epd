@@ -13,40 +13,49 @@
       ></v-skeleton-loader>
 
       <v-list v-else>
-        <v-list-item-group v-model="settings.wifi" mandatory>
-          <template v-for="(wifi, i) in wifiAvailable">
-            <div :key="i">
-              <v-divider v-if="i > 0"></v-divider>
+        <template v-for="(wifi, i) in wifiAvailable">
+          <div :key="i">
+            <v-divider v-if="i > 0"></v-divider>
 
-              <v-list-item class="px-1" :value="wifi.ssid" @click.stop="wifiConnectModal = true">
-                <v-list-item-content dark>
-                  <v-list-item-title v-text="wifi.ssid"></v-list-item-title>
-                  <v-list-item-subtitle v-text="wifi.bssid"></v-list-item-subtitle>
-                </v-list-item-content>
+            <v-list-item class="px-1" @click="onWifiSelect(wifi)">
+              <v-list-item-icon class="mr-2 ml-2">
+                <v-icon v-if="wifi.ssid === settings.system.wifi">$check</v-icon>
 
-                <v-list-item-icon>
-                  <v-icon class="mx-2" v-if="wifi.secure">$lock</v-icon>
-                  <v-icon class="mx-2">{{ wifi.rssi | wifiIcon(0) }}</v-icon>
-                  <v-icon class="ml-3">$next</v-icon>
-                </v-list-item-icon>
-              </v-list-item>
-            </div>
-          </template>
-        </v-list-item-group>
+                <v-progress-circular
+                  v-if="wifi.ssid === connectingSSID"
+                  :size="24"
+                  :width="2"
+                  color="grey "
+                  indeterminate
+                ></v-progress-circular>
+              </v-list-item-icon>
+
+              <v-list-item-content dark>
+                <v-list-item-title v-text="wifi.ssid"></v-list-item-title>
+                <v-list-item-subtitle v-text="wifi.bssid"></v-list-item-subtitle>
+              </v-list-item-content>
+
+              <v-list-item-icon>
+                <v-icon class="mx-2" v-if="wifi.secure">$lock</v-icon>
+                <v-icon class="mx-2">{{ wifi.rssi | wifiIcon(0) }}</v-icon>
+                <v-icon class="ml-3">$next</v-icon>
+              </v-list-item-icon>
+            </v-list-item>
+          </div>
+        </template>
 
         <v-divider></v-divider>
 
-        <v-btn text color="primary" class="px-0 my-2">Choose Another Network</v-btn>
+        <v-btn text color="primary" class="_px-0 my-2">Choose Another Network</v-btn>
       </v-list>
 
-      <v-dialog v-model="wifiConnectModal" max-width="450">
+      <v-dialog v-model="wifiPasswordModal" max-width="450">
         <setup-wifi-connect
-          :ssid="settings.wifi"
-          @connected="commitWifi()"
-          @cancel="wifiConnectModal = false"
+          :ssid="connectSSID"
+          :onConnect="onWifiConnect"
+          @cancel="wifiPasswordModal = false"
         ></setup-wifi-connect>
       </v-dialog>
-
     </v-card>
   </v-container>
 </template>
@@ -63,8 +72,11 @@ export default {
     isLoading: true,
     settings: null,
 
+    connectSSID: null,
+    connectingSSID: "",
+
     wifiAvailable: [],
-    wifiConnectModal: false
+    wifiPasswordModal: false
   }),
   created() {
     apiDevice.getSettings(settings => {
@@ -77,6 +89,21 @@ export default {
       });
     });
   },
-  methods: {}
+  methods: {
+    onWifiSelect(wifi) {
+      if (wifi.secure) {
+        this.connectSSID = wifi.ssid;
+        this.wifiPasswordModal = true;
+      } else {
+        this.onWifiConnect(wifi.ssid, "");
+      }
+    },
+    onWifiConnect(ssid, password) {
+      this.connectingSSID = ssid;
+      this.wifiPasswordModal = false;
+
+      apiDevice.wifiConnect(ssid, password, () => {});
+    }
+  }
 };
 </script>

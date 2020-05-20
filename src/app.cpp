@@ -69,11 +69,11 @@ void setupApp()
 		AsyncResponseStream *response = request->beginResponseStream("application/json");
 		DynamicJsonDocument doc(668); // https://arduinojson.org/v6/assistant/
 
-		doc["wifi"]["rssi"] = WiFi.RSSI();
+		doc["wifi"]["mac"] = WiFi.macAddress();
 		doc["wifi"]["ssid"] = WiFi.SSID();
 		doc["wifi"]["connected"] = WiFi.isConnected();
+		doc["wifi"]["rssi"] = WiFi.RSSI();
 		doc["wifi"]["ip"] = WiFi.localIP().toString();
-		doc["wifi"]["mac"] = WiFi.macAddress();
 		doc["wifi"]["channel"] = WiFi.channel();
 		doc["wifi"]["dns"] = WiFi.dnsIP().toString();
 		doc["wifi"]["gateway"] = WiFi.gatewayIP().toString();
@@ -141,6 +141,8 @@ void setupSettingsGet()
 		root["system"]["timezone"] = NVS.getString("system.timezone");
 		root["system"]["utc"] = NVS.getInt("system.utc");
 		root["system"]["dst"] = NVS.getInt("system.dst");
+		root["system"]["wifi"] = NVS.getString("wifi.ssid");
+
 		// gmtOffset_sec
 		// daylightOffset_sec
 
@@ -280,43 +282,31 @@ void setupCurrentImage()
 }
 
 /**
- * @todo
+ * scan for wifi
  */
 void setupWifiScan()
 {
-	//First request will return 0 results unless you start scan from somewhere else (loop/setup)
-	//Do not request more often than 3-5 seconds
 	server.on("/api/wifi/scan", HTTP_GET, [](AsyncWebServerRequest *request) {
 		String json = "[";
-		int n = WiFi.scanComplete();
-		if (n == -2)
-		{
-			WiFi.scanNetworks(true);
-		}
-		else if (n)
-		{
-			for (int i = 0; i < n; ++i)
-			{
-				if (i)
-				{
-					json += ",";
-				}
 
-				json += "{";
-				json += "\"rssi\":" + String(WiFi.RSSI(i));
-				json += ",\"ssid\":\"" + WiFi.SSID(i) + "\"";
-				json += ",\"bssid\":\"" + WiFi.BSSIDstr(i) + "\"";
-				json += ",\"channel\":" + String(WiFi.channel(i));
-				json += ",\"secure\":" + String(WiFi.encryptionType(i));
-				json += "}";
+		int n = WiFi.scanNetworks();
+		for (int i = 0; i < n; ++i)
+		{
+			if (i)
+			{
+				json += ",";
 			}
 
-			WiFi.scanDelete();
-			if (WiFi.scanComplete() == -2)
-			{
-				WiFi.scanNetworks(true);
-			}
+			json += "{";
+			json += "\"rssi\":" + String(WiFi.RSSI(i));
+			json += ",\"ssid\":\"" + WiFi.SSID(i) + "\"";
+			json += ",\"bssid\":\"" + WiFi.BSSIDstr(i) + "\"";
+			json += ",\"channel\":" + String(WiFi.channel(i));
+			json += ",\"secure\":" + String(WiFi.encryptionType(i));
+			json += "}";
 		}
+
+		WiFi.scanDelete();
 
 		json += "]";
 		request->send(200, "application/json", json);
@@ -338,10 +328,23 @@ void setupWifiConnect()
 			Serial.print(F("deserializeJson() failed with code "));
 			Serial.println(error.c_str());
 
-			request->send(404, "text/plain", "");
+			request->send(404, "application/ld+json; charset=utf-8", "{}");
 		}
 		else
 		{
+			JsonVariant ssid = doc["ssid"];
+			if (!ssid.isNull()) {
+				NVS.setString("wifi.ssid", ssid);
+				Serial.println(ssid.as<char*>());
+			}
+
+			JsonVariant password = doc["password"];
+			if (!password.isNull()) {
+				NVS.setString("wifi.password", password);
+				Serial.println(password.as<char*>());
+			}
+
+/*
 			if (doc.containsKey("ssid")) {
 				NVS.setString("wifi_ssid", doc["ssid"]);
 				Serial.println(doc["ssid"].as<char*>());
@@ -350,6 +353,7 @@ void setupWifiConnect()
 				NVS.setString("wifi_password", doc["password"]);
 				Serial.println(doc["password"].as<char*>());
 			}
+			*/
 
 			request->send(200, "application/ld+json; charset=utf-8", "{}");
 

@@ -48,8 +48,10 @@ const MY_ICONS = {
 	//search: {component: () => import(/* webpackChunkName: "icons" */'!vue-svg-loader!@material-icons/svg/svg/search/baseline.svg')},
 	memory: {component: () => import(/* webpackChunkName: "icons" */'!vue-svg-loader!@material-icons/svg/svg/memory/baseline.svg')},
 	lock: {component: () => import(/* webpackChunkName: "icons" */'!vue-svg-loader!@material-icons/svg/svg/lock/baseline.svg')},
+	settings: {component: () => import(/* webpackChunkName: "icons" */'!vue-svg-loader!@material-icons/svg/svg/settings/baseline.svg')},
 
 	// wifi
+	signalWifiOff: {component: () => import(/* webpackChunkName: "icons" */'!vue-svg-loader!@material-icons/svg/svg/signal_wifi_off/baseline.svg')},
 	signalWifi0: {component: () => import(/* webpackChunkName: "icons" */'!vue-svg-loader!@material-icons/svg/svg/signal_wifi_0_bar/baseline.svg')},
 	signalWifi1: {component: () => import(/* webpackChunkName: "icons" */'!vue-svg-loader!@material-icons/svg/svg/signal_wifi_1_bar/baseline.svg')},
 	signalWifi1Lock: {component: () => import(/* webpackChunkName: "icons" */'!vue-svg-loader!@material-icons/svg/svg/signal_wifi_1_bar_lock/baseline.svg')},
@@ -64,7 +66,10 @@ const MY_ICONS = {
 	wb_sunny: {component: () => import(/* webpackChunkName: "icons" */'!vue-svg-loader!@material-icons/svg/svg/wb_sunny/baseline.svg')},
 	open_in_new: {component: () => import(/* webpackChunkName: "icons" */'!vue-svg-loader!@material-icons/svg/svg/open_in_new/baseline.svg')},
 	face: {component: () => import(/* webpackChunkName: "icons" */'!vue-svg-loader!@material-icons/svg/svg/face/baseline.svg')},
-	autorenew: {component: () => import(/* webpackChunkName: "icons" */'!vue-svg-loader!@material-icons/svg/svg/autorenew/baseline.svg')}
+	autorenew: {component: () => import(/* webpackChunkName: "icons" */'!vue-svg-loader!@material-icons/svg/svg/autorenew/baseline.svg')},
+	check: {component: () => import(/* webpackChunkName: "icons" */'!vue-svg-loader!@material-icons/svg/svg/check/baseline.svg')},
+	visibility: {component: () => import(/* webpackChunkName: "icons" */'!vue-svg-loader!@material-icons/svg/svg/visibility/baseline.svg')},
+	visibility_off: {component: () => import(/* webpackChunkName: "icons" */'!vue-svg-loader!@material-icons/svg/svg/visibility_off/baseline.svg')}
 }
 
 
