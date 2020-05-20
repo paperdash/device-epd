@@ -14,7 +14,10 @@ yarn --cwd app build
 platformio run --target uploadfs
 
 # send a picture to display over json
-curl -F 'myImage=@blackPNG.png' http://192.168.178.62/api/face
+curl -F '=@test3.png;filename=dithering' http://192.168.178.62/api/face
+
+# get current picture as bmp
+curl http://192.168.178.62/current-image --output current.bmp
 
 # erase flash memory
 pio run --target erase

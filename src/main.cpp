@@ -36,7 +36,7 @@ void setup()
 	setupImage();
 
 	setupWlan();
-	if (wlan_isConnected())
+	if (WiFi.isConnected())
 	{
 		setupDateTime();
 		setupPlaylist();
@@ -54,7 +54,7 @@ void loop()
 {
 	// put your main code here, to run repeatedly:
 
-	if (wlan_isConnected())
+	if (WiFi.isConnected())
 	{
 		loopDateTime();
 

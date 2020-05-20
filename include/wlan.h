@@ -2,8 +2,8 @@
 #define WLAN_H
 
 #include <WiFi.h>
+#include <ESPmDNS.h>
 
 void setupWlan();
-bool wlan_isConnected();
 
 #endif

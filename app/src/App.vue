@@ -15,13 +15,20 @@
 			</v-navigation-drawer>
 			-->
 
-			<v-system-bar app dark color="primary">
+			<v-system-bar app dark color="primary" _window _lights-out>
 				<span>paperdash.io</span>
 				<v-spacer></v-spacer>
-				<span>boxxi</span>
+				<span>{{ settings.device.name }}</span>
 				<v-spacer></v-spacer>
-				<v-icon>{{ stats.wifi.rssi | wifiIcon(stats.wifi.secure) }}</v-icon>
-				<span>{{ stats.device.time | moment("LT") }}</span>
+				<template v-if="stats.wifi.connected">
+					<v-icon>{{ stats.wifi.rssi | wifiIcon(0) }}</v-icon>
+					<span>{{ stats.device.time | moment("LT") }}</span>
+				</template>
+				<template v-else>
+					<v-btn to="/setup/wifi" icon>
+						<v-icon color="red">$signalWifiOff</v-icon>
+					</v-btn>
+				</template>
 			</v-system-bar>
 
 <!--
@@ -84,25 +91,14 @@
 		},
         data: () => ({
 			isLoading: true,
-
-			bottomNav: 3,
-
-            items: [
-                {title: 'Dashboard', icon: '$dashboard', to: '/'},
-                //{title: 'Sandbox', icon: '$sandbox', to: '/sandbox'},
-                {title: 'Wifi', icon: '$wifi', to: '/wifi'},
-                {title: 'Settings', icon: '$settings', to: '/settings'},
-			],
+			settings: null
 		}),
 		created () {
-			this.$vuetify.icons.values.device = {component: () => import(/* webpackChunkName: "icons" */'!vue-svg-loader!@material-icons/svg/svg/cast/baseline.svg')}
-			this.$vuetify.icons.values.dashboard = {component: () => import(/* webpackChunkName: "icons" */'!vue-svg-loader!@material-icons/svg/svg/dashboard/baseline.svg')}
-			this.$vuetify.icons.values.settings = {component: () => import(/* webpackChunkName: "icons" */'!vue-svg-loader!@material-icons/svg/svg/settings/baseline.svg')}
-			this.$vuetify.icons.values.wifi = {component: () => import(/* webpackChunkName: "icons" */'!vue-svg-loader!@material-icons/svg/svg/wifi/baseline.svg')}
-			this.$vuetify.icons.values.sandbox = {component: () => import(/* webpackChunkName: "icons" */'!vue-svg-loader!@material-icons/svg/svg/gesture/baseline.svg')}	// gesture, brush, palette,
+			apiDevice.getSettings(settings => {
+				this.settings = settings;
 
-
-			this.autoReloadStats();
+				this.autoReloadStats();
+			});
 		},
 		watch: {
 			stats () {

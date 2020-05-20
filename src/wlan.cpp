@@ -10,14 +10,13 @@ void initAPMode();
 void setupWlan()
 {
 	Serial.println("setup Wlan");
-	WiFi.setHostname(deviceName);
 
 	// load wifi settings
-	String ssid = NVS.getString("wifi_ssid");
-	String password = NVS.getString("wifi_password");
+	String ssid = NVS.getString("wifi.ssid");
+	String password = NVS.getString("wifi.password");
 
 	// TODO count failed connecting wifiFailedCount <=3
-	if (!ssid.isEmpty() && !password.isEmpty()) // && wifiFailedCount <=3
+	if (!ssid.isEmpty() && !password.isEmpty() && wifiFailedCount <=3) // && wifiFailedCount <=3
 	{
 		// client mode
 		initClientMode(ssid.c_str(), password.c_str());
@@ -28,34 +27,14 @@ void setupWlan()
 		initAPMode();
 	}
 
-	Serial.println("setup Wlan - done");
-}
+	WiFi.setHostname(deviceName);
 
-void ___connectToNetwork()
-{
-	uint8_t veces = 10;
-	WiFi.begin("ssid", "password");
-	Serial.println("Establishing connection to WiFi..");
-	while (WiFi.status() != WL_CONNECTED)
-	{
-		delay(1000);
-		Serial.println(veces);
-		if (!veces--)
-		{
-			veces = 10;
-			WiFi.disconnect();
-			Serial.println("Wifi reset...");
-			delay(1000);
-			WiFi.begin("ssid", "password");
-			Serial.println("Establishing connection to WiFi..");
-		}
-	}
-	Serial.println("Connected to network");
+	Serial.println("setup Wlan - done");
 }
 
 void initClientMode(const char *ssid, const char *password)
 {
-	uint8_t veces = 5;
+	uint8_t tryCount = 5;
 	long startMills = millis();
 
 	Serial.print("  Connecting to: ");
@@ -71,19 +50,31 @@ void initClientMode(const char *ssid, const char *password)
 	{
 		delay(500);
 		Serial.print(".");
-		if (!veces--)
+		if (!tryCount--)
 		{
-			veces = 5;
-			WiFi.disconnect();
-			Serial.println("  wifi reset...");
-			delay(500);
-			WiFi.begin(ssid, password);
+			// todo, hier passt was nicht
+			wifiFailedCount++;
+			if (wifiFailedCount > 3) {
+				Serial.println("  wifi is not reachable...");
+				initAPMode();
+				return;
+			} else {
+				tryCount = 5;
+				WiFi.disconnect();
+				Serial.println("  wifi reset...");
+				delay(500);
+				WiFi.begin(ssid, password);
+			}
 		}
 	}
 
 	Serial.println(" ...connected");
 	Serial.print("  IP address: ");
 	Serial.println(WiFi.localIP());
+
+    if (!MDNS.begin(deviceName)) {
+        Serial.println("Error setting up MDNS responder!");
+    }
 
 	Serial.print("  connected in: ");
 	Serial.println(millis() - startMills);
@@ -98,9 +89,4 @@ void initAPMode()
 	IPAddress IP = WiFi.softAPIP();
 	Serial.print("  AP IP address: ");
 	Serial.println(IP);
-}
-
-bool wlan_isConnected()
-{
-	return WiFi.isConnected();
 }
