@@ -22,7 +22,7 @@ void display_time();
 
 const char faceCalendarPicutreJson[] = "/calendarPhoto.json";
 const char faceCalendarPicture[] = "/calendarPhoto.jpg";
-const char faceCalendarPictureUrl[] = "http://sonic/paperdash/unsplash.php?&w=390&h=384&fm=jpg"; // TODO load from settings
+const char faceCalendarPictureUrl[] = "http://us-central1-paperdash-io.cloudfunctions.net/app/image/390x384.jpg"; // TODO load from settings
 
 unsigned long lastCalendarDataUpdate = 0;
 
