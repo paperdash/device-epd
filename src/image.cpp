@@ -5,9 +5,12 @@
 
 structImageProcess ImageProcess;
 // TODO use dynamic display width
-static constexpr int MAX_WIDTH = 640;
-static int16_t curRowDelta[MAX_WIDTH + 1];
-static int16_t nextRowDelta[MAX_WIDTH + 1];
+constexpr uint16_t MAX_WIDTH = 640;
+int16_t curRowDelta[MAX_WIDTH + 1];
+int16_t nextRowDelta[MAX_WIDTH + 1];
+
+// TODO auf das umbauen
+//uint8_t curRowDelta[640 / 8];
 
 void setupImage()
 {
