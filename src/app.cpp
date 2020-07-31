@@ -107,7 +107,9 @@ void setupApp()
 	});
 
 	// CORS
-	//DefaultHeaders::Instance().addHeader("Access-Control-Allow-Origin", "*");
+	DefaultHeaders::Instance().addHeader("Access-Control-Allow-Origin", "*");
+    //DefaultHeaders::Instance().addHeader("Access-Control-Allow-Headers", "content-type"));
+
 	server.begin();
 
 	Serial.println("setup configure - done");

@@ -36,7 +36,7 @@ bool downloadFile(String url, const char *path)
 	int httpCode = http.GET();
 	if (httpCode != HTTP_CODE_OK)
 	{
-		Serial.printf("[HTTP] GET... failed, error: %s\n", http.errorToString(httpCode != HTTP_CODE_OK && httpCode).c_str());
+		Serial.printf("[HTTP] GET... failed, error: %s\n", http.errorToString(httpCode).c_str());
 		hasError = true;
 	}
 	else
