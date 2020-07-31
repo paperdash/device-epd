@@ -79,7 +79,7 @@ void setupApp()
 		doc["wifi"]["gateway"] = WiFi.gatewayIP().toString();
 
 		doc["device"]["id"] = DeviceId;
-		doc["device"]["heap"] = ESP.getFreeHeap();
+		doc["device"]["time"] = time(NULL);
 		doc["device"]["bootCycle"] = deviceGetBootCount();
 		doc["device"]["screen"]["width"] = 640;
 		doc["device"]["screen"]["height"] = 384;
@@ -87,7 +87,11 @@ void setupApp()
 		doc["device"]["fs"]["total"] = SPIFFS.totalBytes();
 		doc["device"]["fs"]["used"] = SPIFFS.usedBytes();
 		doc["device"]["fs"]["free"] = SPIFFS.totalBytes() - SPIFFS.usedBytes();
-		doc["device"]["time"] = time(NULL);
+
+		doc["device"]["heap"]["total"] = ESP.getHeapSize();
+		doc["device"]["heap"]["free"] = ESP.getFreeHeap();
+		doc["device"]["psram"]["total"] = ESP.getPsramSize();
+		doc["device"]["psram"]["free"] = ESP.getFreePsram();
 
 		doc["playlist"]["current"] = PlaylistGetCurrentFace();
 		doc["playlist"]["remaining"] = PlaylistGetRemainingTimeMs() / 1000;
