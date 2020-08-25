@@ -76,6 +76,10 @@ void initClientMode(const char *ssid, const char *password)
         Serial.println("Error setting up MDNS responder!");
     }
 
+	// Add service to MDNS-SD
+	MDNS.addService("http", "tcp", 80);
+	MDNS.addServiceTxt("http", "tcp", "epd", "yes");
+
 	Serial.print("  connected in: ");
 	Serial.println(millis() - startMills);
 }
