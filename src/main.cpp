@@ -4,14 +4,10 @@
 #include "wlan.h"
 #include "display.h"
 #include "settings.h"
-//#include "cloud.h"
 #include "datetime.h"
 #include "playlist.h"
 #include "app.h"
 #include "image.h"
-
-void gotoDeepSleep();
-String getWakeupReason();
 
 void setup()
 {
@@ -31,8 +27,6 @@ void setup()
 
 	setupDisplay();
 	setupSettings();
-	setupDevice();
-
 	setupImage();
 
 	setupWlan();
@@ -40,8 +34,6 @@ void setup()
 	{
 		setupDateTime();
 		setupPlaylist();
-
-		//setupCloud();
 	}
 
 	setupApp();
@@ -52,17 +44,12 @@ void setup()
 
 void loop()
 {
-	// put your main code here, to run repeatedly:
-
 	if (WiFi.isConnected())
 	{
 		loopDateTime();
 
 		loopPlaylist();
-		//loopCloud();
 	}
 
 	loopApp();
-
-	//loopDevice();
 }

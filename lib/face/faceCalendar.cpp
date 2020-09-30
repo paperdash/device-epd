@@ -1,11 +1,9 @@
 #include <HTTPClient.h>
 #include <SPIFFS.h>
 #include <ArduinoJson.h>
-#include <pngle.h>
 #include "faceCalendar.h"
 #include "display.h"
 #include "datetime.h"
-#include "tools.h"
 #include "image.h"
 #include "download.h"
 #include "faceWeather.h"
