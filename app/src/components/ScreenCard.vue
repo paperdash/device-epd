@@ -28,7 +28,7 @@ export default {
   }),
   created() {
     this.playlistRemainingCountdown = this.playlistRemaining;
-    this.device_screen_src = "/current-image?" + Date.now();
+    this.device_screen_src = "/current-image2?q=10&" + Date.now();
 
     setInterval(() => {
       if (this.playlistRemainingCountdown > 0) {
@@ -51,7 +51,7 @@ export default {
     playlistRemaining(val) {
       if (val > 0) {
         this.playlistRemainingCountdown = val;
-        this.device_screen_src = "/current-image?" + Date.now();
+        this.device_screen_src = "/current-image2?q=10&" + Date.now();
       }
     }
   }
