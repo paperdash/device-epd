@@ -30,12 +30,6 @@ bool updateDisplayRequired = false;
 //flag to use from web update to reboot the ESP
 bool shouldReboot = false;
 
-// bmp
-void write16(AsyncResponseStream &f, uint16_t v);
-void write32(AsyncResponseStream &f, uint32_t v);
-uint8_t filldata2[] = {0x0, 0x23, 0x0, 0x0, 0x0, 0x0, 0x0, 0x0, 0x0, 0x0, 0x0, 0x0, 0x0, 0x0, 0x0, 0x0, 0x0, 0x0, 0x0, 0x0, 0x0, 0x0, 0x0, 0x0, 0xFF, 0xFF, 0xFF, 0x0};
-// bmp
-
 void setupApp()
 {
 	Serial.println("setup configure");
@@ -108,7 +102,7 @@ void setupApp()
 
 	// CORS
 	DefaultHeaders::Instance().addHeader("Access-Control-Allow-Origin", "*");
-    //DefaultHeaders::Instance().addHeader("Access-Control-Allow-Headers", "content-type"));
+	//DefaultHeaders::Instance().addHeader("Access-Control-Allow-Headers", "content-type"));
 
 	server.begin();
 
@@ -132,7 +126,7 @@ void loopApp()
 		PlaylistResetTimer();
 
 		updateDisplayRequired = false;
-		display.nextPage();
+		displayFlush();
 	}
 }
 
@@ -232,6 +226,7 @@ void setupSettingsPost()
  */
 void setupCurrentImage()
 {
+	/*
 	server.on("/current-image", HTTP_GET, [](AsyncWebServerRequest *request) {
 		uint8_t *bitmap = display.getBuffer();
 		int16_t w = display.width();
@@ -284,6 +279,32 @@ void setupCurrentImage()
 		}
 
 		request->send(response);
+	});
+	*/
+
+	server.on("/current-image2", HTTP_GET, [](AsyncWebServerRequest *request) {
+		uint8_t q = 10;
+		if (request->hasParam("q"))
+		{
+			q = request->getParam("q")->value().toInt();
+		}
+
+		displayPrintScreenJPG("/tmp2.jpeg", q);
+		AsyncWebServerResponse *response = request->beginResponse(SPIFFS, "/tmp2.jpeg", "image/jpeg");
+
+		request->send(response);
+	});
+
+	server.on("/current-image3", HTTP_GET, [](AsyncWebServerRequest *request) {
+		displayPrintScreenBMP("/tmp2.bmp");
+		AsyncWebServerResponse *response = request->beginResponse(SPIFFS, "/tmp2.bmp", "image/bmp");
+
+		request->send(response);
+	});
+
+	server.on("/current-image4", HTTP_GET, [](AsyncWebServerRequest *request) {
+		uint8_t ratio = displayPixelBWRatio();
+		request->send(200, "text/plain", "{}");
 	});
 }
 
@@ -514,18 +535,4 @@ void setupOTA()
 				}
 			}
 		});
-}
-
-void write16(AsyncResponseStream &f, uint16_t v)
-{
-	f.write(uint8_t(v));
-	f.write(uint8_t(v >> 8));
-}
-
-void write32(AsyncResponseStream &f, uint32_t v)
-{
-	f.write(uint8_t(v));
-	f.write(uint8_t(v >> 8));
-	f.write(uint8_t(v >> 16));
-	f.write(uint8_t(v >> 24));
 }

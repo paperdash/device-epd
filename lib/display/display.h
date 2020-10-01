@@ -1,24 +1,23 @@
 #ifndef DISPLAY_H
 #define DISPLAY_H
 
-//#include "EPD2_BW.h"
+#define ENABLE_GxEPD2_GFX 0
 #include <GxEPD2_BW.h>
-#include <Fonts/FreeMonoBold9pt7b.h>
-
-//#define ENABLE_GxEPD2_GFX 0
-
-extern GxEPD2_BW<GxEPD2_750, GxEPD2_750::HEIGHT> display;
-//extern GxEPD2_BW<GxEPD2_750, GxEPD2_750::HEIGHT> display(GxEPD2_750(/*CS=*/5, /*DC=*/17, /*RST=*/16, /*BUSY=*/4));
-//GxEPD2_BW<GxEPD2_750, GxEPD2_750::HEIGHT> displayGet();
+#include <Adafruit_GFX.h>
 
 
 void setupDisplay();
+GFXcanvas1 *displayGetCanvas();
 
 void displayOpen();
-
 void displayWritePixel(int16_t x, int16_t y, uint16_t color);
-void displayWriteFramebuffer(uint8_t bitmap[]);
-
 void displayFlush();
+
+void exportJPG(GFXcanvas1 *_canvas, const char *fileName, uint8_t q);
+void exportBMP(GFXcanvas1 *_canvas, const char *fileName);
+
+uint8_t displayPixelBWRatio();
+void displayPrintScreenJPG(const char *fileName, uint8_t q);
+void displayPrintScreenBMP(const char *fileName);
 
 #endif

@@ -68,6 +68,8 @@ void jpegInfo()
 
 void renderJPEG(int xpos, int ypos)
 {
+	GFXcanvas1 *canvas = displayGetCanvas();
+
 	// retrieve infomration about the image
 	uint16_t *pImg;
 	uint16_t mcu_w = JpegDec.MCUWidth;
@@ -115,14 +117,14 @@ void renderJPEG(int xpos, int ypos)
 			win_h = min_h;
 
 		// draw image block if it will fit on the screen
-		if ((mcu_x + win_w) <= display.width() && (mcu_y + win_h) <= display.height())
+		if ((mcu_x + win_w) <= canvas->width() && (mcu_y + win_h) <= canvas->height())
 		{
 			renderMcuBlock(mcu_x, mcu_y, win_w, win_h, pImg);
 		}
 
 		// stop drawing blocks if the bottom of the screen has been reached
 		// the abort function will close the file
-		else if ((mcu_y + win_h) >= display.height())
+		else if ((mcu_y + win_h) >= canvas->height())
 		{
 			JpegDec.abort();
 		}
@@ -206,8 +208,10 @@ void renderMcuBlockPixel(uint32_t x, uint32_t y, uint32_t color)
 
 void renderMcuBlock(int16_t x, int16_t y, uint16_t w, uint16_t h, uint16_t *bitmap)
 {
+	GFXcanvas1 *canvas = displayGetCanvas();
+
 	// Stop further decoding as image is running off bottom of screen
-	if (y >= display.height())
+	if (y >= canvas->height())
 	{
 		Serial.println("y is out of display range!");
 		return;

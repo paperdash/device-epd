@@ -39,12 +39,12 @@ void loopFaceWeather()
 
 void playlistFaceWeather()
 {
-	display.setRotation(0);
-	display.setFullWindow();
-	display.firstPage();
-	display.fillScreen(GxEPD_BLACK);
-	display.setTextColor(GxEPD_WHITE);
-	display.setTextSize(1);
+	GFXcanvas1 *canvas = displayGetCanvas();
+
+	canvas->setRotation(0);
+	canvas->fillScreen(GxEPD_BLACK);
+	canvas->setTextColor(GxEPD_WHITE);
+	canvas->setTextSize(1);
 
 	render_current();
 	render_forecast();
@@ -54,50 +54,53 @@ void playlistFaceWeather()
 
 void render_current()
 {
+	GFXcanvas1 *canvas = displayGetCanvas();
+
 	// name
-	display.setFont(&FreeSansBold18pt7b);
-	display.setTextSize(1);
-	display.setCursor(20, 220);
-	display.println(weatherData.location);
+	canvas->setFont(&FreeSansBold18pt7b);
+	canvas->setTextSize(1);
+	canvas->setCursor(20, 220);
+	canvas->println(weatherData.location);
 
 	// temperature
-	display.setFont(&FreeSansBold24pt7b);
-	display.setTextSize(2);
-	display.setCursor(50, 120);
-	display.println(weatherData.current_temp);
+	canvas->setFont(&FreeSansBold24pt7b);
+	canvas->setTextSize(2);
+	canvas->setCursor(50, 120);
+	canvas->println(weatherData.current_temp);
 
 	// icon
 	const unsigned char *icon = getIconById(weatherData.current_icon, 256);
 	if (icon)
 	{
-		display.drawInvertedBitmap(192, 0, icon, 256, 256, GxEPD_WHITE);
+		canvas->drawBitmap(192, 0, icon, 256, 256, GxEPD_WHITE);
 	}
 
 	// 250 height
 	// high
-	display.setTextSize(1);
-	display.setCursor(500, 100);
-	display.println(weatherData.current_max);
+	canvas->setTextSize(1);
+	canvas->setCursor(500, 100);
+	canvas->println(weatherData.current_max);
 
 	// low
-	display.setCursor(500, 180);
-	display.println(weatherData.current_min);
+	canvas->setCursor(500, 180);
+	canvas->println(weatherData.current_min);
 }
 
 void render_forecast()
 {
+	GFXcanvas1 *canvas = displayGetCanvas();
 	const unsigned char *icon;
 
 	// line forecast
-	display.drawRect(0, 250, 640, 2, GxEPD_WHITE);
+	canvas->drawRect(0, 250, 640, 2, GxEPD_WHITE);
 
-	display.drawLine(160, 250, 160, 384, GxEPD_WHITE);
-	display.drawLine(320, 250, 320, 384, GxEPD_WHITE);
-	display.drawLine(480, 250, 480, 384, GxEPD_WHITE);
+	canvas->drawLine(160, 250, 160, 384, GxEPD_WHITE);
+	canvas->drawLine(320, 250, 320, 384, GxEPD_WHITE);
+	canvas->drawLine(480, 250, 480, 384, GxEPD_WHITE);
 	// 160 per block
 
-	display.setTextSize(1);
-	display.setFont(&FreeSansBold18pt7b);
+	canvas->setTextSize(1);
+	canvas->setFont(&FreeSansBold18pt7b);
 
 	char label[20];
 	int16_t tbx, tby;
@@ -108,52 +111,52 @@ void render_forecast()
 	icon = getIconById(weatherData.forecast_1_icon, 64);
 	if (icon)
 	{
-		display.drawInvertedBitmap(0 + 48, 260, icon, 64, 64, GxEPD_WHITE);
+		canvas->drawBitmap(0 + 48, 260, icon, 64, 64, GxEPD_WHITE);
 
 		sprintf(label, "%2d ... %2d", weatherData.forecast_1_min, weatherData.forecast_1_max);
-		display.getTextBounds(label, 0, 0, &tbx, &tby, &tbw, &tbh);
+		canvas->getTextBounds(label, 0, 0, &tbx, &tby, &tbw, &tbh);
 		x = ((160 - tbw) / 2) - tbx;
-		display.setCursor(x, tempRangeY);
-		display.print(label);
+		canvas->setCursor(x, tempRangeY);
+		canvas->print(label);
 	}
 
 	// day +2
 	icon = getIconById(weatherData.forecast_2_icon, 64);
 	if (icon)
 	{
-		display.drawInvertedBitmap(160 + 48, 260, icon, 64, 64, GxEPD_WHITE);
+		canvas->drawBitmap(160 + 48, 260, icon, 64, 64, GxEPD_WHITE);
 
 		sprintf(label, "%2d ... %2d", weatherData.forecast_2_min, weatherData.forecast_2_max);
-		display.getTextBounds(label, 0, 0, &tbx, &tby, &tbw, &tbh);
+		canvas->getTextBounds(label, 0, 0, &tbx, &tby, &tbw, &tbh);
 		x = ((160 - tbw) / 2) - tbx;
-		display.setCursor(160 + x, tempRangeY);
-		display.print(label);
+		canvas->setCursor(160 + x, tempRangeY);
+		canvas->print(label);
 	}
 
 	// day +3
 	icon = getIconById(weatherData.forecast_3_icon, 64);
 	if (icon)
 	{
-		display.drawInvertedBitmap(320 + 48, 260, icon, 64, 64, GxEPD_WHITE);
+		canvas->drawBitmap(320 + 48, 260, icon, 64, 64, GxEPD_WHITE);
 
 		sprintf(label, "%2d ... %2d", weatherData.forecast_3_min, weatherData.forecast_3_max);
-		display.getTextBounds(label, 0, 0, &tbx, &tby, &tbw, &tbh);
+		canvas->getTextBounds(label, 0, 0, &tbx, &tby, &tbw, &tbh);
 		x = ((160 - tbw) / 2) - tbx;
-		display.setCursor(320 + x, tempRangeY);
-		display.print(label);
+		canvas->setCursor(320 + x, tempRangeY);
+		canvas->print(label);
 	}
 
 	// day +4
 	icon = getIconById(weatherData.forecast_4_icon, 64);
 	if (icon)
 	{
-		display.drawInvertedBitmap(480 + 48, 260, icon, 64, 64, GxEPD_WHITE);
+		canvas->drawBitmap(480 + 48, 260, icon, 64, 64, GxEPD_WHITE);
 
 		sprintf(label, "%2d ... %2d", weatherData.forecast_4_min, weatherData.forecast_4_max);
-		display.getTextBounds(label, 0, 0, &tbx, &tby, &tbw, &tbh);
+		canvas->getTextBounds(label, 0, 0, &tbx, &tby, &tbw, &tbh);
 		x = ((160 - tbw) / 2) - tbx;
-		display.setCursor(480 + x, tempRangeY);
-		display.print(label);
+		canvas->setCursor(480 + x, tempRangeY);
+		canvas->print(label);
 	}
 }
 
