@@ -5,14 +5,7 @@
 #include "esp_task_wdt.h"
 
 // mapping suggestion for ESP32, e.g. LOLIN32, see .../variants/.../pins_arduino.h for your board
-// NOTE: there are variants with different pins for SPI ! CHECK SPI PINS OF YOUR BOARD
 // BUSY -> 4, RST -> 16, DC -> 17, CS -> SS(5), CLK ->   (18), DIN -> MOSI(23), GND -> GND, 3.3V -> 3.3V
-
-// mapping of Waveshare Universal e-Paper Raw Panel Driver Shield for Arduino / NUCLEO
-// BUSY -> 7, RST -> 8, DC -> 9, CS-> 10, CLK -> 13, DIN -> 11
-
-// base class GxEPD2_GFX can be used to pass references or pointers to the display instance as parameter, uses ~1.2k more code
-// enable or disable GxEPD2_GFX base class
 
 GxEPD2_BW<GxEPD2_750, GxEPD2_750::HEIGHT> display(GxEPD2_750(/*CS=*/5, /*DC=*/17, /*RST=*/16, /*BUSY=*/4));
 
@@ -30,7 +23,10 @@ void setupDisplay()
 {
 	Serial.println("setupDisplay");
 	delay(100);
-	//display.init(115200); TODO
+	display.init(115200); // TODO
+	display.setRotation(0);
+	display.setFullWindow();
+	display.firstPage();
 
 	displayCanvas = new GFXcanvas1(display.width(), display.height());
 
@@ -55,12 +51,9 @@ void displayWritePixel(int16_t x, int16_t y, uint16_t color)
 
 void displayFlush()
 {
-	display.setRotation(0);
-	display.setFullWindow();
-	display.firstPage();
 	display.fillScreen(GxEPD_WHITE);
-
-	display.drawBitmap(0, 0, displayCanvas->getBuffer(), displayCanvas->width(), displayCanvas->height(), GxEPD_BLACK);
+	display.drawBitmap(0, 0, displayCanvas->getBuffer(), displayCanvas->width(), displayCanvas->height(), GxEPD_WHITE, GxEPD_BLACK);
+	display.display();
 }
 
 /*

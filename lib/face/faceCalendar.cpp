@@ -141,7 +141,7 @@ void display_calender()
 	const unsigned char *icon = getIconById(weatherData.current_icon, 64);
 	if (icon)
 	{
-		canvas->drawBitmap(72, 325, icon, 64, 64, GxEPD_WHITE);
+		canvas->drawBitmap(72, 325, icon, 64, 64, GxEPD_BLACK, GxEPD_WHITE);
 	}
 
 	// temperature
