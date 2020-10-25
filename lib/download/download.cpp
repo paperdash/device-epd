@@ -3,9 +3,7 @@
 #include "download.h"
 #include "device.h"
 
-HTTPClient http;
-
-bool downloadFile(String url, const char *path)
+bool downloadFile(String url, const char *path, const char* CAcert)
 {
 	// @note duration time: 200kb = 35sec write to flash
 	Serial.println("Download file: " + url);
@@ -25,14 +23,20 @@ bool downloadFile(String url, const char *path)
 		return false;
 	}
 
+	HTTPClient http;
 	http.useHTTP10(true); // http1.1 chunked is not working correctly
 	http.setTimeout(7000);
-	http.setUserAgent("paperdash esp");
+	http.setUserAgent("paperdash-epd");
 
 	// use the last 8 bytes of the unique serial id
 	http.addHeader("X-PaperDash-Id", DeviceId);
 
-	http.begin(url);
+	if (CAcert) {
+		http.begin(url, CAcert);
+	} else {
+		http.begin(url);
+	}
+
 	int httpCode = http.GET();
 	if (httpCode != HTTP_CODE_OK)
 	{
@@ -58,4 +62,10 @@ bool downloadFile(String url, const char *path)
 	http.end();
 
 	return !hasError;
+}
+
+
+bool downloadFile(String url, const char *path)
+{
+	return downloadFile(url, path, NULL);
 }
