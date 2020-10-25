@@ -74,6 +74,7 @@ void setupApp()
 
 		doc["device"]["id"] = DeviceId;
 		doc["device"]["time"] = time(NULL);
+		doc["device"]["hostname"] = WiFi.getHostname();
 		doc["device"]["bootCycle"] = deviceGetBootCount();
 		doc["device"]["screen"]["width"] = 640;
 		doc["device"]["screen"]["height"] = 384;
@@ -91,8 +92,8 @@ void setupApp()
 		doc["playlist"]["remaining"] = PlaylistGetRemainingTimeMs() / 1000;
 
 		JsonArray capability = doc.createNestedArray("capability");
-		capability.add("png");
-		capability.add("wbmp");
+		capability.add("jpg");
+		//capability.add("wbmp");
 
 		doc["cloud"]["sleep"] = deviceGetSleepInterval();
 
