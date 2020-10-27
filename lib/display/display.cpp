@@ -231,3 +231,125 @@ void displayPrintScreenBMP(const char *fileName)
 {
 	exportBMP(displayCanvas, fileName);
 }
+
+size_t write8(uint8_t *buffer, uint8_t v)
+{
+	memset(buffer, uint8_t(v), sizeof(uint8_t));
+
+	return sizeof(uint8_t);
+}
+
+size_t write16(uint8_t *buffer, uint16_t v)
+{
+	memset(buffer, uint8_t(v), sizeof(uint8_t));
+	memset(buffer + sizeof(uint8_t), uint8_t(v >> 8), sizeof(uint8_t));
+
+	return sizeof(uint16_t);
+}
+
+size_t write32(uint8_t *buffer, uint32_t v)
+{
+	memset(buffer, uint8_t(v), sizeof(uint8_t));
+	memset(buffer + sizeof(uint8_t), uint8_t(v >> 8), sizeof(uint8_t));
+	memset(buffer + sizeof(uint8_t) * 2, uint8_t(v >> 16), sizeof(uint8_t));
+	memset(buffer + sizeof(uint8_t) * 3, uint8_t(v >> 24), sizeof(uint8_t));
+
+	return sizeof(uint32_t);
+}
+
+int displayStreamPrintScreenBMP(uint8_t *buffer, size_t maxLen, size_t index)
+{
+	Serial.println(F("exportBMP"));
+	Serial.printf("maxLen: %d, index: %d\n", maxLen, index);
+
+	startMills = millis();
+	GFXcanvas1 *_canvas = displayCanvas;
+
+	uint8_t *bitmap = _canvas->getBuffer();
+	int16_t w = _canvas->width();
+	int16_t h = _canvas->height();
+
+	uint16_t depth = 1;
+	uint32_t rowSizeCode = (w + 8 - depth) * depth / 8;
+
+	// BMP rows are padded (if needed) to 4-byte boundary
+	uint32_t rowSizeBMP = (w * depth / 8 + 3) & ~3;
+	uint32_t headerSize = 40;
+	uint32_t imageOffset = 62;
+	uint32_t fileSize = imageOffset + h * rowSizeBMP;
+
+	uint32_t pointer = 0;
+	if (index == 0)
+	{
+		Serial.println("...header");
+		pointer += write16(buffer + pointer, 0x4D42);	   // BMP signature
+		pointer += write32(buffer + pointer, fileSize);	   // fileSize
+		pointer += write32(buffer + pointer, 0);		   // creator bytes
+		pointer += write32(buffer + pointer, imageOffset); // image offset
+		pointer += write32(buffer + pointer, headerSize);  // Header size
+		pointer += write32(buffer + pointer, w);		   // image width
+		pointer += write32(buffer + pointer, h);		   // image height
+		pointer += write16(buffer + pointer, 1);		   // # planes
+		pointer += write16(buffer + pointer, depth);	   // bits per pixel
+		pointer += write32(buffer + pointer, 0);		   // format uncompressed
+
+		uint32_t j = 0;
+		for (uint32_t i = 34; i < imageOffset; i++)
+		{
+			pointer += write8(buffer + pointer, filldata3[j++]);
+		}
+
+		// Serial.println(pointer);
+		return pointer;
+	}
+	else
+	{
+		Serial.println("...image");
+		// pointer = imageOffset;
+		// 1 row = 80byte
+		// 60 rows ?
+
+		size_t maxRows = maxLen / 80;
+		Serial.printf("maxRows: %d\n", maxRows);
+
+		size_t row_from = (index - imageOffset) / 80;
+		Serial.printf("row_from: %d\n", row_from);
+
+		uint16_t row_till = row_from + maxRows > h ? h : row_from + maxRows;
+		Serial.printf("row_till: %d\n", row_till);
+
+		uint32_t rowidx = w * h / 8;
+
+		// set offset
+		rowidx -= rowSizeCode * row_from;
+		for (uint16_t row = row_from; row < row_till; row++) // for each line
+		//for (uint16_t row = 0; row < h; row++) // for each line | 384
+		{
+			rowidx -= rowSizeCode;
+
+			uint32_t colidx;
+			for (colidx = 0; colidx < rowSizeCode; colidx++)
+			{
+				uint8_t data = pgm_read_byte(&bitmap[rowidx + colidx]);
+				pointer += write8(buffer + pointer, data);
+			}
+
+			/*
+			while (colidx++ < rowSizeBMP)
+			{
+				Serial.println(".");
+				pointer += write8(buffer + pointer, uint8_t(0));
+			}
+			*/
+
+			esp_task_wdt_reset();
+		}
+
+		return pointer;
+	}
+
+	Serial.print(millis() - startMills);
+	Serial.println("ms");
+
+	return 0;
+}

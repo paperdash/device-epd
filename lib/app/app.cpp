@@ -307,6 +307,21 @@ void setupCurrentImage()
 		uint8_t ratio = displayPixelBWRatio();
 		request->send(200, "text/plain", "{}");
 	});
+
+	server.on("/current-image5", HTTP_GET, [](AsyncWebServerRequest *request) {
+		Serial.printf(PSTR("[MAIN] Free heap: %d bytes\n"), ESP.getFreeHeap());
+
+		AsyncWebServerResponse *response = request->beginChunkedResponse("image/bmp", [](uint8_t *buffer, size_t maxLen, size_t index) -> size_t {
+			//Write up to "maxLen" bytes into "buffer" and return the amount written.
+			//index equals the amount of bytes that have been already sent
+			//You will be asked for more data until 0 is returned
+			//Keep in mind that you can not delay or yield waiting for more data!
+			return displayStreamPrintScreenBMP(buffer, maxLen, index);
+		});
+
+		// response->addHeader("Server", "ESP Async Web Server");
+		request->send(response);
+	});
 }
 
 /**
