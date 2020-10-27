@@ -7,9 +7,14 @@
 File tmpFileBuffer;
 void renderMcuBlock(int16_t x, int16_t y, uint16_t w, uint16_t h, uint16_t *bitmap);
 
-static constexpr int MAX_WIDTH = 640;	  // TODO get info from display
+static constexpr uint16_t MAX_WIDTH = 640;	  // TODO get info from display 800 works :D
 static constexpr uint8_t BLOCK_SIZE = 16; // max MCU block size
-static uint32_t blockDelta[BLOCK_SIZE * MAX_WIDTH + 1];
+static uint16_t blockDelta[BLOCK_SIZE * MAX_WIDTH + 1];
+
+// TODO uint32_t auf uint16_t ändern um speicher zu sparen
+// https://os.mbed.com/handbook/C-Data-Types#integer-data-types
+// image size limit prüfen damit alles in ein int16_t passt !
+// dann ist genug speicher da :D
 
 #define minimum(a, b) (((a) < (b)) ? (a) : (b))
 
@@ -158,8 +163,17 @@ void jpegFlushFramebuffer()
 			// print information about the image to the serial port
 			//jpegInfo();
 
-			// render the image onto the screen at coordinate 0,0
-			renderJPEG(0, 0);
+			// TODO use display size
+			if (JpegDec.width > 800 || JpegDec.height > 480)
+			{
+				Serial.println("image to big! skip rendering");
+			}
+			else
+			{
+				// render the image onto the screen at coordinate 0,0
+				renderJPEG(0, 0);
+			}
+
 		}
 		else
 		{
@@ -171,10 +185,10 @@ void jpegFlushFramebuffer()
 	}
 }
 
-void renderMcuBlockPixel(uint32_t x, uint32_t y, uint32_t color)
+void renderMcuBlockPixel(uint16_t x, uint16_t y, uint16_t color)
 {
 	// collect all mcu blocks for current row
-	uint32_t blockPageY = y - ((y / JpegDec.MCUHeight) * JpegDec.MCUHeight);
+	uint16_t blockPageY = y - ((y / JpegDec.MCUHeight) * JpegDec.MCUHeight);
 	blockDelta[(blockPageY * MAX_WIDTH) + x] = color;
 
 	// full mcu row is complete now
@@ -182,15 +196,15 @@ void renderMcuBlockPixel(uint32_t x, uint32_t y, uint32_t color)
 	{
 		// MCU block sizes: 8x8, 16x8 or 16x16
 
-		uint32_t originOffsetY = ((y / JpegDec.MCUHeight) * JpegDec.MCUHeight);
+		uint16_t originOffsetY = ((y / JpegDec.MCUHeight) * JpegDec.MCUHeight);
 
 		for (uint16_t _y = 0; _y < JpegDec.MCUHeight; _y++)
 		{
 			for (uint16_t _x = 0; _x < JpegDec.width; _x++)
 			{
-				uint32_t originX = _x;
-				uint32_t originY = originOffsetY + _y;
-				uint32_t originColor = blockDelta[(_y * MAX_WIDTH) + _x];
+				uint16_t originX = _x;
+				uint16_t originY = originOffsetY + _y;
+				uint16_t originColor = blockDelta[(_y * MAX_WIDTH) + _x];
 
 				uint8_t r = ((((originColor >> 11) & 0x1F) * 527) + 23) >> 6;
 				uint8_t g = ((((originColor >> 5) & 0x3F) * 259) + 33) >> 6;

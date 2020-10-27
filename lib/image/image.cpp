@@ -102,7 +102,7 @@ void ImageFlushBuffer()
 	ImageProcess.dithering = false;
 }
 
-void ImageProcessPixel(uint32_t x, uint32_t y, uint8_t rgba[4])
+void ImageProcessPixel(uint16_t x, uint16_t y, uint8_t rgba[4])
 {
 	uint8_t r = rgba[0]; // 0 - 255
 	uint8_t g = rgba[1]; // 0 - 255
