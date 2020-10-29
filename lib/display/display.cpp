@@ -259,10 +259,6 @@ size_t write32(uint8_t *buffer, uint32_t v)
 
 int displayStreamPrintScreenBMP(uint8_t *buffer, size_t maxLen, size_t index)
 {
-	Serial.println(F("exportBMP"));
-	Serial.printf("maxLen: %d, index: %d\n", maxLen, index);
-
-	startMills = millis();
 	GFXcanvas1 *_canvas = displayCanvas;
 
 	uint8_t *bitmap = _canvas->getBuffer();
@@ -281,7 +277,6 @@ int displayStreamPrintScreenBMP(uint8_t *buffer, size_t maxLen, size_t index)
 	uint32_t pointer = 0;
 	if (index == 0)
 	{
-		Serial.println("...header");
 		pointer += write16(buffer + pointer, 0x4D42);	   // BMP signature
 		pointer += write32(buffer + pointer, fileSize);	   // fileSize
 		pointer += write32(buffer + pointer, 0);		   // creator bytes
@@ -299,57 +294,39 @@ int displayStreamPrintScreenBMP(uint8_t *buffer, size_t maxLen, size_t index)
 			pointer += write8(buffer + pointer, filldata3[j++]);
 		}
 
-		// Serial.println(pointer);
 		return pointer;
 	}
 	else
 	{
-		Serial.println("...image");
-		// pointer = imageOffset;
-		// 1 row = 80byte
-		// 60 rows ?
-
-		size_t maxRows = maxLen / 80;
-		Serial.printf("maxRows: %d\n", maxRows);
-
-		size_t row_from = (index - imageOffset) / 80;
-		Serial.printf("row_from: %d\n", row_from);
-
-		uint16_t row_till = row_from + maxRows > h ? h : row_from + maxRows;
-		Serial.printf("row_till: %d\n", row_till);
-
+		// calculate resume point
+		size_t row_from = (index - imageOffset) / rowSizeBMP;
 		uint32_t rowidx = w * h / 8;
-
-		// set offset
 		rowidx -= rowSizeCode * row_from;
-		for (uint16_t row = row_from; row < row_till; row++) // for each line
-		//for (uint16_t row = 0; row < h; row++) // for each line | 384
+		uint32_t colidx_from = (index - imageOffset) - (row_from * rowSizeBMP);
+
+		// export image
+		for (uint16_t row = row_from; row < h; row++) // for each line
 		{
 			rowidx -= rowSizeCode;
 
 			uint32_t colidx;
-			for (colidx = 0; colidx < rowSizeCode; colidx++)
+			for (colidx = colidx_from; colidx < rowSizeCode; colidx++)
 			{
 				uint8_t data = pgm_read_byte(&bitmap[rowidx + colidx]);
 				pointer += write8(buffer + pointer, data);
+
+				if (pointer == maxLen)
+				{
+					return pointer;
+				}
 			}
 
-			/*
-			while (colidx++ < rowSizeBMP)
-			{
-				Serial.println(".");
-				pointer += write8(buffer + pointer, uint8_t(0));
-			}
-			*/
+			// reset resume
+			colidx_from = 0;
 
-			esp_task_wdt_reset();
+			//esp_task_wdt_reset();
 		}
 
 		return pointer;
 	}
-
-	Serial.print(millis() - startMills);
-	Serial.println("ms");
-
-	return 0;
 }

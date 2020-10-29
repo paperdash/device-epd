@@ -227,62 +227,6 @@ void setupSettingsPost()
  */
 void setupCurrentImage()
 {
-	/*
-	server.on("/current-image", HTTP_GET, [](AsyncWebServerRequest *request) {
-		uint8_t *bitmap = display.getBuffer();
-		int16_t w = display.width();
-		int16_t h = display.height();
-
-		uint16_t depth = 1;
-		uint32_t rowSizeCode = (w + 8 - depth) * depth / 8;
-
-		// BMP rows are padded (if needed) to 4-byte boundary
-		uint32_t rowSizeBMP = (w * depth / 8 + 3) & ~3;
-		uint32_t headerSize = 40;
-		uint32_t imageOffset = 62;
-		uint32_t fileSize = imageOffset + h * rowSizeBMP;
-
-		AsyncResponseStream *response = request->beginResponseStream("image/bmp", w * h / 8 + imageOffset);
-
-		write16(*response, 0x4D42);		 // BMP signature
-		write32(*response, fileSize);	 // fileSize
-		write32(*response, 0);			 // creator bytes
-		write32(*response, imageOffset); // image offset
-		write32(*response, headerSize);	 // Header size
-		write32(*response, w);			 // image width
-		write32(*response, h);			 // image height
-		write16(*response, 1);			 // # planes
-		write16(*response, depth);		 // bits per pixel
-		write32(*response, 0);			 // format uncompressed
-
-		uint32_t j = 0;
-		for (uint32_t i = 34; i < imageOffset; i++)
-		{
-			response->write(filldata2[j++]); // remaining header bytes
-		}
-
-		uint32_t rowidx = w * h / 8;
-		for (uint16_t row = 0; row < h; row++) // for each line
-		{
-			rowidx -= rowSizeCode;
-
-			uint32_t colidx;
-			for (colidx = 0; colidx < rowSizeCode; colidx++)
-			{
-				uint8_t data = pgm_read_byte(&bitmap[rowidx + colidx]);
-				response->write(data);
-			}
-
-			while (colidx++ < rowSizeBMP)
-			{
-				response->write(uint8_t(0)); // padding
-			}
-		}
-
-		request->send(response);
-	});
-	*/
-
 	server.on("/current-image2", HTTP_GET, [](AsyncWebServerRequest *request) {
 		uint8_t q = 10;
 		if (request->hasParam("q"))
@@ -296,21 +240,7 @@ void setupCurrentImage()
 		request->send(response);
 	});
 
-	server.on("/current-image3", HTTP_GET, [](AsyncWebServerRequest *request) {
-		displayPrintScreenBMP("/tmp2.bmp");
-		AsyncWebServerResponse *response = request->beginResponse(SPIFFS, "/tmp2.bmp", "image/bmp");
-
-		request->send(response);
-	});
-
-	server.on("/current-image4", HTTP_GET, [](AsyncWebServerRequest *request) {
-		uint8_t ratio = displayPixelBWRatio();
-		request->send(200, "text/plain", "{}");
-	});
-
-	server.on("/current-image5", HTTP_GET, [](AsyncWebServerRequest *request) {
-		Serial.printf(PSTR("[MAIN] Free heap: %d bytes\n"), ESP.getFreeHeap());
-
+	server.on("/current-image", HTTP_GET, [](AsyncWebServerRequest *request) {
 		AsyncWebServerResponse *response = request->beginChunkedResponse("image/bmp", [](uint8_t *buffer, size_t maxLen, size_t index) -> size_t {
 			//Write up to "maxLen" bytes into "buffer" and return the amount written.
 			//index equals the amount of bytes that have been already sent
@@ -319,7 +249,7 @@ void setupCurrentImage()
 			return displayStreamPrintScreenBMP(buffer, maxLen, index);
 		});
 
-		// response->addHeader("Server", "ESP Async Web Server");
+		response->addHeader("Content-Disposition", "inline; filename=capture.bmp");
 		request->send(response);
 	});
 }
