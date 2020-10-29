@@ -89,13 +89,11 @@ void setupApp()
 		doc["device"]["psram"]["free"] = ESP.getFreePsram();
 
 		doc["playlist"]["current"] = PlaylistGetCurrentFace();
-		doc["playlist"]["remaining"] = PlaylistGetRemainingTimeMs() / 1000;
+		doc["playlist"]["remaining"] = (PlaylistGetRemainingTimeMs() / 1000) + 3; // + face rendering time 3s
 
 		JsonArray capability = doc.createNestedArray("capability");
 		capability.add("jpg");
 		//capability.add("wbmp");
-
-		doc["cloud"]["sleep"] = deviceGetSleepInterval();
 
 		serializeJson(doc, *response);
 		request->send(response);
