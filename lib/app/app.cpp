@@ -91,6 +91,9 @@ void setupApp()
 		doc["playlist"]["current"] = PlaylistGetCurrentFace();
 		doc["playlist"]["remaining"] = (PlaylistGetRemainingTimeMs() / 1000) + 3; // + face rendering time 3s
 
+		doc["firmware"]["created"] = FW_CREATED;
+		doc["firmware"]["rev"] = FW_GIT_REV;
+
 		JsonArray capability = doc.createNestedArray("capability");
 		capability.add("jpg");
 		//capability.add("wbmp");
