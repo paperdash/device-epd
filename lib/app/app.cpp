@@ -2,6 +2,7 @@
 #include <Update.h>
 #include "app.h"
 #include "ESPAsyncWebServer.h"
+#include <ESPmDNS.h>
 #include "ArduinoJson.h"
 #include "settings.h"
 #include "device.h"
@@ -15,6 +16,7 @@
 
 AsyncWebServer server(80);
 
+void setupApiDevice();
 void setupSettingsGet();
 void setupSettingsPost();
 void setupWifiScan();
@@ -45,6 +47,7 @@ void setupApp()
 		;
 	server.serveStatic("/fs/", SPIFFS, "/");
 
+	setupApiDevice();
 	setupSettingsGet();
 	setupSettingsPost();
 	setupWifiScan();
@@ -225,6 +228,7 @@ void setupSettingsPost()
 
 /**
  * get current screen
+ * @depricated
  */
 void setupCurrentImage()
 {
@@ -247,11 +251,104 @@ void setupCurrentImage()
 			//index equals the amount of bytes that have been already sent
 			//You will be asked for more data until 0 is returned
 			//Keep in mind that you can not delay or yield waiting for more data!
-			return displayStreamPrintScreenBMP(buffer, maxLen, index);
+			return displaySnapshotBMPStream(buffer, maxLen, index);
 		});
 
 		response->addHeader("Content-Disposition", "inline; filename=capture.bmp");
 		request->send(response);
+	});
+}
+
+void setupApiDevice()
+{
+	server.on("/api/device/restart", HTTP_GET, [](AsyncWebServerRequest *request) {
+		request->send(200, "application/json", "{}");
+
+		ESP.restart();
+	});
+
+	server.on("/api/device/screen", HTTP_GET, [](AsyncWebServerRequest *request) {
+		AsyncWebServerResponse *response = request->beginChunkedResponse("image/bmp", [](uint8_t *buffer, size_t maxLen, size_t index) -> size_t {
+			return displaySnapshotBMPStream(buffer, maxLen, index);
+		});
+
+		response->addHeader("Content-Disposition", "inline; filename=capture.bmp");
+		request->send(response);
+	});
+
+	server.on(
+		"/api/device/screen", HTTP_POST, [](AsyncWebServerRequest *request) {
+			AsyncResponseStream *response = request->beginResponseStream("application/json");
+			DynamicJsonDocument doc(117); // https://arduinojson.org/v6/assistant/
+
+			// todo
+			doc["status"] = true;
+			doc["image"]["format"] = "xxx";
+			doc["image"]["width"] = 0;
+			doc["image"]["height"] = 0;
+
+			serializeJson(doc, *response);
+			request->send(response); },
+		[](AsyncWebServerRequest *request, String filename, size_t index, uint8_t *data, size_t len, bool final) {
+			if (!index)
+			{
+				Serial.printf("UploadStart: %s\n", filename.c_str());
+				bool dither = strcmp(filename.c_str(), "dithering") == 0;
+
+				ImageNew(0, 0, 0, 0, dither);
+				PlaylistResetTimer();
+			}
+
+			ImageWriteBuffer(data, len);
+
+			if (final)
+			{
+				Serial.printf("UploadEnd: %s, %u B\n", filename.c_str(), index + len);
+				ImageFlushBuffer();
+
+				updateDisplayRequired = true;
+			}
+		});
+
+	server.on("/api/device/scan", HTTP_GET, [](AsyncWebServerRequest *request) {
+		String json = "[";
+		Serial.printf("Browsing for service _%s._%s.local. ... ", "http", "tcp");
+		int n = MDNS.queryService("http", "tcp");
+		if (n == 0)
+		{
+			Serial.println("no services found");
+		}
+		else
+		{
+			Serial.print(n);
+			Serial.println(" service(s) found");
+
+			size_t cnt = 0;
+			for (size_t i = 0; i < n; ++i)
+			{
+				// checking for epd
+				if (MDNS.hasTxt(i, "paperdash"))
+				{
+					if (cnt)
+					{
+						json += ",";
+					}
+					cnt++;
+
+					json += "{";
+					json += "\"host\":\"" + MDNS.hostname(i) + "\"";
+					json += ",\"ip\":\"" + MDNS.IP(i).toString() + "\"";
+					json += ",\"port\":" + String(MDNS.port(i));
+					json += ",\"type\":\"" + String(MDNS.txt(i, 0)) + "\"";
+					json += "}";
+				}
+			}
+		}
+		Serial.println();
+
+		json += "]";
+		request->send(200, "application/json", json);
+		json = String();
 	});
 }
 
@@ -335,6 +432,9 @@ void setupWifiConnect()
 		} });
 }
 
+/**
+ * @depricated
+ */
 static void handle_update_progress_cb(AsyncWebServerRequest *request, String filename, size_t index, uint8_t *data, size_t len, bool final)
 {
 	if (!index)
@@ -357,6 +457,9 @@ static void handle_update_progress_cb(AsyncWebServerRequest *request, String fil
 	}
 }
 
+/**
+ * @depricated
+ */
 void setupApiFace()
 {
 	server.on(
