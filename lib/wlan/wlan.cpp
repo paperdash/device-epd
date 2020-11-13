@@ -78,7 +78,7 @@ void initClientMode(const char *ssid, const char *password)
 
 	// Add service to MDNS-SD
 	MDNS.addService("http", "tcp", 80);
-	MDNS.addServiceTxt("http", "tcp", "epd", "yes");
+	MDNS.addServiceTxt("http", "tcp", "paperdash", "epd");
 
 	Serial.print("  connected in: ");
 	Serial.println(millis() - startMills);
