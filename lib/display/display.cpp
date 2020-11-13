@@ -13,11 +13,8 @@ GFXcanvas1 *displayCanvas;
 File tmpFileCache;
 long startMills;
 
-// bmp
-void write16(File &f, uint16_t v);
-void write32(File &f, uint32_t v);
-uint8_t filldata3[] = {0x0, 0x23, 0x0, 0x0, 0x0, 0x0, 0x0, 0x0, 0x0, 0x0, 0x0, 0x0, 0x0, 0x0, 0x0, 0x0, 0x0, 0x0, 0x0, 0x0, 0x0, 0x0, 0x0, 0x0, 0xFF, 0xFF, 0xFF, 0x0};
-// bmp
+// bmp filldata
+uint8_t bmpFilldata[] = {0x0, 0x23, 0x0, 0x0, 0x0, 0x0, 0x0, 0x0, 0x0, 0x0, 0x0, 0x0, 0x0, 0x0, 0x0, 0x0, 0x0, 0x0, 0x0, 0x0, 0x0, 0x0, 0x0, 0x0, 0xFF, 0xFF, 0xFF, 0x0};
 
 void setupDisplay()
 {
@@ -116,6 +113,20 @@ void exportJPG(GFXcanvas1 *_canvas, const char *fileName, uint8_t q)
 	tmpFileCache.close();
 }
 
+void write16(File &f, uint16_t v)
+{
+	f.write(uint8_t(v));
+	f.write(uint8_t(v >> 8));
+}
+
+void write32(File &f, uint32_t v)
+{
+	f.write(uint8_t(v));
+	f.write(uint8_t(v >> 8));
+	f.write(uint8_t(v >> 16));
+	f.write(uint8_t(v >> 24));
+}
+
 void exportBMP(GFXcanvas1 *_canvas, const char *fileName)
 {
 	Serial.println(F("exportBMP"));
@@ -156,7 +167,7 @@ void exportBMP(GFXcanvas1 *_canvas, const char *fileName)
 	uint32_t j = 0;
 	for (uint32_t i = 34; i < imageOffset; i++)
 	{
-		tmpFileCache.write(filldata3[j++]); // remaining header bytes
+		tmpFileCache.write(bmpFilldata[j++]); // remaining header bytes
 	}
 
 	uint32_t rowidx = w * h / 8;
@@ -185,19 +196,6 @@ void exportBMP(GFXcanvas1 *_canvas, const char *fileName)
 	tmpFileCache.close();
 }
 
-void write16(File &f, uint16_t v)
-{
-	f.write(uint8_t(v));
-	f.write(uint8_t(v >> 8));
-}
-
-void write32(File &f, uint32_t v)
-{
-	f.write(uint8_t(v));
-	f.write(uint8_t(v >> 8));
-	f.write(uint8_t(v >> 16));
-	f.write(uint8_t(v >> 24));
-}
 
 uint8_t displayPixelBWRatio()
 {
@@ -257,7 +255,7 @@ size_t write32(uint8_t *buffer, uint32_t v)
 	return sizeof(uint32_t);
 }
 
-int displayStreamPrintScreenBMP(uint8_t *buffer, size_t maxLen, size_t index)
+int displaySnapshotBMPStream(uint8_t *buffer, size_t maxLen, size_t index)
 {
 	GFXcanvas1 *_canvas = displayCanvas;
 
@@ -291,7 +289,7 @@ int displayStreamPrintScreenBMP(uint8_t *buffer, size_t maxLen, size_t index)
 		uint32_t j = 0;
 		for (uint32_t i = 34; i < imageOffset; i++)
 		{
-			pointer += write8(buffer + pointer, filldata3[j++]);
+			pointer += write8(buffer + pointer, bmpFilldata[j++]);
 		}
 
 		return pointer;

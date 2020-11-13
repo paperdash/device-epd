@@ -20,6 +20,6 @@ uint8_t displayPixelBWRatio();
 void displayPrintScreenJPG(const char *fileName, uint8_t q);
 void displayPrintScreenBMP(const char *fileName);
 
-int displayStreamPrintScreenBMP(uint8_t *buffer, size_t maxLen, size_t index);
+int displaySnapshotBMPStream(uint8_t *buffer, size_t maxLen, size_t index);
 
 #endif
