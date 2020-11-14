@@ -17,20 +17,13 @@
 AsyncWebServer server(80);
 
 void setupApiDevice();
-void setupSettingsGet();
-void setupSettingsPost();
-void setupWifiScan();
-void setupWifiConnect();
-void setupCurrentImage();
-void setupApiFace();
+void setupApiSettings();
+void setupApiWifi();
 void setupApiUpdate();
 void setupOTA();
 
 //flag to use from web update to update display
 bool updateDisplayRequired = false;
-
-//flag to use from web update to reboot the ESP
-bool shouldReboot = false;
 
 void setupApp()
 {
@@ -48,12 +41,8 @@ void setupApp()
 	server.serveStatic("/fs/", SPIFFS, "/");
 
 	setupApiDevice();
-	setupSettingsGet();
-	setupSettingsPost();
-	setupWifiScan();
-	setupWifiConnect();
-	setupCurrentImage();
-	setupApiFace();
+	setupApiSettings();
+	setupApiWifi();
 	setupApiUpdate();
 	setupOTA();
 
@@ -116,13 +105,6 @@ void setupApp()
 
 void loopApp()
 {
-	if (shouldReboot)
-	{
-		Serial.println("Rebooting...");
-		delay(100);
-		ESP.restart();
-	}
-
 	if (updateDisplayRequired)
 	{
 		Serial.println("loop app update display");
@@ -135,7 +117,10 @@ void loopApp()
 	}
 }
 
-void setupSettingsGet()
+/**
+ * api settings endpoint
+ */
+void setupApiSettings()
 {
 	server.on("/api/settings", HTTP_GET, [](AsyncWebServerRequest *request) {
 		AsyncResponseStream *response = request->beginResponseStream("application/json");
@@ -169,10 +154,7 @@ void setupSettingsGet()
 		serializeJson(root, *response);
 		request->send(response);
 	});
-}
 
-void setupSettingsPost()
-{
 	server.on(
 		"/api/settings", HTTP_PUT, [](AsyncWebServerRequest *request) { /* nothing and dont remove it */ }, NULL, [](AsyncWebServerRequest *request, uint8_t *data, size_t len, size_t index, size_t total) {
 		DynamicJsonDocument doc(2048);
@@ -227,38 +209,8 @@ void setupSettingsPost()
 }
 
 /**
- * get current screen
- * @depricated
+ * api device endpoint
  */
-void setupCurrentImage()
-{
-	server.on("/current-image2", HTTP_GET, [](AsyncWebServerRequest *request) {
-		uint8_t q = 10;
-		if (request->hasParam("q"))
-		{
-			q = request->getParam("q")->value().toInt();
-		}
-
-		displayPrintScreenJPG("/tmp2.jpeg", q);
-		AsyncWebServerResponse *response = request->beginResponse(SPIFFS, "/tmp2.jpeg", "image/jpeg");
-
-		request->send(response);
-	});
-
-	server.on("/current-image", HTTP_GET, [](AsyncWebServerRequest *request) {
-		AsyncWebServerResponse *response = request->beginChunkedResponse("image/bmp", [](uint8_t *buffer, size_t maxLen, size_t index) -> size_t {
-			//Write up to "maxLen" bytes into "buffer" and return the amount written.
-			//index equals the amount of bytes that have been already sent
-			//You will be asked for more data until 0 is returned
-			//Keep in mind that you can not delay or yield waiting for more data!
-			return displaySnapshotBMPStream(buffer, maxLen, index);
-		});
-
-		response->addHeader("Content-Disposition", "inline; filename=capture.bmp");
-		request->send(response);
-	});
-}
-
 void setupApiDevice()
 {
 	server.on("/api/device/restart", HTTP_GET, [](AsyncWebServerRequest *request) {
@@ -353,9 +305,9 @@ void setupApiDevice()
 }
 
 /**
- * scan for wifi
+ * api wifi endpoint
  */
-void setupWifiScan()
+void setupApiWifi()
 {
 	server.on("/api/wifi/scan", HTTP_GET, [](AsyncWebServerRequest *request) {
 		String json = "[";
@@ -383,13 +335,7 @@ void setupWifiScan()
 		request->send(200, "application/json", json);
 		json = String();
 	});
-}
 
-/**
- * @todo
- */
-void setupWifiConnect()
-{
 	server.on(
 		"/api/wifi/connect", HTTP_POST, [](AsyncWebServerRequest *request) { /* nothing and dont remove it */ }, NULL, [](AsyncWebServerRequest *request, uint8_t *data, size_t len, size_t index, size_t total) {
 		DynamicJsonDocument doc(1024);
@@ -415,92 +361,16 @@ void setupWifiConnect()
 				Serial.println(password.as<char*>());
 			}
 
-/*
-			if (doc.containsKey("ssid")) {
-				NVS.setString("wifi_ssid", doc["ssid"]);
-				Serial.println(doc["ssid"].as<char*>());
-			}
-			if (doc.containsKey("password")) {
-				NVS.setString("wifi_password", doc["password"]);
-				Serial.println(doc["password"].as<char*>());
-			}
-			*/
-
-			request->send(200, "application/ld+json; charset=utf-8", "{}");
+			request->send(200, "application/json; charset=utf-8", "{}");
 
 			ESP.restart();
 		} });
 }
 
 /**
- * @depricated
+ * api data endpoint
+ * @todo
  */
-static void handle_update_progress_cb(AsyncWebServerRequest *request, String filename, size_t index, uint8_t *data, size_t len, bool final)
-{
-	if (!index)
-	{
-		Serial.printf("UploadStart: %s\n", filename.c_str());
-		bool dither = strcmp(filename.c_str(), "dithering") == 0;
-
-		ImageNew(0, 0, 0, 0, dither);
-		PlaylistResetTimer();
-	}
-
-	ImageWriteBuffer(data, len);
-
-	if (final)
-	{
-		Serial.printf("UploadEnd: %s, %u B\n", filename.c_str(), index + len);
-		ImageFlushBuffer();
-
-		updateDisplayRequired = true;
-	}
-}
-
-/**
- * @depricated
- */
-void setupApiFace()
-{
-	server.on(
-		"/api/face", HTTP_POST, [](AsyncWebServerRequest *request) {
-			AsyncResponseStream *response = request->beginResponseStream("application/json");
-			DynamicJsonDocument doc(117); // https://arduinojson.org/v6/assistant/
-
-			// todo
-			doc["status"] = true;
-			doc["image"]["format"] = "xxx";
-			doc["image"]["width"] = 0;
-			doc["image"]["height"] = 0;
-
-			//doc["jpg"]["comps"] = 0;
-
-			/*
-			Serial.println(JpegDec.width);
-			Serial.println(JpegDec.height);
-
-			Serial.print(F("Components :"));
-			Serial.println(JpegDec.comps);
-			Serial.print(F("MCU / row  :"));
-			Serial.println(JpegDec.MCUSPerRow);
-			Serial.print(F("MCU / col  :"));
-			Serial.println(JpegDec.MCUSPerCol);
-			Serial.print(F("Scan type  :"));
-			Serial.println(JpegDec.scanType);
-			Serial.print(F("MCU width  :"));
-			Serial.println(JpegDec.MCUWidth);
-			Serial.print(F("MCU height :"));
-			Serial.println(JpegDec.MCUHeight);
-			*/
-
-			serializeJson(doc, *response);
-			request->send(response);
-
-			//request->send(200, "application/ld+json; charset=utf-8", "{}");
-		},
-		handle_update_progress_cb);
-}
-
 void setupApiUpdate()
 {
 	server.on("/api/update", HTTP_GET, [](AsyncWebServerRequest *request) {
@@ -532,56 +402,87 @@ void setupApiUpdate()
 			downloadFile(request->getParam("url")->value().c_str(), request->getParam("file")->value().c_str());
 		}
 
-		request->send(200, "application/ld+json; charset=utf-8", "{}");
+		request->send(200, "application/ld; charset=utf-8", "{}");
 	});
 }
 
+/**
+ * api data endpoint
+ * @todo
+ */
 void setupOTA()
 {
 	// Simple Firmware Update Form
-	/*
 	server.on("/update", HTTP_GET, [](AsyncWebServerRequest *request) {
-		// TODO in die pwa auslagern
 		request->send(200, "text/html", "<form method='POST' action='/update' enctype='multipart/form-data'><input type='file' name='update'><input type='submit' value='Update'></form>");
 	});
-	*/
 
 	server.on(
-		"/update", HTTP_POST, [](AsyncWebServerRequest *request) {
-			shouldReboot = !Update.hasError();
-			AsyncWebServerResponse *response = request->beginResponse(200, "application/ld+json; charset=utf-8", shouldReboot ? "{\"success\": true}" : "{\"success\": false}");
-
-			response->addHeader("Connection", "close");
-			request->send(response); },
+		"/update", HTTP_POST, [](AsyncWebServerRequest *request) { },
 		[](AsyncWebServerRequest *request, String filename, size_t index, uint8_t *data, size_t len, bool final) {
 			if (!index)
 			{
 				Serial.printf("Update Start: %s\n", filename.c_str());
-				// bool canBegin = Update.begin(contentLength, U_FLASH);
-				// bool canBegin = Update.begin(contentLength, U_SPIFFS);
-				if (!Update.begin((ESP.getFreeSketchSpace() - 0x1000) & 0xFFFFF000))
-				{
-					Update.printError(Serial);
-				}
-			}
+				uint8_t flashType = 255;
 
-			if (!Update.hasError())
-			{
-				if (Update.write(data, len) != len)
+				if (filename.equals("firmware.bin"))
 				{
-					Update.printError(Serial);
+					Serial.println("firmware update");
+					flashType = U_FLASH;
 				}
-			}
-
-			if (final)
-			{
-				if (Update.end(true))
+				else if (filename.equals("spiffs.bin"))
 				{
-					Serial.printf("Update Success: %uB\n", index + len);
+					Serial.println("spiffs update");
+					flashType = U_SPIFFS;
+
+					SPIFFS.end();
 				}
 				else
 				{
-					Update.printError(Serial);
+					Serial.println("unkown, reject");
+				}
+
+				if (flashType != 255)
+				{
+					Serial.println("update start...");
+					if (!Update.begin(UPDATE_SIZE_UNKNOWN, flashType))
+					{
+						Update.printError(Serial);
+					}
+				}
+				else
+				{
+					Serial.println("unkown update type, reject");
+				}
+			}
+
+			if (Update.isRunning())
+			{
+				if (!Update.hasError())
+				{
+					if (Update.write(data, len) != len)
+					{
+						Update.printError(Serial);
+					}
+				}
+
+				if (final)
+				{
+					AsyncWebServerResponse *response = request->beginResponse(200, "application/json; charset=utf-8", !Update.hasError() ? "{\"success\": true}" : "{\"success\": false}");
+					response->addHeader("Refresh", "20");
+					response->addHeader("Location", "/");
+					request->send(response);
+
+					if (!Update.end(true))
+					{
+						Update.printError(Serial);
+					}
+					else
+					{
+						Serial.println("Update complete");
+						Serial.flush();
+						ESP.restart();
+					}
 				}
 			}
 		});

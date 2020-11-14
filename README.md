@@ -1,5 +1,12 @@
 # paperdash-display
 
+## build for deployment
+```properties
+pio run --environment lolin32
+platformio run --target buildfs
+```
+
+
 ## compile and upload new firmware
 ```properties
 platformio run --target upload
