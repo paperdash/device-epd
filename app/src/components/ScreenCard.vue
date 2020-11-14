@@ -70,13 +70,13 @@
       playlistRemaining (val) {
         if (val > 0) {
           this.playlistRemainingCountdown = val
-          this.device_screen_src = '/current-image3?' + Date.now()
+          this.device_screen_src = '/api/device/screen?' + Date.now()
         }
       },
     },
     created () {
       this.playlistRemainingCountdown = this.playlistRemaining
-      this.device_screen_src = '/current-image3?' + Date.now()
+      this.device_screen_src = '/api/device/screen?' + Date.now()
 
       setInterval(() => {
         if (this.playlistRemainingCountdown > 0) {
