@@ -16,6 +16,15 @@
 
 AsyncWebServer server(80);
 
+struct AppConfig
+{
+	char buildRev[40 +1];
+	uint32_t buildTime;
+};
+
+const char *jsonAppVersion = "/dist/version.json";
+AppConfig appConfig;
+
 void setupApiDevice();
 void setupApiSettings();
 void setupApiWifi();
@@ -25,9 +34,45 @@ void setupOTA();
 //flag to use from web update to update display
 bool updateDisplayRequired = false;
 
+void loadAppVersion()
+{
+	File file = SPIFFS.open(jsonAppVersion);
+	if (!file)
+	{
+		Serial.print(F("Failed to open file: "));
+		Serial.println(jsonAppVersion);
+
+		return;
+	}
+
+	// Allocate a temporary JsonDocument
+	const size_t capacity = JSON_OBJECT_SIZE(2) + 70;
+	StaticJsonDocument<capacity> doc;
+
+	// Deserialize the JSON document
+	DeserializationError error = deserializeJson(doc, file);
+	if (error)
+	{
+		Serial.println(F("Failed to version file:"));
+		Serial.println(error.c_str());
+
+		return;
+	}
+
+	// get data
+	appConfig.buildTime = doc["buildTime"];
+	strlcpy(appConfig.buildRev,
+			doc["rev"],
+			sizeof(appConfig.buildRev));
+
+	file.close();
+}
+
 void setupApp()
 {
-	Serial.println("setup configure");
+	Serial.println("setup app");
+
+	loadAppVersion();
 
 	// @see https://github.com/me-no-dev/ESPAsyncWebServer
 	// @see https://arduinojson.org/v6/assistant/
@@ -53,7 +98,8 @@ void setupApp()
 	// TODO response
 	server.on("/stats", HTTP_GET, [](AsyncWebServerRequest *request) {
 		AsyncResponseStream *response = request->beginResponseStream("application/json");
-		DynamicJsonDocument doc(668); // https://arduinojson.org/v6/assistant/
+		const size_t capacity = 5*JSON_OBJECT_SIZE(2) + JSON_OBJECT_SIZE(3) + JSON_OBJECT_SIZE(5) + JSON_OBJECT_SIZE(7) + JSON_OBJECT_SIZE(8) + 410;
+		DynamicJsonDocument doc(capacity);
 
 		doc["wifi"]["mac"] = WiFi.macAddress();
 		doc["wifi"]["ssid"] = WiFi.SSID();
@@ -77,8 +123,6 @@ void setupApp()
 
 		doc["device"]["heap"]["total"] = ESP.getHeapSize();
 		doc["device"]["heap"]["free"] = ESP.getFreeHeap();
-		doc["device"]["psram"]["total"] = ESP.getPsramSize();
-		doc["device"]["psram"]["free"] = ESP.getFreePsram();
 
 		doc["playlist"]["current"] = PlaylistGetCurrentFace();
 		doc["playlist"]["remaining"] = (PlaylistGetRemainingTimeMs() / 1000) + 3; // + face rendering time 3s
@@ -86,8 +130,11 @@ void setupApp()
 		doc["firmware"]["created"] = FW_CREATED;
 		doc["firmware"]["rev"] = FW_GIT_REV;
 
-		JsonArray capability = doc.createNestedArray("capability");
-		capability.add("jpg");
+		doc["app"]["created"] = appConfig.buildTime;
+		doc["app"]["rev"] = appConfig.buildRev;
+
+		//JsonArray capability = doc.createNestedArray("capability");
+		//capability.add("jpg");
 		//capability.add("wbmp");
 
 		serializeJson(doc, *response);
@@ -100,7 +147,7 @@ void setupApp()
 
 	server.begin();
 
-	Serial.println("setup configure - done");
+	Serial.println("setup app - done");
 }
 
 void loopApp()
@@ -408,7 +455,6 @@ void setupApiUpdate()
 
 /**
  * api data endpoint
- * @todo
  */
 void setupOTA()
 {
@@ -418,7 +464,7 @@ void setupOTA()
 	});
 
 	server.on(
-		"/update", HTTP_POST, [](AsyncWebServerRequest *request) { },
+		"/update", HTTP_POST, [](AsyncWebServerRequest *request) {},
 		[](AsyncWebServerRequest *request, String filename, size_t index, uint8_t *data, size_t len, bool final) {
 			if (!index)
 			{

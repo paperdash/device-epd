@@ -1,5 +1,32 @@
 const webpack = require('webpack')
 const CompressionPlugin = require('compression-webpack-plugin')
+const VersionFile = require('webpack-version-file')
+
+// get git info from command line
+const commitHash = require('child_process')
+  .execSync('git rev-parse HEAD')
+  .toString()
+
+const buildInfo = {
+  commitHash: commitHash.trim(),
+  buildTime: JSON.stringify(new Date().getTime() / 1000 | 0),
+}
+
+/*
+const appVersionVue = new webpack.DefinePlugin({
+  __COMMIT_HASH__: buildInfo.commitHash,
+  __BUILD_TIME__: buildInfo.buildTime,
+})
+*/
+
+const appVersionJson = new VersionFile({
+  output: '../data/dist/version.json',
+  template: './version.ejs',
+  data: {
+    commitHash: buildInfo.commitHash,
+    buildTime: buildInfo.buildTime,
+  },
+})
 
 module.exports = {
   outputDir: '../data/dist',
@@ -11,7 +38,7 @@ module.exports = {
   devServer: {
     proxy: {
       '^/': {
-        target: 'http://paperdash-display-2:80',
+        target: 'http://paperdash-display:80',
         ws: true,
         changeOrigin: true,
       },
@@ -30,10 +57,20 @@ module.exports = {
           new CompressionPlugin({
             deleteOriginalAssets: true,
           }),
+          // add version info
+          // appVersionVue,
+          appVersionJson,
         ],
       }
     } else {
       // mutate for development...
+      return {
+        plugins: [
+          // add version info
+          // appVersionVue,
+          appVersionJson,
+        ],
+      }
     }
   },
 }

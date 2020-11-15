@@ -4005,7 +4005,7 @@ ee-first@1.1.1:
   resolved "https://registry.yarnpkg.com/ee-first/-/ee-first-1.1.1.tgz#590c61156b0ae2f4f0255732a158b266bc56b21d"
   integrity sha1-WQxhFWsK4vTwJVcyoViyZrxWsh0=
 
-ejs@^2.6.1:
+ejs@^2.5.2, ejs@^2.6.1:
   version "2.7.4"
   resolved "https://registry.yarnpkg.com/ejs/-/ejs-2.7.4.tgz#48661287573dcc53e366c7a1ae52c3a120eec9ba"
   integrity sha512-7vmuyh5+kuUyJKePhQfRQBhXV5Ce+RnaeeQArKu1EAMpL3WbgMt5WG6uQZpEVvYSSsxMXRKOewtDk9RaTKXRlA==
@@ -10501,6 +10501,14 @@ webpack-sources@^1.1.0, webpack-sources@^1.4.0, webpack-sources@^1.4.1, webpack-
   dependencies:
     source-list-map "^2.0.0"
     source-map "~0.6.1"
+
+webpack-version-file@^0.1.6:
+  version "0.1.6"
+  resolved "https://registry.yarnpkg.com/webpack-version-file/-/webpack-version-file-0.1.6.tgz#b6d0ed23a8f98c37397827996ad36bbe47a9be21"
+  integrity sha512-vGc2h2i+3s15fidvzGxUIWrnZZvYlPDSlbowoI8SRW3MV5wS6IJJ8O3BRKXlTg+VwDxyiEXh67v1T28qRBoY2A==
+  dependencies:
+    chalk "^2.1.0"
+    ejs "^2.5.2"
 
 webpack@^4.0.0:
   version "4.44.2"
