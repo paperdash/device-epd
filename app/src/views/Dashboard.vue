@@ -9,6 +9,18 @@
         md="6"
       >
         <screen-card />
+
+        <!--
+        <v-chip
+          outlined
+          :title="firmware.rev"
+          color="text--disabled"
+        >
+          {{ (new Date(firmware.created * 1000).toLocaleDateString()) }}
+          @
+          {{ firmware.rev.substring(0,8) }}
+        </v-chip>
+        -->
       </v-col>
       <v-col
         cols="12"
@@ -36,6 +48,16 @@
     data: () => ({
       isLoading: false,
     }),
+    computed: {
+      firmware () {
+        return {
+          // eslint-disable-next-line no-undef
+          created: __BUILD_TIME__ || JSON.stringify(new Date().getTime() / 1000 | 0),
+          // eslint-disable-next-line no-undef
+          rev: __COMMIT_HASH__ || 'dev-master',
+        }
+      },
+    },
   }
 </script>
 

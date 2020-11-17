@@ -3,6 +3,10 @@ import VueRouter from 'vue-router'
 
 const Dashboard = () => import('../views/Dashboard')
 const Settings = () => import('../views/Settings')
+const Device = () => import('../views/Device')
+const Playlist = () => import('../views/Playlist')
+const Weather = () => import('../views/Weather')
+const System = () => import('../views/System')
 
 const SetupStart = () => import('../views/Setup/Start')
 const SetupCountry = () => import('../views/Setup/Country')
@@ -18,15 +22,20 @@ export default new VueRouter({
     routes: [
       { path: '/', component: Dashboard },
       { path: '/settings', component: Settings, meta: { transitionName: 'slide' } },
+      { path: '/device', component: Device, meta: { transitionName: 'slide' } },
+      { path: '/playlist', component: Playlist, meta: { transitionName: 'slide' } },
+      { path: '/weather', component: Weather, meta: { transitionName: 'slide' } },
+      { path: '/system', component: System, meta: { transitionName: 'slide' } },
 
       // setup wizard
-      { path: '/setup/start', component: SetupStart, meta: { transitionName: 'slide' } },
-      { path: '/setup/country', component: SetupCountry, meta: { transitionName: 'slide' } },
-      { path: '/setup/wifi', component: SetupWifi, meta: { transitionName: 'slide' } },
-      { path: '/setup/weather', component: SetupWeather, meta: { transitionName: 'slide' } },
-      { path: '/setup/name', component: SetupName, meta: { transitionName: 'slide' } },
-      { path: '/setup/appearance', component: SetupAppearance, meta: { transitionName: 'slide' } },
-      { path: '/setup/done', component: SetupDone, meta: { transitionName: 'slide' } },
+      { path: '/setup', redirect: '/setup/start' },
+      { path: '/setup/start', component: SetupStart, meta: { transitionName: 'slide', layout: 'setup' } },
+      { path: '/setup/country', component: SetupCountry, meta: { transitionName: 'slide', layout: 'setup' } },
+      { path: '/setup/wifi', component: SetupWifi, meta: { transitionName: 'slide', layout: 'setup' } },
+      { path: '/setup/weather', component: SetupWeather, meta: { transitionName: 'slide', layout: 'setup' } },
+      { path: '/setup/name', component: SetupName, meta: { transitionName: 'slide', layout: 'setup' } },
+      { path: '/setup/appearance', component: SetupAppearance, meta: { transitionName: 'slide', layout: 'setup' } },
+      { path: '/setup/done', component: SetupDone, meta: { transitionName: 'slide', layout: 'setup' } },
 
       { path: '*', redirect: '/' },
     ],

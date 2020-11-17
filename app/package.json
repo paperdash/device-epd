@@ -28,11 +28,11 @@
     "sass": "^1.19.0",
     "sass-loader": "^10.0.2",
     "vue-cli-plugin-vuetify": "~2.0.4",
-    "vue-moment": "^4.1.0",
     "vue-router": "^3.1.5",
     "vue-svg-loader": "^0.16.0",
     "vue-template-compiler": "^2.6.11",
     "vuetify-loader": "^1.3.0",
+    "vuex": "^3.5.1",
     "webpack-version-file": "^0.1.6"
   },
   "eslintConfig": {

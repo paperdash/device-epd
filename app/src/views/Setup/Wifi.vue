@@ -76,6 +76,7 @@
               text
               color="primary"
               class="_px-0 my-2"
+              disabled
             >
               Choose Another Network
             </v-btn>
