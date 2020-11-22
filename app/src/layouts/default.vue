@@ -7,11 +7,36 @@
       class="grey darken-3"
       dark
       app
+      mobile-breakpoint="sm"
       _mini-variant-width="150"
       _mini-variant
       :clipped="clipped"
     >
-      <v-sheet rounded="lg">
+      <template
+        #prepend
+      >
+        <v-img
+          :aspect-ratio="16/9"
+          src="/api/device/screen"
+        >
+          <template #placeholder>
+            <v-row
+              class="fill-height ma-0 grey"
+              align="center"
+              justify="center"
+            >
+              <v-progress-circular
+                indeterminate
+                color="grey lighten-5"
+              />
+            </v-row>
+          </template>
+        </v-img>
+      </template>
+      <v-sheet
+        v-if="0"
+        rounded="lg"
+      >
         <v-img
           :aspect-ratio="16/9"
           src="/api/device/screen"
@@ -38,10 +63,23 @@
           :to="page.to"
           link
         >
-          <v-list-item-content class="text-center">
+          <v-list-item-content
+            v-if="1"
+            class="text-center"
+          >
             <v-icon>{{ page.icon }}</v-icon>
             <v-list-item-title>{{ page.label }}</v-list-item-title>
           </v-list-item-content>
+
+          <template v-if="0">
+            <v-list-item-icon>
+              <v-icon>{{ page.icon }}</v-icon>
+            </v-list-item-icon>
+
+            <v-list-item-content>
+              <v-list-item-title>{{ page.label }}</v-list-item-title>
+            </v-list-item-content>
+          </template>
         </v-list-item>
 
         <v-divider />
@@ -78,10 +116,9 @@
         >
       </v-btn>
 
-      <v-toolbar-title>paperdash</v-toolbar-title>
-      <v-app-bar-nav-icon
-        @click.stop="drawer = !drawer"
-      />
+      <v-toolbar-title class="hidden-xs-only">
+        paperdash
+      </v-toolbar-title>
       <v-spacer />
       <div>{{ settings.device.name }}</div>
       <v-spacer />
@@ -89,7 +126,7 @@
       <v-progress-circular
         :rotate="-90"
         :value="40"
-        class="mx-3"
+        class="mx-3 hidden-xs-only"
         size="40"
       >
         <v-icon>$playlist</v-icon>
@@ -98,17 +135,20 @@
       <v-progress-circular
         :rotate="-90"
         :value="40"
-        class="mx-3"
+        class="mx-3 hidden-xs-only"
         size="40"
       >
         <v-icon>$storage</v-icon>
       </v-progress-circular>
 
       <template v-if="stats.wifi.connected">
-        <v-btn icon>
+        <v-btn
+          icon
+          class="hidden-xs-only"
+        >
           <v-icon>{{ stats.wifi.rssi | wifiIcon(0) }}</v-icon>
         </v-btn>
-        <span>{{ new Date(stats.device.time * 1000).toLocaleString(undefined, {month: 'numeric', day: 'numeric', year: 'numeric', hour: '2-digit', minute: '2-digit'}) }}</span>
+        <span class="hidden-xs-only">{{ new Date(stats.device.time * 1000).toLocaleString(undefined, {month: 'numeric', day: 'numeric', year: 'numeric', hour: '2-digit', minute: '2-digit'}) }}</span>
       </template>
       <template v-else>
         <v-btn
@@ -121,17 +161,10 @@
         </v-btn>
       </template>
 
-    <!--
-      <v-responsive max-width="260">
-        <v-text-field
-          dense
-          flat
-          hide-details
-          rounded
-          solo-inverted
-        />
-      </v-responsive>
-      -->
+      <v-app-bar-nav-icon
+        class="hidden-md-and-up"
+        @click.stop="drawer = !drawer"
+      />
     </v-app-bar>
 
     <v-main class="grey lighten-3">
