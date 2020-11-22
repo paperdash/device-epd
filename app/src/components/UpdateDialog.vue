@@ -2,6 +2,7 @@
   <v-dialog
     v-model="dialog"
     max-width="400"
+    :fullscreen="$vuetify.breakpoint.mobile"
   >
     <template #activator="{ on }">
       <slot
