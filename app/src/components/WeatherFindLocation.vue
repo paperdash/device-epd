@@ -1,20 +1,48 @@
 <template>
   <v-autocomplete
+    ref="input"
     v-model="model"
     :disabled="!api"
     :items="entries"
     :loading="isLoading"
     :search-input.sync="search"
-    hide-no-data
-    hide-selected
+    _hide-no-data
+    _hide-selected
     item-text="name"
     item-value="id"
-    label="i8n:Location"
-    placeholder="i8n:Start typing to Search"
+    label="Location"
+    placeholder="Start typing to Search"
     _return-object
   >
     <template #item="{ item }">
+      <v-list-item-avatar
+        color="grey lighten-2"
+        class="headline font-weight-light white--text"
+      >
+        <img
+          width="64"
+          :src="getConditionIcon(item.weather[0].icon)"
+        >
+      </v-list-item-avatar>
+
+      <v-list-item-content>
+        <v-list-item-title>
+          {{ item.name }}, {{ item.sys.country }}
+        </v-list-item-title>
+        <v-list-item-subtitle>
+          <img
+            width="16"
+            :src="getCountryFlag(item.sys.country)"
+          >
+          {{ item.weather[0].description }}
+        </v-list-item-subtitle>
+      </v-list-item-content>
+      <v-list-item-action>
+        {{ item.main.temp }}°С
+      </v-list-item-action>
+
       <v-list-item
+        v-if="0"
         two-line
         class="pa-0"
       >
@@ -24,6 +52,7 @@
             :src="getConditionIcon(item.weather[0].icon)"
           >
         </v-list-item-icon>
+
         <v-list-item-content>
           <v-list-item-title>
             {{ item.name }}, {{ item.sys.country }}
@@ -40,7 +69,6 @@
           </v-list-item-subtitle>
         </v-list-item-content>
       </v-list-item>
-      <v-list-item />
     </template>
   </v-autocomplete>
 </template>

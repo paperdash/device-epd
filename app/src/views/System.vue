@@ -5,6 +5,10 @@
       width="400"
       class="mx-auto"
     >
+      <v-card-title class="display-2 mb-12 justify-center text-center">
+        System info
+      </v-card-title>
+
       <v-list-item>
         <v-list-item-icon class="mr-3">
           <v-icon>$info</v-icon>
@@ -13,12 +17,20 @@
           <v-list-item-title>Software</v-list-item-title>
         </v-list-item-content>
         <v-list-item-action>
-          <v-btn
-            outlined
-            color="primary"
+          <update-dialog
+            :current-firmware="new Date(stats.firmware.created *1000)"
+            :current-app="new Date(stats.app.created *1000)"
           >
-            Update
-          </v-btn>
+            <template #activator="{ on }">
+              <v-btn
+                outlined
+                color="primary"
+                v-on="on"
+              >
+                Update
+              </v-btn>
+            </template>
+          </update-dialog>
         </v-list-item-action>
       </v-list-item>
       <v-divider class="mx-4" />
@@ -86,6 +98,7 @@
         </v-list-item>
       </v-list>
       <v-progress-linear
+        v-if="0"
         height="25"
         :value="fsUsage"
         dark
@@ -106,27 +119,56 @@
         <v-list-item-avatar>
           <v-progress-circular
             :rotate="-90"
-            :value="fsUsage"
+            :value="memoryUsage"
             class="caption"
           >
-            {{ fsUsage }}
+            {{ memoryUsage }}
           </v-progress-circular>
         </v-list-item-avatar>
       </v-list-item>
 
       <v-divider class="mx-4" />
+      <v-list
+        class="pb-0"
+      >
+        <v-list-item>
+          <v-list-item-title>Total</v-list-item-title>
+          <v-list-item-subtitle class="text-right">
+            {{ memory.total | prettyBytes }}
+          </v-list-item-subtitle>
+        </v-list-item>
+
+        <v-list-item>
+          <v-list-item-title>Free</v-list-item-title>
+          <v-list-item-subtitle class="text-right">
+            {{ memory.free | prettyBytes }}
+          </v-list-item-subtitle>
+        </v-list-item>
+      </v-list>
+      <v-progress-linear
+        v-if="0"
+        height="25"
+        :value="memoryUsage"
+        dark
+        rounded
+      >
+        <template #default="{ value }">
+          <strong>{{ Math.ceil(value) }}%</strong>
+        </template>
+      </v-progress-linear>
     </v-card>
   </div>
 </template>
 
 <script>
   import { mapState } from 'vuex'
+  import UpdateDialog from '@/components/UpdateDialog'
 
   export default {
     components: {
+      UpdateDialog,
     },
     data: () => ({
-      isLoading: false,
     }),
     computed: {
       ...mapState(['stats']),
@@ -137,6 +179,14 @@
       },
       fs () {
         return this.stats.device.fs
+      },
+      memoryUsage () {
+        return Math.round(
+          (100 / this.stats.device.heap.total) * this.stats.device.heap.free,
+        )
+      },
+      memory () {
+        return this.stats.device.heap
       },
 
     },

@@ -9,7 +9,7 @@
           <v-list-item-title class="headline">
             {{ weather.name }}
           </v-list-item-title>
-          <v-list-item-subtitle>{{ weather.dt | moment("ddd, h A") }}, {{ weather.weather[0].description }}</v-list-item-subtitle>
+          <v-list-item-subtitle>{{ new Date(weather.dt *1000).toLocaleString(undefined, {weekday:'short', hour: 'numeric'}) }}, {{ weather.weather[0].description }}</v-list-item-subtitle>
         </v-list-item-content>
       </v-list-item>
 
@@ -54,7 +54,7 @@
               v-for="item in forecast.list"
               :key="item.dt"
             >
-              <v-list-item-title>{{ item.dt | moment("dddd") }}</v-list-item-title>
+              <v-list-item-title>{{ new Date(item.dt *1000).toLocaleString(undefined, {weekday:'long'}) }}</v-list-item-title>
 
               <v-list-item-icon class="ma-0">
                 <v-img :src="getConditionIcon(item.weather[0].icon)" />

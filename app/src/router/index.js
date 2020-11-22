@@ -5,6 +5,7 @@ const Dashboard = () => import('../views/Dashboard')
 const Settings = () => import('../views/Settings')
 const Device = () => import('../views/Device')
 const Playlist = () => import('../views/Playlist')
+const Wifi = () => import('../views/Wifi')
 const Weather = () => import('../views/Weather')
 const System = () => import('../views/System')
 
@@ -24,6 +25,7 @@ export default new VueRouter({
       { path: '/settings', component: Settings, meta: { transitionName: 'slide' } },
       { path: '/device', component: Device, meta: { transitionName: 'slide' } },
       { path: '/playlist', component: Playlist, meta: { transitionName: 'slide' } },
+      { path: '/wifi', component: Wifi, meta: { transitionName: 'slide' } },
       { path: '/weather', component: Weather, meta: { transitionName: 'slide' } },
       { path: '/system', component: System, meta: { transitionName: 'slide' } },
 

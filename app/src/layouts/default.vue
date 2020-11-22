@@ -1,5 +1,7 @@
 <template>
   <div class="d-flex flex-grow-1">
+    <notifications />
+
     <v-navigation-drawer
       v-model="drawer"
       class="grey darken-3"
@@ -81,7 +83,7 @@
         @click.stop="drawer = !drawer"
       />
       <v-spacer />
-      <div>box name</div>
+      <div>{{ settings.device.name }}</div>
       <v-spacer />
 
       <v-progress-circular
@@ -106,7 +108,7 @@
         <v-btn icon>
           <v-icon>{{ stats.wifi.rssi | wifiIcon(0) }}</v-icon>
         </v-btn>
-        <span>{{ new Date(stats.device.time * 1000).toLocaleString() }}</span>
+        <span>{{ new Date(stats.device.time * 1000).toLocaleString(undefined, {month: 'numeric', day: 'numeric', year: 'numeric', hour: '2-digit', minute: '2-digit'}) }}</span>
       </template>
       <template v-else>
         <v-btn
@@ -147,8 +149,10 @@
 
 <script>
   import { mapState } from 'vuex'
+  import Notifications from '@/components/Notifications'
 
   export default {
+    components: { Notifications },
     data: () => ({
       drawer: true,
       clipped: true,
@@ -174,6 +178,11 @@
           to: '/weather',
         },
         {
+          label: 'Wifi',
+          icon: '$signalWifi3',
+          to: '/wifi',
+        },
+        {
           label: 'System',
           icon: '$settings',
           to: '/system',
@@ -181,7 +190,7 @@
       ],
     }),
     computed: {
-      ...mapState(['stats']),
+      ...mapState(['stats', 'settings']),
     },
   }
 </script>

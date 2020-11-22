@@ -3,6 +3,9 @@ import Vuex from 'vuex'
 import axios from 'axios'
 // import device from '@/api/device'
 
+import { countries, languages } from 'countries-list'
+import timezones from 'countries-and-timezones'
+
 Vue.use(Vuex)
 
 const store = new Vuex.Store({
@@ -18,46 +21,13 @@ const store = new Vuex.Store({
     setSettings (state, payload) {
       state.settings = payload
     },
-
-    /*
-    setSensors (state, payload) {
-      state.sensors = payload
-    },
-    updateSensor (state, payload) {
-      // update sensor
-      const i = state.sensors.findIndex(item => item.id === payload.id)
-      if (i >= 0) {
-        state.sensors[i].temperature = payload.temperature
-        state.sensors[i].humidity = payload.humidity
-        state.sensors[i].last_update = payload.last_update
-
-        if (payload.label) {
-          state.sensors[i].label = payload.label
-        }
-
-        // update state
-        state.sensors = [
-          ...state.sensors,
-        ]
-      }
-    },
-    deleteSensor (state, id) {
-      // const i = state.sensors.findIndex(item => item.id === id)
-      state.sensors = state.sensors.filter(item => item.id !== id)
-    },
-    setPushUpdate (state, enable) {
-      state.pushUpdate = enable
-    },
-    addSensorHistory (state, payload) {
-      state.sensorHistory.push(payload)
-      if (state.sensorHistory.length > 20) {
-        state.sensorHistory = state.sensorHistory.slice(1)
-      }
-    },
     notification (state, payload) {
       state.notifications = payload
     },
-     */
+    updateSettings (state, payload) {
+      state.settings = { ...state.settings, ...payload }
+      console.log(state.settings)
+    },
   },
   actions: {
     async loadStats ({ commit }) {
@@ -76,6 +46,19 @@ const store = new Vuex.Store({
         commit('setSettings', {})
       }
     },
+    async saveSettings ({ commit, state }) {
+      try {
+        await axios.put('/api/settings', state.settings, {
+          headers: {
+            'Content-Type': 'application/json',
+          },
+        })
+        commit('notification', 'settings saved')
+      } catch (error) {
+        console.warn(error)
+      }
+    },
+
     /*
     async getSensors ({ commit }) {
       try {
@@ -108,11 +91,20 @@ const store = new Vuex.Store({
      */
   },
   getters: {
-    /*
-    isAuthenticated(state) {
-      return state.user !== null && state.user !== undefined;
-    }
-     */
+    getAvailableLanguages () {
+      return languages
+    },
+
+    getAvailableCountries () {
+      return countries
+    },
+
+    getAvailableTimezones () {
+      return timezones.getAllTimezones()
+    },
+    getAvailableTimezone: () => (countryCode) => {
+      return timezones.getCountry(countryCode)
+    },
   },
 })
 
