@@ -7,6 +7,7 @@
       class="grey darken-3"
       dark
       app
+      :temporary="temporary"
       mobile-breakpoint="sm"
       _mini-variant-width="150"
       _mini-variant
@@ -224,6 +225,9 @@
     }),
     computed: {
       ...mapState(['stats', 'settings']),
+      temporary () {
+        return this.smAndDown
+      },
     },
   }
 </script>
