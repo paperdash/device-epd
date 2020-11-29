@@ -7,7 +7,8 @@
       class="grey darken-3"
       dark
       app
-      mobile-breakpoint="sm"
+      :permanent="$vuetify.breakpoint.mdOnly"
+      :temporary="$vuetify.breakpoint.smAndDown"
       :clipped="clipped"
     >
       <template
@@ -229,6 +230,9 @@
     }),
     computed: {
       ...mapState(['stats', 'settings']),
+    },
+    created () {
+      this.drawer = !this.$vuetify.breakpoint.smAndDown
     },
   }
 </script>
