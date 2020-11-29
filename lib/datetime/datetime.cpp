@@ -2,13 +2,11 @@
 #include <time.h>
 #include <sys/time.h>
 #include "datetime.h"
+#include "settings.h"
 
 RTC_DATA_ATTR struct datetime_struct now;
 
-// TODO offset
 const char *ntpServer = "pool.ntp.org";
-const long gmtOffset_sec = 3600;
-const int daylightOffset_sec = 3600;
 
 unsigned long lastUpdate = 0;
 
@@ -54,6 +52,9 @@ bool updateDateTime()
 
 void setupDateTime()
 {
+	int gmtOffset_sec = NVS.getInt("system.utc");
+	int daylightOffset_sec = NVS.getInt("system.dst");
+
 	configTime(gmtOffset_sec, daylightOffset_sec, ntpServer);
 
 	if (!updateDateTime())

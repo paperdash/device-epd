@@ -3,6 +3,8 @@
 #include "app.h"
 #include "ESPAsyncWebServer.h"
 #include <ESPmDNS.h>
+#define ARDUINOJSON_DECODE_UNICODE 1
+#define ARDUINOJSON_USE_LONG_LONG 1
 #include "ArduinoJson.h"
 #include "settings.h"
 #include "device.h"
@@ -180,14 +182,12 @@ void setupApiSettings()
 		root["system"]["dst"] = NVS.getInt("system.dst");
 		root["system"]["wifi"] = NVS.getString("wifi.ssid");
 
-		// gmtOffset_sec
-		// daylightOffset_sec
-
 		//root["device"]["angle"] = NVS.getInt("device.angle");
 		root["device"]["theme"] = NVS.getString("device.theme");
 		root["device"]["name"] = NVS.getString("device.name");
 
 		root["playlist"]["timer"] = NVS.getInt("playlist.timer");
+		root["playlist"]["images"] = NVS.getString("playlist.images");
 
 		root["weather"]["api"] = NVS.getString("weather.api");
 		root["weather"]["location"] = NVS.getInt("weather.loc");
@@ -234,6 +234,7 @@ void setupApiSettings()
 			JsonVariant playlist = doc["playlist"];
 			if (!playlist.isNull()) {
 				NVS.setInt("playlist.timer", playlist["timer"].as<unsigned int>());
+				NVS.setString("playlist.images", playlist["images"]);
 			}
 
 			JsonVariant weather = doc["weather"];

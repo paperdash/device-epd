@@ -65,6 +65,15 @@ void showFaceCalendar()
  */
 bool updateCalendarData()
 {
+	String url = NVS.getString("service.image");
+
+	// TODO
+	if (url) {
+		url += "390x384.jpg"
+	}
+	// url += "APPID=" + NVS.getString("service.image");
+	// char faceCalendarPictureUrl[] = NVS.getString("service.image");
+
 	return downloadFile(faceCalendarPictureUrl, faceCalendarPicture);
 }
 

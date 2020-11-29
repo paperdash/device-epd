@@ -160,7 +160,6 @@ void render_forecast()
 	}
 }
 
-// @todo load params from settings
 // @see https://openweathermap.org/appid#work
 // @note no more than one time every 10 minutes for one location
 bool downloadWeatherData()
