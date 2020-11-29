@@ -1,21 +1,21 @@
 <template>
   <v-autocomplete
-    ref="input"
     v-model="model"
     :disabled="!api"
     :items="entries"
     :loading="isLoading"
     :search-input.sync="search"
+    no-filter
     _hide-no-data
-    _hide-selected
     item-text="name"
     item-value="id"
     label="Location"
     placeholder="Start typing to Search"
-    _return-object
+    prepend-icon="$place"
   >
     <template #item="{ item }">
       <v-list-item-avatar
+        v-if="item.weather"
         color="grey lighten-2"
         class="headline font-weight-light white--text"
       >
@@ -29,7 +29,7 @@
         <v-list-item-title>
           {{ item.name }}, {{ item.sys.country }}
         </v-list-item-title>
-        <v-list-item-subtitle>
+        <v-list-item-subtitle v-if="item.weather">
           <img
             width="16"
             :src="getCountryFlag(item.sys.country)"
@@ -37,43 +37,19 @@
           {{ item.weather[0].description }}
         </v-list-item-subtitle>
       </v-list-item-content>
-      <v-list-item-action>
+      <v-list-item-action v-if="item.main">
         {{ item.main.temp }}°С
       </v-list-item-action>
-
-      <v-list-item
-        v-if="0"
-        two-line
-        class="pa-0"
-      >
-        <v-list-item-icon class="ma-0">
-          <img
-            width="64"
-            :src="getConditionIcon(item.weather[0].icon)"
-          >
-        </v-list-item-icon>
-
-        <v-list-item-content>
-          <v-list-item-title>
-            {{ item.name }}, {{ item.sys.country }}
-            <img :src="getCountryFlag(item.sys.country)">
-            <strong>{{ item.weather[0].description }}</strong>
-          </v-list-item-title>
-          <v-list-item-subtitle>
-            <v-chip
-              class="font-weight-bold"
-              small
-            >
-              {{ item.main.temp }}°С
-            </v-chip>
-          </v-list-item-subtitle>
-        </v-list-item-content>
-      </v-list-item>
+    </template>
+    <template #selection="{ item }">
+      {{ item.name }}, {{ item.sys.country }}
     </template>
   </v-autocomplete>
 </template>
 
 <script>
+  import axios from 'axios'
+
   export default {
     props: {
       location: {
@@ -105,12 +81,17 @@
         this.$emit('update:location', val)
       },
       search (val) {
-        if (!val || val.length < 3) return
+        if (!val || val.length < 3) {
+          return
+        }
 
         // Items have already been requested
-        if (this.isLoading) return
+        if (this.isLoading) {
+          return
+        }
 
         this.isLoading = true
+        this.entries = []
 
         // search
         let url = 'https://api.openweathermap.org/data/2.5/find?appid='
@@ -120,17 +101,23 @@
         url += '&type=like&sort=population&cnt=10'
         url += '&q=' + val
 
-        fetch(url)
-          .then(res => res.json())
+        axios.get(url)
           .then(res => {
-            this.count = res.count
-            this.entries = res.list
+            this.entries = res.data.list
+            this.isLoading = false
           })
-          .catch(err => {
-            console.log(err)
-          })
-          .finally(() => (this.isLoading = false))
       },
+    },
+    created () {
+      // TODO
+      this.entries = [{
+        name: 'Freilassing',
+        sys: {
+          country: 'DE',
+        },
+        id: this.location,
+      }]
+      this.model = this.location
     },
     methods: {
       getCountryFlag (code) {

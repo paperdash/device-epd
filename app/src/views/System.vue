@@ -2,8 +2,6 @@
   <div class="pa-5">
     <v-card
       flat
-      width="400"
-      class="mx-auto"
     >
       <v-card-title class="display-2 mb-12 justify-center text-center">
         System info
@@ -156,6 +154,16 @@
           <strong>{{ Math.ceil(value) }}%</strong>
         </template>
       </v-progress-linear>
+
+      <v-divider class="mt-12" />
+      <v-card-actions>
+        <v-btn
+          depressed
+          disabled
+        >
+          factory reset
+        </v-btn>
+      </v-card-actions>
     </v-card>
   </div>
 </template>

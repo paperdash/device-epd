@@ -50,7 +50,8 @@ const MY_ICONS = {
     lock: { component: () => import(/* webpackChunkName: "icons" */'!vue-svg-loader!@material-icons/svg/svg/lock/baseline.svg') },
     settings: { component: () => import(/* webpackChunkName: "icons" */'!vue-svg-loader!@material-icons/svg/svg/settings/baseline.svg') },
     storage: { component: () => import(/* webpackChunkName: "icons" */'!vue-svg-loader!@material-icons/svg/svg/sd_storage/baseline.svg') },
-    playlist: { component: () => import(/* webpackChunkName: "icons" */'!vue-svg-loader!@material-icons/svg/svg/live_tv/baseline.svg') },
+    // playlist: { component: () => import(/* webpackChunkName: "icons" */'!vue-svg-loader!@material-icons/svg/svg/live_tv/baseline.svg') },
+    slideshow: { component: () => import(/* webpackChunkName: "icons" */'!vue-svg-loader!@material-icons/svg/svg/slideshow/baseline.svg') },
     support: { component: () => import(/* webpackChunkName: "icons" */'!vue-svg-loader!@material-icons/svg/svg/support/baseline.svg') },
     device: { component: () => import(/* webpackChunkName: "icons" */'!vue-svg-loader!@material-icons/svg/svg/video_label/baseline.svg') },
     update: { component: () => import(/* webpackChunkName: "icons" */'!vue-svg-loader!@material-icons/svg/svg/update/baseline.svg') },
@@ -62,6 +63,12 @@ const MY_ICONS = {
     sentiment_satisfied_alt: { component: () => import(/* webpackChunkName: "icons" */'!vue-svg-loader!@material-icons/svg/svg/sentiment_satisfied_alt/baseline.svg') },
     file: { component: () => import(/* webpackChunkName: "icons" */'!vue-svg-loader!@material-icons/svg/svg/insert_drive_file/baseline.svg') },
     calendar_today: { component: () => import(/* webpackChunkName: "icons" */'!vue-svg-loader!@material-icons/svg/svg/calendar_today/baseline.svg') },
+    dashboard: { component: () => import(/* webpackChunkName: "icons" */'!vue-svg-loader!@material-icons/svg/svg/dashboard/baseline.svg') },
+    done: { component: () => import(/* webpackChunkName: "icons" */'!vue-svg-loader!@material-icons/svg/svg/done/baseline.svg') },
+    link: { component: () => import(/* webpackChunkName: "icons" */'!vue-svg-loader!@material-icons/svg/svg/link/baseline.svg') },
+    help: { component: () => import(/* webpackChunkName: "icons" */'!vue-svg-loader!@material-icons/svg/svg/help/baseline.svg') },
+    vpn_key: { component: () => import(/* webpackChunkName: "icons" */'!vue-svg-loader!@material-icons/svg/svg/vpn_key/baseline.svg') },
+    place: { component: () => import(/* webpackChunkName: "icons" */'!vue-svg-loader!@material-icons/svg/svg/place/baseline.svg') },
 
     // wifi
     signalWifiOff: { component: () => import(/* webpackChunkName: "icons" */'!vue-svg-loader!@material-icons/svg/svg/signal_wifi_off/baseline.svg') },

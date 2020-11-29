@@ -1,5 +1,8 @@
 <template>
-  <v-card outlined>
+  <v-card
+    outlined_
+    flat
+  >
     <v-skeleton-loader
       type="card-heading, list-item-three-line, list-item-avatar, list-item-avatar, list-item-avatar, list-item-avatar"
       :loading="isLoading"
@@ -73,12 +76,26 @@
       <v-divider />
 
       <v-card-actions>
+        <!--
         <v-btn
           :loading="isUpdatingData"
           text
           @click="updateData"
         >
           i8n:update weather data
+        </v-btn>
+        -->
+
+        <v-spacer />
+        <v-btn
+          :loading="isUpdatingData"
+          depressed
+          @click="updateData"
+        >
+          <v-icon left>
+            $update
+          </v-icon>
+          Update Now
         </v-btn>
       </v-card-actions>
     </v-skeleton-loader>

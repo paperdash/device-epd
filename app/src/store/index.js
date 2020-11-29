@@ -3,7 +3,7 @@ import Vuex from 'vuex'
 import axios from 'axios'
 // import device from '@/api/device'
 
-import { countries, languages } from 'countries-list'
+// import { languages } from 'countries-list'
 import timezones from 'countries-and-timezones'
 
 Vue.use(Vuex)
@@ -26,7 +26,6 @@ const store = new Vuex.Store({
     },
     updateSettings (state, payload) {
       state.settings = { ...state.settings, ...payload }
-      console.log(state.settings)
     },
   },
   actions: {
@@ -91,19 +90,55 @@ const store = new Vuex.Store({
      */
   },
   getters: {
+    isSettingSupported: (state) => (key) => {
+      const getDescendantProp = (obj, path) => {
+        const arr = path.split(/[.[]['"]?/)
+        let o = obj
+        while (arr.length && o) {
+          o = o[arr.shift().replace(/['"]?]$/, '')]
+        }
+        return o
+      }
+
+      return getDescendantProp(state.settings, key) !== undefined
+    },
     getAvailableLanguages () {
-      return languages
+      const list = []
+      // const en = languages.en
+
+      list.push({
+        code: 'EN',
+        name: 'English',
+        native: 'English',
+      })
+
+      /*
+      Object.keys(languages).forEach((code) => {
+        list.push({
+          code: code,
+          name: languages[code].name,
+          native: languages[code].native,
+        })
+      })
+       */
+      return list
     },
 
     getAvailableCountries () {
-      return countries
+      return Object.values(timezones.getAllCountries())
     },
 
     getAvailableTimezones () {
-      return timezones.getAllTimezones()
+      return Object.values(timezones.getAllTimezones())
     },
     getAvailableTimezone: () => (countryCode) => {
       return timezones.getCountry(countryCode)
+    },
+    getTimezoneByCountry: () => (country) => {
+      return timezones.getTimezonesForCountry(country)
+    },
+    getTimezone: () => (timezone) => {
+      return timezones.getTimezone(timezone)
     },
   },
 })

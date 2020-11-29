@@ -3,13 +3,17 @@
     class="_grid-list-md _pa-2"
     fluid
   >
-    <v-row>
+    <weather-card />
+
+    - update screen in<br>
+    - update weather in<br>
+    - show api infos and short how to
+
+    <v-row v-if="0">
       <v-col
         cols="12"
         md="6"
       >
-        <screen-card />
-
         <!--
         <v-chip
           outlined
@@ -27,7 +31,6 @@
         sm="6"
         md="4"
       >
-        <weather-card />
         <device-card class="mt-5" />
       </v-col>
     </v-row>

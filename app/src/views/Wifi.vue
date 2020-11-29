@@ -2,8 +2,6 @@
   <div class="pa-5">
     <v-card
       flat
-      width="400"
-      class="mx-auto"
     >
       <v-card-title class="display-2 mb-12 justify-center text-center">
         Wifi settings

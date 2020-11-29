@@ -2,8 +2,6 @@
   <div class="pa-5">
     <v-card
       flat
-      width="400"
-      class="mx-auto"
     >
       <v-card-title class="display-2 mb-12 justify-center text-center">
         Weather settings
@@ -11,8 +9,9 @@
 
       <v-card-text>
         <v-text-field
-          v-model="settings.weather.api"
+          v-model="form.api"
           label="OpenWeatherMap API key"
+          prepend-icon="$vpn_key"
         >
           <template #append-outer>
             <v-btn
@@ -26,38 +25,47 @@
         </v-text-field>
 
         <weather-find-location
-          :api="settings.weather.api"
-          :location.sync="settings.weather.location"
-          :lang="settings.weather.lang"
-          :unit="settings.weather.unit"
+          :api="form.api"
+          :location.sync="form.location"
+          :placeholder="form.name"
+          :lang="form.lang"
+          :unit="form.unit"
         />
 
         <v-select
-          v-model="settings.weather.lang"
-          :disabled="!settings.weather.api"
-          :items="weatherLang"
-          label="Language"
-        />
-        <v-select
-          v-model="settings.weather.unit"
-          :disabled="!settings.weather.api"
+          v-model="form.unit"
+          :disabled="!form.api"
           :items="weatherUnit"
           label="Units"
+          prepend-icon=" "
+        />
+        <v-select
+          v-model="form.lang"
+          :disabled="!form.api"
+          :items="weatherLang"
+          label="Language"
+          prepend-icon="$translate"
         />
       </v-card-text>
 
       <v-divider class="mt-12" />
       <v-card-actions>
-        <v-btn text>
-          Cancel
+        <v-btn
+          text
+          @click="resetChanges"
+        >
+          Restore
         </v-btn>
         <v-spacer />
         <v-btn
-          color="primary"
-          text
+          :loading="isProcessing"
+          depressed
           @click="commitChanges"
         >
-          Submit
+          <v-icon left>
+            $done
+          </v-icon>
+          Save
         </v-btn>
       </v-card-actions>
     </v-card>
@@ -65,15 +73,25 @@
 </template>
 
 <script>
-  import { mapState, mapGetters, mapActions } from 'vuex'
+  import { mapState, mapActions, mapMutations } from 'vuex'
   import WeatherFindLocation from '@/components/WeatherFindLocation'
   export default {
     components: {
       WeatherFindLocation,
     },
     data: () => ({
+      isProcessing: false,
+      form: {
+        api: '',
+        location: '',
+        name: '',
+        lang: '',
+        unit: '',
+      },
+
       // @see https://openweathermap.org/current#multi
       weatherLang: [
+        { text: 'Use system settings', value: '' },
         { text: 'English', value: 'en' },
         { text: 'Deutsch', value: 'de' },
       ],
@@ -87,13 +105,36 @@
         'stats',
         'settings',
       ]),
-      ...mapGetters([
-      ]),
     },
+    created () {
+      this.resetChanges()
+    },
+
     methods: {
+      ...mapMutations(['updateSettings']),
       ...mapActions(['saveSettings']),
       commitChanges () {
-        this.saveSettings()
+        this.isProcessing = true
+
+        // TODO
+        this.updateSettings({
+          weather_: {
+            api: '',
+            locationId: 0,
+
+          },
+        })
+
+        this.saveSettings().then(() => {
+          this.isProcessing = false
+        })
+      },
+      resetChanges () {
+        this.form.api = this.settings.weather.api
+        this.form.location = this.settings.weather.location
+        this.form.name = 'freilassing' // this.settings.weather.name
+        this.form.lang = this.settings.weather.lang
+        this.form.unit = this.settings.weather.unit
       },
     },
   }
