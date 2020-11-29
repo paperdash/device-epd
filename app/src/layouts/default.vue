@@ -7,10 +7,7 @@
       class="grey darken-3"
       dark
       app
-      :temporary="temporary"
       mobile-breakpoint="sm"
-      _mini-variant-width="150"
-      _mini-variant
       :clipped="clipped"
     >
       <template
@@ -34,28 +31,20 @@
           </template>
         </v-img>
       </template>
-      <v-sheet
-        v-if="0"
-        rounded="lg"
-      >
-        <v-img
-          :aspect-ratio="16/9"
-          src="/api/device/screen"
-        >
-          <template #placeholder>
-            <v-row
-              class="fill-height ma-0 grey"
-              align="center"
-              justify="center"
-            >
-              <v-progress-circular
-                indeterminate
-                color="grey lighten-5"
-              />
-            </v-row>
-          </template>
-        </v-img>
-      </v-sheet>
+      <template #append>
+        <v-list class="py-0">
+          <v-divider />
+          <v-list-item
+            link
+            to="/setup"
+          >
+            <v-list-item-content class="text-center">
+              <v-icon>$support</v-icon>
+              <v-list-item-title>Assistant</v-list-item-title>
+            </v-list-item-content>
+          </v-list-item>
+        </v-list>
+      </template>
 
       <v-list nav>
         <v-list-item
@@ -65,14 +54,14 @@
           link
         >
           <v-list-item-content
-            v-if="1"
+            v-if="0"
             class="text-center"
           >
             <v-icon>{{ page.icon }}</v-icon>
             <v-list-item-title>{{ page.label }}</v-list-item-title>
           </v-list-item-content>
 
-          <template v-if="0">
+          <template v-if="1">
             <v-list-item-icon>
               <v-icon>{{ page.icon }}</v-icon>
             </v-list-item-icon>
@@ -83,6 +72,7 @@
           </template>
         </v-list-item>
 
+        <!--
         <v-divider />
         <v-list-item
           link
@@ -93,6 +83,7 @@
             <v-list-item-title>Assistant</v-list-item-title>
           </v-list-item-content>
         </v-list-item>
+        -->
       </v-list>
     </v-navigation-drawer>
 
@@ -124,30 +115,30 @@
       <div>{{ settings.device.name }}</div>
       <v-spacer />
 
-      <v-progress-circular
-        :rotate="-90"
-        :value="40"
-        class="mx-3 hidden-xs-only"
-        size="40"
-      >
-        <v-icon>$playlist</v-icon>
-      </v-progress-circular>
-
-      <v-progress-circular
-        :rotate="-90"
-        :value="40"
-        class="mx-3 hidden-xs-only"
-        size="40"
-      >
+      <div class="hidden-xs-only mx-3">
+        <v-icon>$slideshow</v-icon>
+        <v-progress-linear
+          :value="40"
+          size="40"
+          color="white"
+        />
+      </div>
+      <div class="hidden-xs-only mx-3">
         <v-icon>$storage</v-icon>
-      </v-progress-circular>
+        <v-progress-linear
+          :value="72"
+          color="white"
+        />
+      </div>
 
       <template v-if="stats.wifi.connected">
         <v-btn
           icon
           class="hidden-xs-only"
         >
-          <v-icon>{{ stats.wifi.rssi | wifiIcon(0) }}</v-icon>
+          <v-icon>
+            {{ stats.wifi.rssi | wifiIcon(0) }}
+          </v-icon>
         </v-btn>
         <span class="hidden-xs-only">{{ new Date(stats.device.time * 1000).toLocaleString(undefined, {month: 'numeric', day: 'numeric', year: 'numeric', hour: '2-digit', minute: '2-digit'}) }}</span>
       </template>
@@ -170,12 +161,25 @@
 
     <v-main class="grey lighten-3">
       <v-container>
-        <v-sheet
-          min-height="70vh"
-          rounded="lg"
+        <v-col
+          class="_md _offset-md"
+          cols="12"
+          sm="8"
+          offset-sm="2"
+          md="8"
+          offset-md="2"
+          lg="6"
+          offset-lg="3"
         >
-          <router-view />
-        </v-sheet>
+          <v-sheet
+            _min-width="1vh"
+            _max-width="50vh"
+            min-height="70vh"
+            rounded="lg"
+          >
+            <router-view />
+          </v-sheet>
+        </v-col>
       </v-container>
     </v-main>
   </div>
@@ -193,7 +197,7 @@
       pages: [
         {
           label: 'Dashboard',
-          icon: '$lock',
+          icon: '$dashboard',
           to: '/',
         },
         {
@@ -203,7 +207,7 @@
         },
         {
           label: 'Playlist',
-          icon: '$playlist',
+          icon: '$slideshow',
           to: '/playlist',
         },
         {
@@ -225,9 +229,6 @@
     }),
     computed: {
       ...mapState(['stats', 'settings']),
-      temporary () {
-        return this.smAndDown
-      },
     },
   }
 </script>

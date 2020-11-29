@@ -2,7 +2,6 @@ import Vue from 'vue'
 import VueRouter from 'vue-router'
 
 const Dashboard = () => import('../views/Dashboard')
-const Settings = () => import('../views/Settings')
 const Device = () => import('../views/Device')
 const Playlist = () => import('../views/Playlist')
 const Wifi = () => import('../views/Wifi')
@@ -22,7 +21,6 @@ Vue.use(VueRouter)
 export default new VueRouter({
     routes: [
       { path: '/', component: Dashboard },
-      { path: '/settings', component: Settings, meta: { transitionName: 'slide' } },
       { path: '/device', component: Device, meta: { transitionName: 'slide' } },
       { path: '/playlist', component: Playlist, meta: { transitionName: 'slide' } },
       { path: '/wifi', component: Wifi, meta: { transitionName: 'slide' } },
