@@ -190,6 +190,7 @@ void setupApiSettings()
 		root["playlist"]["images"] = NVS.getString("playlist.images");
 
 		root["weather"]["api"] = NVS.getString("weather.api");
+		root["weather"]["name"] = NVS.getString("weather.name");
 		root["weather"]["location"] = NVS.getInt("weather.loc");
 		root["weather"]["lang"] = NVS.getString("weather.lang");
 		root["weather"]["unit"] = NVS.getString("weather.unit");
@@ -241,6 +242,7 @@ void setupApiSettings()
 			if (!doc["weather"].isNull()) {
 				NVS.setString("weather.api", weather["api"]);
 				NVS.setInt("weather.loc", weather["location"].as<unsigned int>());
+				NVS.setString("weather.name", weather["name"]);
 				NVS.setString("weather.lang", weather["lang"]);
 				NVS.setString("weather.unit", weather["unit"]);
 			}

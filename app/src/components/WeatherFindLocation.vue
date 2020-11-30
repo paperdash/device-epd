@@ -4,7 +4,7 @@
     :disabled="!api"
     :items="entries"
     :loading="isLoading"
-    :search-input.sync="search"
+    :search-input.sync="searchInput"
     no-filter
     _hide-no-data
     item-text="name"
@@ -12,6 +12,8 @@
     label="Location"
     placeholder="Start typing to Search"
     prepend-icon="$place"
+    return-object
+    clearable
   >
     <template #item="{ item }">
       <v-list-item-avatar
@@ -21,28 +23,28 @@
       >
         <img
           width="64"
-          :src="getConditionIcon(item.weather[0].icon)"
+          :src="getConditionIcon(item.weather.icon)"
         >
       </v-list-item-avatar>
 
       <v-list-item-content>
         <v-list-item-title>
-          {{ item.name }}, {{ item.sys.country }}
+          {{ item.label }}
         </v-list-item-title>
         <v-list-item-subtitle v-if="item.weather">
           <img
             width="16"
-            :src="getCountryFlag(item.sys.country)"
+            :src="getCountryFlag(item.country)"
           >
-          {{ item.weather[0].description }}
+          {{ item.weather.description }}
         </v-list-item-subtitle>
       </v-list-item-content>
       <v-list-item-action v-if="item.main">
-        {{ item.main.temp }}°С
+        {{ item.temp }}°С
       </v-list-item-action>
     </template>
     <template #selection="{ item }">
-      {{ item.name }}, {{ item.sys.country }}
+      {{ item.label }}
     </template>
   </v-autocomplete>
 </template>
@@ -60,6 +62,10 @@
         type: String,
         required: true,
       },
+      search: {
+        type: String,
+        required: false,
+      },
       lang: {
         type: String,
         required: true,
@@ -74,13 +80,16 @@
       entries: [],
       isLoading: false,
       model: null,
-      search: null,
+      searchInput: null,
     }),
     watch: {
-      model (val) {
-        this.$emit('update:location', val)
+      model (item) {
+        if (item) {
+          this.$emit('update:location', item.id)
+          this.$emit('update:search', item.label)
+        }
       },
-      search (val) {
+      searchInput (val) {
         if (!val || val.length < 3) {
           return
         }
@@ -103,19 +112,31 @@
 
         axios.get(url)
           .then(res => {
-            this.entries = res.data.list
+            const entries = []
+
+            res.data.list.forEach((item) => {
+              entries.push({
+                id: item.id,
+                label: item.name + ', ' + item.sys.country,
+                temp: item.main.temp,
+                country: item.sys.country,
+                weather: {
+                  icon: item.weather[0].icon,
+                  description: item.weather[0].description,
+                },
+              })
+            })
+
+            this.entries = entries
             this.isLoading = false
           })
       },
     },
     created () {
-      // TODO
+      // create entry for the current item
       this.entries = [{
-        name: 'Freilassing',
-        sys: {
-          country: 'DE',
-        },
         id: this.location,
+        label: this.search,
       }]
       this.model = this.location
     },
