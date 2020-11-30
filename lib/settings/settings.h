@@ -4,8 +4,7 @@
 #include "ArduinoNvs.h"
 
 void setupSettings();
-
-//extern Settings = NVS;
+void settingsFactoryReset();
 
 
 #endif

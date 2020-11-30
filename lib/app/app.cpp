@@ -171,6 +171,18 @@ void loopApp()
  */
 void setupApiSettings()
 {
+	server.on("/api/settings/reset", HTTP_GET, [](AsyncWebServerRequest *request) {
+		if (request->hasParam("confirmed"))
+		{
+			Serial.println("factory reset");
+			settingsFactoryReset();
+
+			ESP.restart();
+		}
+
+		request->send(200, "application/json; charset=utf-8", "{}");
+	});
+
 	server.on("/api/settings", HTTP_GET, [](AsyncWebServerRequest *request) {
 		AsyncResponseStream *response = request->beginResponseStream("application/json");
 		DynamicJsonDocument root(1024);
