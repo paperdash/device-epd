@@ -20,7 +20,7 @@ AsyncWebServer server(80);
 
 struct AppConfig
 {
-	char buildRev[40 +1];
+	char buildRev[40 + 1];
 	uint32_t buildTime;
 };
 
@@ -100,7 +100,7 @@ void setupApp()
 	// TODO response
 	server.on("/stats", HTTP_GET, [](AsyncWebServerRequest *request) {
 		AsyncResponseStream *response = request->beginResponseStream("application/json");
-		const size_t capacity = 5*JSON_OBJECT_SIZE(2) + JSON_OBJECT_SIZE(3) + JSON_OBJECT_SIZE(5) + JSON_OBJECT_SIZE(7) + JSON_OBJECT_SIZE(8) + 410;
+		const size_t capacity = 5 * JSON_OBJECT_SIZE(2) + JSON_OBJECT_SIZE(3) + JSON_OBJECT_SIZE(5) + JSON_OBJECT_SIZE(7) + JSON_OBJECT_SIZE(8) + 410;
 		DynamicJsonDocument doc(capacity);
 
 		doc["wifi"]["mac"] = WiFi.macAddress();
@@ -207,10 +207,6 @@ void setupApiSettings()
 		root["weather"]["lang"] = NVS.getString("weather.lang");
 		root["weather"]["unit"] = NVS.getString("weather.unit");
 
-		//root["cloud"]["mode"] = NVS.getString("cloud.mode");
-		//root["cloud"]["url"] = NVS.getString("cloud.url");
-		//root["cloud"]["token"] = NVS.getString("cloud.token");
-
 		serializeJson(root, *response);
 		request->send(response);
 	});
@@ -258,11 +254,6 @@ void setupApiSettings()
 				NVS.setString("weather.lang", weather["lang"]);
 				NVS.setString("weather.unit", weather["unit"]);
 			}
-/*
-			NVS.setString("cloud.mode", doc["cloud"]["mode"]);
-			NVS.setString("cloud.url", doc["cloud"]["url"]);
-			NVS.setString("cloud.token", doc["cloud"]["token"]);
-			*/
 
 			NVS.commit();
 

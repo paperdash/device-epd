@@ -7,7 +7,6 @@
 RTC_DATA_ATTR struct datetime_struct now;
 
 const char *ntpServer = "pool.ntp.org";
-
 unsigned long lastUpdate = 0;
 
 int getNumberOfDays(int month, int year)
@@ -29,7 +28,6 @@ int getNumberOfDays(int month, int year)
 
 bool updateDateTime()
 {
-	//configTime(gmtOffset_sec, daylightOffset_sec, ntpServer);
 	if (!getLocalTime(&now))
 	{
 		Serial.println("Failed to obtain time");
@@ -52,11 +50,12 @@ bool updateDateTime()
 
 void setupDateTime()
 {
+	// config time
 	int gmtOffset_sec = NVS.getInt("system.utc");
 	int daylightOffset_sec = NVS.getInt("system.dst");
-
 	configTime(gmtOffset_sec, daylightOffset_sec, ntpServer);
 
+	// get current time
 	if (!updateDateTime())
 	{
 		// re-try
