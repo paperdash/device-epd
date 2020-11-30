@@ -2,6 +2,7 @@
 #include <SPIFFS.h>
 #include <ArduinoJson.h>
 #include "faceCalendar.h"
+#include "settings.h"
 #include "display.h"
 #include "datetime.h"
 #include "image.h"
@@ -19,10 +20,7 @@ void display_calender();
 void display_picture();
 void display_time();
 
-const char faceCalendarPicutreJson[] = "/calendarPhoto.json";
 const char faceCalendarPicture[] = "/calendarPhoto.jpg";
-//const char faceCalendarPictureUrl[] = "http://us-central1-paperdash-io.cloudfunctions.net/apiImageOnRequest/390x384.jpg"; // TODO load from settings
-const char faceCalendarPictureUrl[] = "https://paperdash.io/api/image/390x384.jpg"; // TODO load from settings
 
 unsigned long lastCalendarDataUpdate = 0;
 
@@ -65,16 +63,14 @@ void showFaceCalendar()
  */
 bool updateCalendarData()
 {
-	String url = NVS.getString("service.image");
+	String url = NVS.getString("playlist.images");
 
-	// TODO
-	if (url) {
-		url += "390x384.jpg"
+	if (!url.isEmpty()) {
+		url += "390x384.jpg";
+		return downloadFile(url, faceCalendarPicture);
 	}
-	// url += "APPID=" + NVS.getString("service.image");
-	// char faceCalendarPictureUrl[] = NVS.getString("service.image");
 
-	return downloadFile(faceCalendarPictureUrl, faceCalendarPicture);
+	return false;
 }
 
 void display_calender()
