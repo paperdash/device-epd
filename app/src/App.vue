@@ -32,30 +32,18 @@
     },
     data: () => ({
       isLoading: true,
-      layout: 'layout-default',
     }),
     computed: {
       ...mapState(['stats']),
+      layout () {
+        return 'layout-' + (this.$route.meta.layout || 'default')
+      },
     },
     created () {
-      // switch layout if necessary
-      this.$router.beforeEach((to, from, next) => {
-        const layout = to.meta.layout || 'default'
-        this.layout = 'layout-' + layout
-        next()
-      })
-
       // load
-
-      Promise.all([this.loadStats(), this.loadSettings()]).then((values) => {
+      Promise.all([this.loadStats(), this.loadSettings()]).then(() => {
         this.isLoading = false
       })
-
-      /*
-      this.loadStats().then(() => {
-        this.isLoading = false
-      })
-       */
     },
     methods: {
       ...mapActions([
