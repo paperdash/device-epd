@@ -1,80 +1,89 @@
 <template>
-  <v-container
-    class="_fill-height"
-    fluid
+  <setup-panel
+    back
+    @back="stepBack"
   >
-    <v-row
-      no-gutters
-      justify="center"
+    <template #icon />
+    <template #headline>
+      Appearance
+    </template>
+
+    <v-radio-group
+      v-model="form.theme"
+      row
     >
-      <v-col
-        lg="5"
-        md="6"
-        sm="8"
+      <v-radio
+        label="Light"
+        value="white"
+      />
+      <v-radio
+        label="Dark"
+        value="black"
+      />
+    </v-radio-group>
+
+    <template #actions>
+      <v-btn
+        depressed
+        block
+        color="primary"
+        @click="commitStep()"
       >
-        <v-card flat>
-          <v-card-title class="display-2 mb-12 justify-center text-center">
-            Appearance
-          </v-card-title>
-
-          <v-radio-group
-            v-model="settings.device.theme"
-            row
-          >
-            <v-radio
-              label="Light"
-              value="white"
-            />
-            <v-radio
-              label="Dark"
-              value="black"
-            />
-          </v-radio-group>
-
-          <v-card-actions>
-            <v-btn
-              depressed
-              block
-              color="primary"
-              @click="commitStep()"
-            >
-              Continue
-            </v-btn>
-          </v-card-actions>
-        </v-card>
-      </v-col>
-    </v-row>
-  </v-container>
+        Continue
+      </v-btn>
+    </template>
+  </setup-panel>
 </template>
 
 <script>
-  import apiDevice from '@/api/device'
+  import { mapState, mapMutations, mapActions } from 'vuex'
+  import SetupPanel from '@/components/SetupPanel'
 
   export default {
+    components: { SetupPanel },
     data: () => ({
-      isLoading: true,
-      isSaving: false,
-      settings: null,
+      isProcessing: false,
+      form: {
+        theme: '',
+      },
     }),
+    computed: {
+      ...mapState([
+        'settings',
+      ]),
+    },
     created () {
-      apiDevice.getSettings(settings => {
-        this.settings = settings
-
-        this.isLoading = false
-      })
+      this.resetChanges()
     },
     methods: {
+      ...mapMutations(['updateSettings']),
+      ...mapActions(['saveSettings']),
+
       commitStep () {
-        this.isSaving = true
+        this.isProcessing = true
 
-        apiDevice.putSettings({ device: this.settings.device }, () => {
-          this.isSaving = false
+        this.updateSettings({
+          device: {
+            theme: this.form.theme,
+          },
+        })
 
+        /*
+        this.saveSettings().then(() => {
           this.nextStep()
         })
+        */
+
+        this.nextStep()
+      },
+      resetChanges () {
+        this.form.theme = this.settings.device.theme
       },
       nextStep () {
         this.$router.push('/setup/done')
+      },
+      stepBack () {
+        this.$router.push('/setup/weather')
       },
     },
   }

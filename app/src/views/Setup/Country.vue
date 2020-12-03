@@ -3,6 +3,18 @@
     class="_fill-height"
     fluid
   >
+    <div>
+      <v-btn
+        text
+        color="primary"
+        class="px-0"
+        @click="stepBack"
+      >
+        <v-icon>$prev</v-icon>
+        Back
+      </v-btn>
+    </div>
+
     <v-row
       no-gutters
       justify="center"
@@ -16,18 +28,18 @@
           <!-- country -->
           <v-card flat>
             <v-card-title
-              class="display-2 mb-12 justify-center text-center"
+              class="display-1 font-weight-bold mb-12 px-0 justify-center text-center"
             >
               Select Your Country or Region
             </v-card-title>
 
-            <v-list class="ml-5 pa-0">
+            <v-list class="pa-0">
               <template v-for="(country, code) in availableCountries">
                 <div :key="code">
                   <v-divider />
 
                   <v-list-item
-                    class="pl-1"
+                    class="px-0"
                     @click="commitCountry(code, country)"
                   >
                     <!--<v-list-item-icon>{{ country.emoji }}</v-list-item-icon>-->
@@ -46,17 +58,17 @@
         <template v-else-if="currentStep === 1">
           <!-- timezone if needed -->
           <v-card flat>
-            <v-card-title class="display-2 mb-12 justify-center text-center">
+            <v-card-title class="display-1 font-weight-bold mb-12 px-0 justify-center text-center">
               Select Your Timezone
             </v-card-title>
 
-            <v-list class="ml-5 pa-0">
+            <v-list class="pa-0">
               <template v-for="(zone, i) in availableTimeZones">
                 <div :key="i">
                   <v-divider />
 
                   <v-list-item
-                    class="pl-1"
+                    class="px-0"
                     @click="commitTimezone(zone)"
                   >
                     <v-list-item-content>{{ zone }}</v-list-item-content>
@@ -132,6 +144,9 @@
 
           this.$router.push('/setup/wifi')
         })
+      },
+      stepBack () {
+        this.$router.push('/setup/start')
       },
     },
   }

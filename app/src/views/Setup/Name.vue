@@ -1,124 +1,115 @@
 <template>
-  <v-container
-    class="_fill-height"
-    fluid
+  <setup-panel
+    back
+    @back="stepBack"
   >
-    <v-row
-      no-gutters
-      justify="center"
+    <template #icon>
+      $face
+    </template>
+    <template #headline>
+      Give it a name
+    </template>
+
+    <p
+      class="text-center"
     >
-      <v-col
-        lg="5"
-        md="6"
-        sm="8"
+      TODO:Lorem ipsum dolor sit amet, consetetur sadipscing elitr, sed diam nonumy eirmod tempor invidunt ut labore et dolore magna aliquyam
+    </p>
+
+    <v-card-text>
+      <v-text-field
+        v-model="form.name"
+        label="Name of the device"
       >
-        <v-card flat>
-          <div class="justify-center text-center">
-            <v-icon
-              view-box="0 0 24 24"
-              style="width: 64px; height: 64px; fill: #FF9800"
-            >
-              $face
-            </v-icon>
-          </div>
-          <v-card-title class="display-2 mb-12 justify-center text-center">
-            Give it a name
-          </v-card-title>
-
-          <p
-            class="text-center"
+        <template #append-outer>
+          <v-icon
+            class="random-icon mt-5 ml-5"
+            @click="setRandomName()"
           >
-            TODO:Lorem ipsum dolor sit amet, consetetur sadipscing elitr, sed diam nonumy eirmod tempor invidunt ut labore et dolore magna aliquyam
-          </p>
+            $autorenew
+          </v-icon>
+        </template>
+      </v-text-field>
+    </v-card-text>
 
-          <v-skeleton-loader
-            v-if="isLoading"
-            type="list-item-two-line"
-            class="mx-auto"
-          />
-
-          <template v-else>
-            <v-card-text>
-              <v-text-field
-                v-model="settings.device.name"
-                label="i8n:My paperdash name"
-              >
-                <template #append-outer>
-                  <v-icon
-                    view-box="0 0 24 24"
-                    style="width: 48px; height: 48px;"
-                    @click="setRandomeName()"
-                  >
-                    $autorenew
-                  </v-icon>
-                </template>
-              </v-text-field>
-            </v-card-text>
-
-            <v-card-actions class="flex-column">
-              <v-btn
-                :disabled="!isStepValid"
-                :loading="isSaving"
-                depressed
-                block
-                color="primary"
-                @click="commitStep()"
-              >
-                Continue
-              </v-btn>
-            </v-card-actions>
-          </template>
-        </v-card>
-      </v-col>
-    </v-row>
-  </v-container>
+    <template #actions>
+      <v-btn
+        :disabled="!isStepValid"
+        depressed
+        block
+        color="primary"
+        @click="commitStep()"
+      >
+        Continue
+      </v-btn>
+    </template>
+  </setup-panel>
 </template>
 
 <script>
-  import apiDevice from '@/api/device'
+  import { mapState, mapMutations, mapActions } from 'vuex'
   import randomNames from '@/assets/fantasyNames.json'
+  import SetupPanel from '@/components/SetupPanel'
 
   export default {
+    components: { SetupPanel },
     data: () => ({
-      isLoading: true,
-      isSaving: false,
-      settings: null,
+      isProcessing: false,
+      form: {
+        name: '',
+      },
     }),
     computed: {
+      ...mapState([
+        'settings',
+      ]),
+
       isStepValid () {
         return (
-          this.settings.device.name !== undefined &&
-          this.settings.device.name !== ''
+          this.form.name !== ''
         )
       },
     },
     created () {
-      apiDevice.getSettings(settings => {
-        this.settings = settings
+      this.resetChanges()
 
-        if (!this.isStepValid) {
-          this.setRandomeName()
-        }
-
-        this.isLoading = false
-      })
+      if (!this.isStepValid) {
+        this.setRandomName()
+      }
     },
     methods: {
+      ...mapMutations(['updateSettings']),
+      ...mapActions(['saveSettings']),
+
       commitStep () {
-        this.isSaving = true
+        this.isProcessing = true
 
-        apiDevice.putSettings({ device: this.settings.device }, () => {
-          this.isSaving = false
+        this.updateSettings({
+          device: {
+            name: this.form.name,
+          },
+        })
 
+        /*
+        this.saveSettings().then(() => {
           this.nextStep()
         })
+        */
+
+        this.nextStep()
+      },
+      resetChanges () {
+        this.form.name = this.settings.device.name
       },
       nextStep () {
         this.$router.push('/setup/appearance')
       },
-      setRandomeName () {
-        this.settings.device.name =
+      setRandomName () {
+        this.form.name =
           randomNames[Math.floor(Math.random() * randomNames.length)]
+      },
+      stepBack () {
+        this.$router.push('/setup/weather')
       },
     },
   }
@@ -128,5 +119,9 @@
 >>> .v-text-field input {
   font-size: 2.2em;
   max-height: inherit;
+}
+
+>>> .random-icon > .v-icon__svg {
+  transform: scale(2);
 }
 </style>

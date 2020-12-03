@@ -3,6 +3,18 @@
     class="_fill-height"
     fluid
   >
+    <div>
+      <v-btn
+        text
+        color="primary"
+        class="px-0"
+        @click="stepBack"
+      >
+        <v-icon>$prev</v-icon>
+        Back
+      </v-btn>
+    </div>
+
     <v-row
       no-gutters
       justify="center"
@@ -13,7 +25,7 @@
         sm="8"
       >
         <v-card flat>
-          <v-card-title class="display-2 mb-12 justify-center text-center">
+          <v-card-title class="display-1 font-weight-bold mb-12 px-0 justify-center text-center">
             Choose a
             <br>Wi-Fi Network
           </v-card-title>
@@ -141,6 +153,9 @@
         this.wifiPasswordModal = false
 
         apiDevice.wifiConnect(ssid, password, () => {})
+      },
+      stepBack () {
+        this.$router.push('/setup/country')
       },
     },
   }

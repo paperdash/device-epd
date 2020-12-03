@@ -1,51 +1,47 @@
 <template>
-  <v-container
-    class="_fill-height"
-    fluid
+  <setup-panel
+    back
+    @back="stepBack"
   >
-    <v-card
-      flat
-      class="mx-auto"
-      width="540"
-    >
-      <!--<v-card-title class="display-2 mb-12 justify-center text-center">Welcome to paperdash</v-card-title>-->
-      <v-card-title class="display-2 mb-12 justify-center text-center">
-        Hello {{ settings.device.name }}
-      </v-card-title>
+    <template #headline>
+      Hello {{ settings.device.name }}
+    </template>
 
-      <v-card-actions>
-        <v-btn
-          outlined
-          block
-          color="primary"
-          @click="onStart"
-        >
-          Let's start
-        </v-btn>
-      </v-card-actions>
-    </v-card>
-  </v-container>
+    <template #actions>
+      <v-btn
+        outlined
+        block
+        color="primary"
+        @click="onStart"
+      >
+        Let's start
+      </v-btn>
+    </template>
+  </setup-panel>
 </template>
 
 <script>
-  import apiDevice from '@/api/device'
+  import { mapState } from 'vuex'
+  import SetupPanel from '@/components/SetupPanel'
 
   export default {
+    components: { SetupPanel },
     data: () => ({
-      isLoading: true,
-      isSaving: false,
-      settings: null,
     }),
+    computed: {
+      ...mapState([
+        'settings',
+      ]),
+    },
     created () {
-      apiDevice.getSettings(settings => {
-        this.settings = settings
 
-        this.isLoading = false
-      })
     },
     methods: {
       onStart () {
         this.$router.push('/')
+      },
+      stepBack () {
+        this.$router.push('/setup/appearance')
       },
     },
   }
