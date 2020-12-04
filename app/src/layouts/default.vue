@@ -9,7 +9,7 @@
       app
       :permanent="$vuetify.breakpoint.mdOnly"
       :temporary="$vuetify.breakpoint.smAndDown"
-      :clipped="clipped"
+      clipped
     >
       <template
         #prepend
@@ -92,8 +92,7 @@
       app
       color="orange darken-2"
       dark
-      flat_
-      :clipped-left="clipped"
+      clipped-left
     >
       <v-btn
         _class="hidden-xs-and-down"
@@ -145,10 +144,10 @@
       </template>
       <template v-else>
         <v-btn
-          to="/setup/wifi"
+          to="/wifi"
           icon
         >
-          <v-icon color="red">
+          <v-icon>
             $signalWifiOff
           </v-icon>
         </v-btn>
@@ -160,28 +159,26 @@
       />
     </v-app-bar>
 
-    <v-main class="grey lighten-3">
-      <v-container>
-        <v-col
-          class="_md _offset-md"
-          cols="12"
-          sm="8"
-          offset-sm="2"
-          md="8"
-          offset-md="2"
-          lg="6"
-          offset-lg="3"
+    <v-main
+      :class="[{'grey lighten-3': !$vuetify.breakpoint.xsOnly}]"
+    >
+      <v-col
+        class="px-0"
+        cols="12"
+        sm="8"
+        offset-sm="2"
+        md="8"
+        offset-md="2"
+        lg="6"
+        offset-lg="3"
+      >
+        <v-sheet
+          min-height="70vh"
+          rounded="lg"
         >
-          <v-sheet
-            _min-width="1vh"
-            _max-width="50vh"
-            min-height="70vh"
-            rounded="lg"
-          >
-            <router-view />
-          </v-sheet>
-        </v-col>
-      </v-container>
+          <router-view class="pa-5" />
+        </v-sheet>
+      </v-col>
     </v-main>
   </div>
 </template>
@@ -194,7 +191,6 @@
     components: { Notifications },
     data: () => ({
       drawer: true,
-      clipped: true,
       pages: [
         {
           label: 'Dashboard',
