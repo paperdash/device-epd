@@ -40,8 +40,28 @@
       },
     },
     created () {
-      // load
       Promise.all([this.loadStats(), this.loadSettings()]).then(() => {
+        // init app
+        let goto
+        const setupFinished = true // TODO
+        const wifiConnected = this.stats.wifi.connected
+
+        // only on initial navigation
+        if (!setupFinished) {
+          if (this.$route.path !== '/setup/start') {
+            goto = '/setup/start'
+          }
+        } else if (!wifiConnected) {
+          if (this.$route.path !== '/wifi') {
+            goto = '/wifi'
+          }
+        }
+
+        if (goto) {
+          this.$router.push(goto)
+        }
+
+        // initialization done
         this.isLoading = false
       })
     },
