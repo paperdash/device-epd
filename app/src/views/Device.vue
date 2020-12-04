@@ -1,77 +1,76 @@
 <template>
-  <div class="pa-5">
-    <v-card
-      flat
-    >
-      <v-card-title class="display-2 mb-12 justify-center text-center">
-        Device settings
-      </v-card-title>
+  <v-card
+    flat
+    rounded="lg"
+  >
+    <v-card-title class="display-2 mb-12 justify-center text-center">
+      Device settings
+    </v-card-title>
 
-      <v-card-text>
-        <v-text-field
-          v-model="form.name"
-          label="Name"
-          prepend-icon="$sentiment_satisfied_alt"
-        />
+    <div>
+      <v-text-field
+        v-model="form.name"
+        label="Name"
+        prepend-icon="$sentiment_satisfied_alt"
+      />
 
-        <v-select
-          v-model="form.theme"
-          disabled
-          :items="optionsTheme"
-          label="Appearance"
-          prepend-icon="$palette"
-        />
+      <v-select
+        v-model="form.theme"
+        disabled
+        :items="optionsTheme"
+        label="Appearance"
+        prepend-icon="$palette"
+      />
 
-        <v-select
-          v-model="form.language"
-          disabled
-          :items="getAvailableLanguages"
-          item-text="native"
-          item-value="code"
-          label="Language"
-          prepend-icon="$translate"
-        />
+      <v-select
+        v-model="form.language"
+        disabled
+        :items="getAvailableLanguages"
+        item-text="native"
+        item-value="code"
+        label="Language"
+        prepend-icon="$translate"
+      />
 
-        <v-autocomplete
-          v-model="form.timezone"
-          :items="getAvailableTimezonesSorted"
-          item-value="name"
-          item-text="name"
-          label="Timezone"
-          prepend-icon="$access_time"
-          return-object
-        >
-          <template #item="{ item }">
-            (GMT{{ item.utcOffsetStr }}) {{ item.name }}
-          </template>
-          <template #selection="{item}">
-            (GMT{{ item.utcOffsetStr }}) {{ item.name }}
-          </template>
-        </v-autocomplete>
-      </v-card-text>
+      <v-autocomplete
+        v-model="form.timezone"
+        :items="getAvailableTimezonesSorted"
+        item-value="name"
+        item-text="name"
+        label="Timezone"
+        prepend-icon="$access_time"
+        return-object
+      >
+        <template #item="{ item }">
+          (GMT{{ item.utcOffsetStr }}) {{ item.name }}
+        </template>
+        <template #selection="{item}">
+          (GMT{{ item.utcOffsetStr }}) {{ item.name }}
+        </template>
+      </v-autocomplete>
+    </div>
 
-      <v-divider class="mt-12" />
-      <v-card-actions>
-        <v-btn
-          text
-          @click="resetChanges"
-        >
-          Restore
-        </v-btn>
-        <v-spacer />
-        <v-btn
-          :loading="isProcessing"
-          depressed
-          @click="commitChanges"
-        >
-          <v-icon left>
-            $done
-          </v-icon>
-          Save
-        </v-btn>
-      </v-card-actions>
-    </v-card>
-  </div>
+    <v-divider class="mt-12" />
+    <v-card-actions>
+      <v-btn
+        text
+        @click="resetChanges"
+      >
+        Restore
+      </v-btn>
+      <v-spacer />
+      <v-btn
+        :loading="isProcessing"
+        depressed
+        @click="commitChanges"
+      >
+        <v-icon left>
+          $done
+        </v-icon>
+        Save
+      </v-btn>
+    </v-card-actions>
+  </v-card>
 </template>
 
 <script>

@@ -1,88 +1,87 @@
 <template>
-  <div class="pa-5">
-    <v-card
-      flat
-    >
-      <v-card-title class="display-2 mb-12 justify-center text-center">
-        Playlist settings
-      </v-card-title>
+  <v-card
+    flat
+    rounded="lg"
+  >
+    <v-card-title class="display-2 mb-12 justify-center text-center">
+      Playlist settings
+    </v-card-title>
 
-      <v-card-text class="pb-0">
-        <v-row>
-          <v-col
-            cols="3"
-            class="text-center mt-2 pb-0"
-          >
-            <v-icon>$wb_sunny</v-icon>
-            <br>Forecast
-          </v-col>
-          <v-col
-            cols="6"
-            class="text-center pb-0"
-          >
-            <v-text-field
-              v-model="form.timer"
-              :disabled="!isSettingSupported('playlist.timer')"
-              label="Switch every"
-              :rules="[rules.minValue]"
-              type="number"
-              dense
-              rounded
-              filled
-              suffix="seconds"
-              class="text--right"
-            />
-          </v-col>
-          <v-col
-            cols="3"
-            class="text-center mt-2 pb-0"
-          >
-            <v-icon>$calendar_today</v-icon>
-            <br>Calendar
-          </v-col>
-        </v-row>
-      </v-card-text>
-
-      <v-divider class="mt-12 mx-3" />
-
-      <v-card-subtitle>
-        Service
-      </v-card-subtitle>
-      <v-card-text>
-        <v-combobox
-          v-model="form.images"
-          :disabled="!isSettingSupported('playlist.images')"
-          :items="['https://api.paperdash.io/image/']"
-          label="Image provider"
-          prepend-icon="$link"
-          append-outer-icon="$help"
-        />
-      </v-card-text>
-
-      <v-divider class="mt-12" />
-      <v-card-actions>
-        <v-btn
-          text
-          @click="resetChanges"
+    <v-card-text class="pb-0">
+      <v-row>
+        <v-col
+          cols="3"
+          class="text-center mt-2 pb-0"
         >
-          Restore
-        </v-btn>
-        <v-spacer />
-        <v-btn
-          :loading="isProcessing"
-          depressed
-          @click="commitChanges"
+          <v-icon>$wb_sunny</v-icon>
+          <br>Forecast
+        </v-col>
+        <v-col
+          cols="6"
+          class="text-center pb-0"
         >
-          <v-icon left>
-            $done
-          </v-icon>
-          Save
-        </v-btn>
-      </v-card-actions>
-    </v-card>
+          <v-text-field
+            v-model="form.timer"
+            :disabled="!isSettingSupported('playlist.timer')"
+            label="Switch every"
+            :rules="[rules.minValue]"
+            type="number"
+            dense
+            rounded
+            filled
+            suffix="seconds"
+            class="text--right"
+          />
+        </v-col>
+        <v-col
+          cols="3"
+          class="text-center mt-2 pb-0"
+        >
+          <v-icon>$calendar_today</v-icon>
+          <br>Calendar
+        </v-col>
+      </v-row>
+    </v-card-text>
 
-    - rename playlist to faces?
-  </div>
+    <v-divider class="mt-12 mx-3" />
+
+    <v-card-subtitle>
+      Service
+    </v-card-subtitle>
+    <v-card-text>
+      <v-combobox
+        v-model="form.images"
+        :disabled="!isSettingSupported('playlist.images')"
+        :items="['https://api.paperdash.io/image/']"
+        label="Image provider"
+        prepend-icon="$link"
+        append-outer-icon="$help"
+      />
+    </v-card-text>
+
+    <v-divider class="mt-12" />
+    <v-card-actions>
+      <v-btn
+        text
+        @click="resetChanges"
+      >
+        Restore
+      </v-btn>
+      <v-spacer />
+      <v-btn
+        :loading="isProcessing"
+        depressed
+        @click="commitChanges"
+      >
+        <v-icon
+          left
+        >
+          $done
+        </v-icon>
+        Save
+      </v-btn>
+    </v-card-actions>
+  </v-card>
 </template>
 
 <script>

@@ -1,6 +1,7 @@
 <template>
   <v-card
     flat
+    rounded="lg"
   >
     <v-card-title class="display-2 mb-12 justify-center text-center">
       Weather settings
