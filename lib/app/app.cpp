@@ -114,6 +114,7 @@ void setupApp()
 
 		doc["device"]["id"] = DeviceId;
 		doc["device"]["time"] = time(NULL);
+		doc["device"]["name"] = NVS.getString("device.name");
 		doc["device"]["hostname"] = WiFi.getHostname();
 		doc["device"]["bootCycle"] = deviceGetBootCount();
 		doc["device"]["screen"]["width"] = 640;
