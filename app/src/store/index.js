@@ -1,9 +1,6 @@
 import Vue from 'vue'
 import Vuex from 'vuex'
 import axios from 'axios'
-// import device from '@/api/device'
-
-// import { languages } from 'countries-list'
 import timezones from 'countries-and-timezones'
 
 Vue.use(Vuex)
@@ -57,37 +54,6 @@ const store = new Vuex.Store({
         console.warn(error)
       }
     },
-
-    /*
-    async getSensors ({ commit }) {
-      try {
-        const response = await axios.get('/api/sensors')
-        commit('setSensors', response.data)
-      } catch (error) {
-        commit('setSensors', [])
-      }
-    },
-    async putSensor ({ commit }, [id, sensor]) {
-      try {
-        await axios.put('/api/sensor/' + id, {
-          label: sensor.label,
-        })
-        commit('updateSensor', sensor)
-      } catch (error) {
-        console.warn(error)
-      }
-    },
-    async deleteSensor ({ commit }, id) {
-      try {
-        await axios.delete('/api/sensor/' + id)
-        commit('deleteSensor', id)
-        commit('notification', 'sensor #' + id + ' deleted')
-      } catch (error) {
-        console.warn(error)
-      }
-    },
-
-     */
   },
   getters: {
     isSettingSupported: (state) => (key) => {
