@@ -19,9 +19,14 @@ unsigned long lastWeatherDataUpdate = 0;
 void render_current();
 void render_forecast();
 bool readWeatherData();
+bool isFaceWeatherSetupCompleted();
 
 void setupFaceWeather()
 {
+	if (!isFaceWeatherSetupCompleted()) {
+		Serial.println("weather not configured");
+	}
+
 	readWeatherData();
 	lastWeatherDataUpdate = millis();
 }
@@ -50,6 +55,11 @@ void playlistFaceWeather()
 	render_forecast();
 
 	displayFlush();
+}
+
+bool isFaceWeatherSetupCompleted()
+{
+	return !(NVS.getString("weather.api").isEmpty() || NVS.getString("weather.lang").isEmpty() || NVS.getString("weather.lang").isEmpty());
 }
 
 void render_current()
@@ -199,11 +209,14 @@ bool downloadWeatherData()
  */
 bool updateWeatherData()
 {
-	if (downloadWeatherData())
+	if (isFaceWeatherSetupCompleted())
 	{
-		readWeatherData();
+		if (downloadWeatherData())
+		{
+			readWeatherData();
 
-		return true;
+			return true;
+		}
 	}
 
 	return false;
