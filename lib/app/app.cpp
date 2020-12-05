@@ -283,18 +283,7 @@ void setupApiDevice()
 	});
 
 	server.on(
-		"/api/device/screen", HTTP_POST, [](AsyncWebServerRequest *request) {
-			AsyncResponseStream *response = request->beginResponseStream("application/json");
-			DynamicJsonDocument doc(117); // https://arduinojson.org/v6/assistant/
-
-			// todo
-			doc["status"] = true;
-			doc["image"]["format"] = "xxx";
-			doc["image"]["width"] = 0;
-			doc["image"]["height"] = 0;
-
-			serializeJson(doc, *response);
-			request->send(response); },
+		"/api/device/screen", HTTP_POST, [](AsyncWebServerRequest *request) {},
 		[](AsyncWebServerRequest *request, String filename, size_t index, uint8_t *data, size_t len, bool final) {
 			if (!index)
 			{
@@ -313,6 +302,8 @@ void setupApiDevice()
 				ImageFlushBuffer();
 
 				updateDisplayRequired = true;
+
+				request->send(200, "application/json; charset=utf-8", "{}");
 			}
 		});
 
