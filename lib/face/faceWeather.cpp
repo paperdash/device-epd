@@ -66,6 +66,13 @@ void render_current()
 {
 	GFXcanvas1 *canvas = displayGetCanvas();
 
+	// icon
+	const unsigned char *icon = getIconById(weatherData.current_icon, 256);
+	if (icon)
+	{
+		canvas->drawBitmap(192, 0, icon, 256, 256, GxEPD_BLACK, GxEPD_WHITE);
+	}
+
 	// name
 	canvas->setFont(&FreeSansBold18pt7b);
 	canvas->setTextSize(1);
@@ -77,13 +84,6 @@ void render_current()
 	canvas->setTextSize(2);
 	canvas->setCursor(50, 120);
 	canvas->println(weatherData.current_temp);
-
-	// icon
-	const unsigned char *icon = getIconById(weatherData.current_icon, 256);
-	if (icon)
-	{
-		canvas->drawBitmap(192, 0, icon, 256, 256, GxEPD_BLACK, GxEPD_WHITE);
-	}
 
 	// 250 height
 	// high
