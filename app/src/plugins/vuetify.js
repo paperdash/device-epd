@@ -69,8 +69,10 @@ const MY_ICONS = {
     help: { component: () => import(/* webpackChunkName: "icons" */'!vue-svg-loader!@material-icons/svg/svg/help/baseline.svg') },
     vpn_key: { component: () => import(/* webpackChunkName: "icons" */'!vue-svg-loader!@material-icons/svg/svg/vpn_key/baseline.svg') },
     place: { component: () => import(/* webpackChunkName: "icons" */'!vue-svg-loader!@material-icons/svg/svg/place/baseline.svg') },
+    monochrome_photos: { component: () => import(/* webpackChunkName: "icons" */'!vue-svg-loader!@material-icons/svg/svg/monochrome_photos/baseline.svg') },
 
     // wifi
+    wifi: { component: () => import(/* webpackChunkName: "icons" */'!vue-svg-loader!@material-icons/svg/svg/wifi/baseline.svg') },
     signalWifiOff: { component: () => import(/* webpackChunkName: "icons" */'!vue-svg-loader!@material-icons/svg/svg/signal_wifi_off/baseline.svg') },
     signalWifi0: { component: () => import(/* webpackChunkName: "icons" */'!vue-svg-loader!@material-icons/svg/svg/signal_wifi_0_bar/baseline.svg') },
     signalWifi1: { component: () => import(/* webpackChunkName: "icons" */'!vue-svg-loader!@material-icons/svg/svg/signal_wifi_1_bar/baseline.svg') },
