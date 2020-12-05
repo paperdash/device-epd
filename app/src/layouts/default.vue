@@ -214,7 +214,7 @@
         },
         {
           label: 'Wifi',
-          icon: '$signalWifi3',
+          icon: '$wifi',
           to: '/wifi',
         },
         {
