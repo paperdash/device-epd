@@ -5,6 +5,7 @@
 #include "esp_task_wdt.h"
 
 // mapping suggestion for ESP32, e.g. LOLIN32, see .../variants/.../pins_arduino.h for your board
+// EPD -> ESP
 // BUSY -> 4, RST -> 16, DC -> 17, CS -> SS(5), CLK ->   (18), DIN -> MOSI(23), GND -> GND, 3.3V -> 3.3V
 
 GxEPD2_BW<GxEPD2_750, GxEPD2_750::HEIGHT> display(GxEPD2_750(/*CS=*/5, /*DC=*/17, /*RST=*/16, /*BUSY=*/4));
