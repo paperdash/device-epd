@@ -22,7 +22,15 @@ const store = new Vuex.Store({
       state.notifications = payload
     },
     updateSettings (state, payload) {
-      state.settings = { ...state.settings, ...payload }
+      const commit = { ...state.settings }
+
+      Object.keys(payload).forEach(group => {
+        if (commit[group]) {
+          commit[group] = { ...commit[group], ...payload[group] }
+        }
+      })
+
+      state.settings = commit
     },
   },
   actions: {

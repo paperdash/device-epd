@@ -6,3 +6,8 @@
 	width: 24px !important;
 	height: 24px !important;
 }
+
+/* FIX https://github.com/vuetifyjs/vuetify/issues/9130 */
+.v-card__text, .v-card__title {
+	word-break: normal !important;
+}

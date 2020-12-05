@@ -31,6 +31,7 @@
           >
             <v-icon
               class="my-icon ma-10"
+              color="primary"
             >
               <slot name="icon" />
             </v-icon>

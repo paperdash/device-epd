@@ -3,24 +3,40 @@
     back
     @back="stepBack"
   >
-    <template #icon />
+    <template #icon>
+      $monochrome_photos
+    </template>
     <template #headline>
       Appearance
     </template>
 
-    <v-radio-group
-      v-model="form.theme"
-      row
+    <v-sheet
+      width="60%"
+      class="mx-auto"
     >
-      <v-radio
-        label="Light"
-        value="white"
+      <device-simulator
+        :theme="form.theme"
+        face="weather"
       />
-      <v-radio
-        label="Dark"
-        value="black"
-      />
-    </v-radio-group>
+    </v-sheet>
+
+    <v-divider class="mt-5" />
+
+    <div class="d-flex justify-center">
+      <v-radio-group
+        v-model="form.theme"
+        row
+      >
+        <v-radio
+          label="Light"
+          value="white"
+        />
+        <v-radio
+          label="Dark"
+          value="black"
+        />
+      </v-radio-group>
+    </div>
 
     <template #actions>
       <v-btn
@@ -38,9 +54,10 @@
 <script>
   import { mapState, mapMutations, mapActions } from 'vuex'
   import SetupPanel from '@/components/SetupPanel'
+  import DeviceSimulator from '@/components/DeviceSimulator'
 
   export default {
-    components: { SetupPanel },
+    components: { DeviceSimulator, SetupPanel },
     data: () => ({
       isProcessing: false,
       form: {
@@ -68,16 +85,12 @@
           },
         })
 
-        /*
         this.saveSettings().then(() => {
           this.nextStep()
         })
-        */
-
-        this.nextStep()
       },
       resetChanges () {
-        this.form.theme = this.settings.device.theme
+        this.form.theme = this.settings.device.theme || 'black'
       },
       nextStep () {
         this.$router.push('/setup/done')

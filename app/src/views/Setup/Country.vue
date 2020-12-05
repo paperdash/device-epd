@@ -89,7 +89,8 @@
 </template>
 
 <script>
-  import apiDevice from '@/api/device'
+  import { mapState, mapActions, mapMutations } from 'vuex'
+  //  import apiDevice from '@/api/device'
   import { countries } from 'countries-list'
   import timezones from 'countries-and-timezones'
 
@@ -97,24 +98,27 @@
     data: () => ({
       currentStep: 0,
 
-      isLoading: true,
-      isSaving: true,
-      settings: null,
-
       availableCountries: countries,
       availableTimeZones: [],
     }),
-    created () {
-      apiDevice.getSettings(settings => {
-        this.settings = settings
-
-        this.isLoading = false
-      })
+    computed: {
+      ...mapState([
+        'stats',
+        'settings',
+      ]),
     },
+
     methods: {
+      ...mapMutations(['updateSettings']),
+      ...mapActions(['saveSettings']),
+
       commitCountry (code, country) {
-        this.settings.system.country = code
-        this.settings.system.language = country.languages[0]
+        this.updateSettings({
+          system: {
+            country: code,
+            language: country.languages[0],
+          },
+        })
 
         // get also timezone
         const zone = timezones.getCountry(code)
@@ -127,21 +131,21 @@
       },
 
       commitTimezone (zone) {
-        this.settings.system.timezone = zone
-
         const timezone = timezones.getTimezone(zone)
-        this.settings.system.utc = timezone.utcOffset * 60
-        this.settings.system.dst = timezone.dstOffset * 60
+
+        this.updateSettings({
+          system: {
+            timezone: zone,
+            utc: timezone.utcOffset * 60,
+            dst: timezone.dstOffset * 60,
+          },
+        })
 
         this.commitStep()
       },
 
       commitStep () {
-        this.isSaving = true
-
-        apiDevice.putSettings({ system: this.settings.system }, () => {
-          this.isSaving = false
-
+        this.saveSettings().then(() => {
           this.$router.push('/setup/wifi')
         })
       },

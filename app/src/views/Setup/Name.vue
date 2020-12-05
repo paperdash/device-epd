@@ -90,13 +90,11 @@
           },
         })
 
-        /*
         this.saveSettings().then(() => {
           this.nextStep()
         })
-        */
 
-        this.nextStep()
+        // this.nextStep()
       },
       resetChanges () {
         this.form.name = this.settings.device.name
