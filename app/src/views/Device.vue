@@ -16,7 +16,6 @@
 
       <v-select
         v-model="form.theme"
-        disabled
         :items="optionsTheme"
         label="Appearance"
         prepend-icon="$palette"

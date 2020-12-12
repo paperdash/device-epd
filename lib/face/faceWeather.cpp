@@ -47,8 +47,8 @@ void playlistFaceWeather()
 	GFXcanvas1 *canvas = displayGetCanvas();
 
 	canvas->setRotation(0);
-	canvas->fillScreen(GxEPD_BLACK);
-	canvas->setTextColor(GxEPD_WHITE);
+	canvas->fillScreen(COLOR_BG);
+	canvas->setTextColor(COLOR_FG);
 	canvas->setTextSize(1);
 
 	render_current();
@@ -70,7 +70,7 @@ void render_current()
 	const unsigned char *icon = getIconById(weatherData.current_icon, 256);
 	if (icon)
 	{
-		canvas->drawBitmap(192, 0, icon, 256, 256, GxEPD_BLACK, GxEPD_WHITE);
+		canvas->drawBitmap(192, 0, icon, 256, 256, COLOR_BG, COLOR_FG);
 	}
 
 	// name
@@ -102,11 +102,11 @@ void render_forecast()
 	const unsigned char *icon;
 
 	// line forecast
-	canvas->drawRect(0, 250, 640, 2, GxEPD_WHITE);
+	canvas->drawRect(0, 250, 640, 2, COLOR_FG);
 
-	canvas->drawLine(160, 250, 160, 384, GxEPD_WHITE);
-	canvas->drawLine(320, 250, 320, 384, GxEPD_WHITE);
-	canvas->drawLine(480, 250, 480, 384, GxEPD_WHITE);
+	canvas->drawLine(160, 250, 160, 384, COLOR_FG);
+	canvas->drawLine(320, 250, 320, 384, COLOR_FG);
+	canvas->drawLine(480, 250, 480, 384, COLOR_FG);
 	// 160 per block
 
 	canvas->setTextSize(1);
@@ -121,7 +121,7 @@ void render_forecast()
 	icon = getIconById(weatherData.forecast_1_icon, 64);
 	if (icon)
 	{
-		canvas->drawBitmap(0 + 48, 260, icon, 64, 64, GxEPD_BLACK, GxEPD_WHITE);
+		canvas->drawBitmap(0 + 48, 260, icon, 64, 64, COLOR_BG, COLOR_FG);
 
 		sprintf(label, "%2d ... %2d", weatherData.forecast_1_min, weatherData.forecast_1_max);
 		canvas->getTextBounds(label, 0, 0, &tbx, &tby, &tbw, &tbh);
@@ -134,7 +134,7 @@ void render_forecast()
 	icon = getIconById(weatherData.forecast_2_icon, 64);
 	if (icon)
 	{
-		canvas->drawBitmap(160 + 48, 260, icon, 64, 64, GxEPD_BLACK, GxEPD_WHITE);
+		canvas->drawBitmap(160 + 48, 260, icon, 64, 64, COLOR_BG, COLOR_FG);
 
 		sprintf(label, "%2d ... %2d", weatherData.forecast_2_min, weatherData.forecast_2_max);
 		canvas->getTextBounds(label, 0, 0, &tbx, &tby, &tbw, &tbh);
@@ -147,7 +147,7 @@ void render_forecast()
 	icon = getIconById(weatherData.forecast_3_icon, 64);
 	if (icon)
 	{
-		canvas->drawBitmap(320 + 48, 260, icon, 64, 64, GxEPD_BLACK, GxEPD_WHITE);
+		canvas->drawBitmap(320 + 48, 260, icon, 64, 64, COLOR_BG, COLOR_FG);
 
 		sprintf(label, "%2d ... %2d", weatherData.forecast_3_min, weatherData.forecast_3_max);
 		canvas->getTextBounds(label, 0, 0, &tbx, &tby, &tbw, &tbh);
@@ -160,7 +160,7 @@ void render_forecast()
 	icon = getIconById(weatherData.forecast_4_icon, 64);
 	if (icon)
 	{
-		canvas->drawBitmap(480 + 48, 260, icon, 64, 64, GxEPD_BLACK, GxEPD_WHITE);
+		canvas->drawBitmap(480 + 48, 260, icon, 64, 64, COLOR_BG, COLOR_FG);
 
 		sprintf(label, "%2d ... %2d", weatherData.forecast_4_min, weatherData.forecast_4_max);
 		canvas->getTextBounds(label, 0, 0, &tbx, &tby, &tbw, &tbh);

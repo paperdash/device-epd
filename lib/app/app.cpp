@@ -257,6 +257,7 @@ void setupApiSettings()
 			}
 
 			NVS.commit();
+			loadSettingsColor();
 
 			request->send(200, "application/ld+json; charset=utf-8", "{}");
 		} });

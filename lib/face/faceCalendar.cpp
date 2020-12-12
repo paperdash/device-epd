@@ -50,7 +50,7 @@ void showFaceCalendar()
 	GFXcanvas1 *canvas = displayGetCanvas();
 
 	canvas->setRotation(0);
-	canvas->fillScreen(GxEPD_WHITE);
+	canvas->fillScreen(COLOR_FG);
 
 	display_picture();
 	display_calender();
@@ -81,12 +81,12 @@ void display_calender()
 	int16_t tbx, tby;
 	uint16_t tbw, tbh, x;
 	char label[64];
-	canvas->setTextColor(GxEPD_WHITE);
+	canvas->setTextColor(COLOR_FG);
 	canvas->setTextSize(1);
 	canvas->setRotation(0);
 
 	// left side
-	canvas->fillRect(0, 0, sideWidth, canvas->height(), GxEPD_BLACK);
+	canvas->fillRect(0, 0, sideWidth, canvas->height(), COLOR_BG);
 
 	// weekday
 	strftime(label, 64, "%A", &now);
@@ -140,13 +140,13 @@ void display_calender()
 	}
 
 	// current weather
-	canvas->drawLine(15, 320, sideWidth - 15, 320, GxEPD_WHITE);
+	canvas->drawLine(15, 320, sideWidth - 15, 320, COLOR_FG);
 
 	// icon
 	const unsigned char *icon = getIconById(weatherData.current_icon, 64);
 	if (icon)
 	{
-		canvas->drawBitmap(72, 325, icon, 64, 64, GxEPD_BLACK, GxEPD_WHITE);
+		canvas->drawBitmap(72, 325, icon, 64, 64, COLOR_BG, COLOR_FG);
 	}
 
 	// temperature
@@ -186,7 +186,7 @@ void display_time()
 	//display time
 	canvas->setFont(&FreeMonoBold9pt7b); // LARGE_FONT
 	canvas->setTextSize(1);
-	canvas->setTextColor(GxEPD_BLACK);
+	canvas->setTextColor(COLOR_BG);
 	int16_t time_base_y = 60;
 	int16_t time_base_x = 25;
 	canvas->getTextBounds("03", time_base_x, time_base_y, &x1, &y1, &w, &h); // 03 is arbitrary text to get the height and width

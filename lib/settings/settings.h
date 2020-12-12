@@ -3,8 +3,11 @@
 
 #include "ArduinoNvs.h"
 
+extern uint16_t COLOR_FG;
+extern uint16_t COLOR_BG;
+
 void setupSettings();
 void settingsFactoryReset();
-
+void loadSettingsColor();
 
 #endif
