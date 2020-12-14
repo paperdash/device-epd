@@ -259,7 +259,7 @@ void setupApiSettings()
 			NVS.commit();
 			loadSettingsColor();
 
-			request->send(200, "application/ld+json; charset=utf-8", "{}");
+			request->send(200, "application/json; charset=utf-8", "{}");
 		} });
 }
 
@@ -391,7 +391,7 @@ void setupApiWifi()
 			Serial.print(F("deserializeJson() failed with code "));
 			Serial.println(error.c_str());
 
-			request->send(404, "application/ld+json; charset=utf-8", "{}");
+			request->send(404, "application/json; charset=utf-8", "{}");
 		}
 		else
 		{
