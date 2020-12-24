@@ -12,9 +12,7 @@ char DeviceId[21 + 1];
 void sleepDevice();
 bool isBootTimeOver();
 
-/**
- * setup deep sleep mode
- */
+
 void setupDevice()
 {
 	// increment boot number and print it every reboot
@@ -27,15 +25,7 @@ void setupDevice()
 
 void loopDevice()
 {
-	if (NVS.getString("device_mode") == "passive")
-	{
-		// TODO give user a time window to switch the mode to active
-		if (true) // isBootTimeOver()
-		{
-			sleepDevice();
-			// device stop here
-		}
-	}
+	// NOP
 }
 
 void sleepDevice()

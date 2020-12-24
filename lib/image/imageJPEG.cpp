@@ -112,7 +112,6 @@ void renderJPEG(int xpos, int ypos)
 	// read each MCU block until there are no more
 	while (JpegDec.read())
 	{
-
 		// save a pointer to the image block
 		pImg = JpegDec.pImage;
 
@@ -182,7 +181,6 @@ void jpegFlushFramebuffer()
 				// render the image onto the screen at coordinate 0,0
 				renderJPEG(0, 0);
 			}
-
 		}
 		else
 		{

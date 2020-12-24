@@ -12,13 +12,8 @@ GFXcanvas1 *displayGetCanvas();
 void displayOpen();
 void displayWritePixel(int16_t x, int16_t y, uint16_t color);
 void displayFlush();
-
-void exportJPG(GFXcanvas1 *_canvas, const char *fileName, uint8_t q);
-void exportBMP(GFXcanvas1 *_canvas, const char *fileName);
-
-uint8_t displayPixelBWRatio();
-void displayPrintScreenJPG(const char *fileName, uint8_t q);
-void displayPrintScreenBMP(const char *fileName);
+uint16_t displayGetWidth();
+uint16_t displayGetHeight();
 
 int displaySnapshotBMPStream(uint8_t *buffer, size_t maxLen, size_t index);
 

@@ -400,13 +400,11 @@ void setupApiWifi()
 			JsonVariant ssid = doc["ssid"];
 			if (!ssid.isNull()) {
 				NVS.setString("wifi.ssid", ssid);
-				Serial.println(ssid.as<char*>());
 			}
 
 			JsonVariant password = doc["password"];
 			if (!password.isNull()) {
 				NVS.setString("wifi.password", password);
-				Serial.println(password.as<char*>());
 			}
 
 			request->send(200, "application/json; charset=utf-8", "{}");
@@ -417,7 +415,6 @@ void setupApiWifi()
 
 /**
  * api data endpoint
- * @todo
  */
 void setupApiUpdate()
 {
