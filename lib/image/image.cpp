@@ -4,14 +4,19 @@
 #include "display.h"
 
 structImageProcess ImageProcess;
-// TODO use dynamic display width
-constexpr uint16_t MAX_WIDTH = 640;
-int16_t curRowDelta[MAX_WIDTH + 1];
-int16_t nextRowDelta[MAX_WIDTH + 1];
+
+// dithering
+uint16_t ditheringBufferSize;
+int16_t *ditheringCurRowDelta;
+int16_t *ditheringNextRowDelta;
 
 void setupImage()
 {
-	setupImagePNG();
+	// create buffer for dithering
+	ditheringBufferSize = displayGetWidth() + 1;
+	ditheringCurRowDelta = new int16_t[ditheringBufferSize];
+	ditheringNextRowDelta = new int16_t[ditheringBufferSize];
+
 	setupImageJPEG();
 }
 
@@ -25,8 +30,8 @@ void ImageNew(int x, int y, int w, int h, bool dithering)
 	ImageProcess.h = h;
 	ImageProcess.dithering = dithering;
 
-	memset(curRowDelta, 0, sizeof(curRowDelta));
-	memset(nextRowDelta, 0, sizeof(nextRowDelta));
+	memset(ditheringCurRowDelta, 0, sizeof(ditheringCurRowDelta[0]) * ditheringBufferSize);
+	memset(ditheringNextRowDelta, 0, sizeof(ditheringNextRowDelta[0]) * ditheringBufferSize);
 }
 
 void ImageWriteBuffer(uint8_t buff[], size_t c)
@@ -111,7 +116,7 @@ void ImageProcessPixel(uint16_t x, uint16_t y, uint8_t rgba[4])
 	// Add errors to color if there are
 	if (ImageProcess.dithering)
 	{
-		gray += curRowDelta[x];
+		gray += ditheringCurRowDelta[x];
 	}
 
 	if (gray <= 127)
@@ -132,17 +137,17 @@ void ImageProcessPixel(uint16_t x, uint16_t y, uint8_t rgba[4])
 
 		if (x > 0)
 		{
-			nextRowDelta[x - 1] += err * 3 / 16;
+			ditheringNextRowDelta[x - 1] += err * 3 / 16;
 		}
-		nextRowDelta[x] += err * 5 / 16;
-		nextRowDelta[x + 1] += err * 1 / 16;
-		curRowDelta[x + 1] += err * 7 / 16;
+		ditheringNextRowDelta[x] += err * 5 / 16;
+		ditheringNextRowDelta[x + 1] += err * 1 / 16;
+		ditheringCurRowDelta[x + 1] += err * 7 / 16;
 
 		if (x == 0 && y > 0)
 		{
 			// new line
-			memcpy(curRowDelta, nextRowDelta, sizeof(curRowDelta));
-			memset(nextRowDelta, 0, sizeof(nextRowDelta));
+			memcpy(ditheringCurRowDelta, ditheringNextRowDelta, sizeof(ditheringCurRowDelta[0]) * ditheringBufferSize);
+			memset(ditheringNextRowDelta, 0, sizeof(ditheringNextRowDelta[0]) * ditheringBufferSize);
 		}
 	}
 

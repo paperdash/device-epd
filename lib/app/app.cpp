@@ -117,8 +117,8 @@ void setupApp()
 		doc["device"]["name"] = NVS.getString("device.name");
 		doc["device"]["hostname"] = WiFi.getHostname();
 		doc["device"]["bootCycle"] = deviceGetBootCount();
-		doc["device"]["screen"]["width"] = 640;
-		doc["device"]["screen"]["height"] = 384;
+		doc["device"]["screen"]["width"] = displayGetWidth();
+		doc["device"]["screen"]["height"] = displayGetHeight();
 
 		doc["device"]["fs"]["total"] = SPIFFS.totalBytes();
 		doc["device"]["fs"]["used"] = SPIFFS.usedBytes();

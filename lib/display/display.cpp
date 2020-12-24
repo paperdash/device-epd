@@ -54,7 +54,18 @@ void displayFlush()
 	display.display();
 }
 
-/*
+uint16_t displayGetWidth()
+{
+	return display.width();
+}
+
+uint16_t displayGetHeight()
+{
+	return display.height();
+}
+
+
+/* TODO
 void printSplash()
 {
 	const char Hello[] = "Hello Paperdash!";

@@ -7,9 +7,11 @@
 File tmpFileBuffer;
 void renderMcuBlock(int16_t x, int16_t y, uint16_t w, uint16_t h, uint16_t *bitmap);
 
-static constexpr uint16_t MAX_WIDTH = 640;	  // TODO get info from display 800 works :D
-static constexpr uint8_t BLOCK_SIZE = 16; // max MCU block size
-static uint16_t blockDelta[BLOCK_SIZE * MAX_WIDTH + 1];
+static uint8_t BLOCK_SIZE = 16; // max MCU block size
+
+int16_t *blockDelta;
+uint16_t displayWidth;
+uint16_t blockDeltaSize;
 
 // TODO uint32_t auf uint16_t ändern um speicher zu sparen
 // https://os.mbed.com/handbook/C-Data-Types#integer-data-types
@@ -21,6 +23,13 @@ static uint16_t blockDelta[BLOCK_SIZE * MAX_WIDTH + 1];
 void setupImageJPEG()
 {
 	Serial.println("setupJPEG");
+
+	// create working buffer
+	displayWidth = displayGetWidth();
+	blockDeltaSize = BLOCK_SIZE * displayWidth + 1;
+	blockDelta = new int16_t[blockDeltaSize];
+
+	Serial.println(sizeof(blockDelta[0]) * blockDeltaSize);
 }
 
 void jpegOpenFramebuffer()
@@ -35,7 +44,7 @@ void jpegOpenFramebuffer()
 		Serial.println("Failed to open file for writing");
 	}
 
-	memset(blockDelta, 0, sizeof(blockDelta));
+	memset(blockDelta, 0, sizeof(blockDelta[0]) * blockDeltaSize);
 }
 
 void jpegWriteFramebuffer(int offset, uint8_t bitmap[], int c)
@@ -189,7 +198,7 @@ void renderMcuBlockPixel(uint16_t x, uint16_t y, uint16_t color)
 {
 	// collect all mcu blocks for current row
 	uint16_t blockPageY = y - ((y / JpegDec.MCUHeight) * JpegDec.MCUHeight);
-	blockDelta[(blockPageY * MAX_WIDTH) + x] = color;
+	blockDelta[(blockPageY * displayWidth) + x] = color;
 
 	// full mcu row is complete now
 	if (x == JpegDec.width - 1 && (y + 1) % JpegDec.MCUHeight == 0)
@@ -204,7 +213,7 @@ void renderMcuBlockPixel(uint16_t x, uint16_t y, uint16_t color)
 			{
 				uint16_t originX = _x;
 				uint16_t originY = originOffsetY + _y;
-				uint16_t originColor = blockDelta[(_y * MAX_WIDTH) + _x];
+				uint16_t originColor = blockDelta[(_y * displayWidth) + _x];
 
 				uint8_t r = ((((originColor >> 11) & 0x1F) * 527) + 23) >> 6;
 				uint8_t g = ((((originColor >> 5) & 0x3F) * 259) + 33) >> 6;
@@ -216,7 +225,7 @@ void renderMcuBlockPixel(uint16_t x, uint16_t y, uint16_t color)
 		}
 
 		// clean buffer
-		memset(blockDelta, 0, sizeof(blockDelta));
+		memset(blockDelta, 0, sizeof(blockDelta[0]) * blockDeltaSize);
 	}
 }
 
