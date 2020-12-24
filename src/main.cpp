@@ -25,6 +25,7 @@ void setup()
 		return;
 	}
 
+	setupDevice();
 	setupDisplay();
 	setupSettings();
 	setupImage();
