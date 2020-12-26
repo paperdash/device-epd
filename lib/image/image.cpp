@@ -152,6 +152,6 @@ void ImageProcessPixel(uint16_t x, uint16_t y, uint8_t rgba[4])
 		}
 	}
 
-	GFXcanvas1 *displayCanvas;
-	displayCanvas->drawPixel(ImageProcess.x + x, ImageProcess.y + y, (uint16_t)blackOrWhite);
+	GFXcanvas1 *canvas = displayGetCanvas();
+	canvas->drawPixel(ImageProcess.x + x, ImageProcess.y + y, (uint16_t)blackOrWhite);
 }
