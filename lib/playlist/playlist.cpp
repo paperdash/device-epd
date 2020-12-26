@@ -2,22 +2,27 @@
 #include "settings.h"
 #include "faceWeather.h"
 #include "faceCalendar.h"
+#include "faceSplash.h"
+#include "faceToday.h"
 
 #define ARRAY_SIZE(A) (sizeof(A) / sizeof((A)[0]))
 
-typedef void (*Face)();
-typedef Face FaceList[];
+typedef void (*Callable)();
 typedef struct
 {
-	Face face;
 	String name;
+	Callable show;
+	Callable setup;
+	Callable loop;
 } FaceAndName;
 typedef FaceAndName FaceAndNameList[];
 
 // List of faces to cycle through
 FaceAndNameList faces = {
-	{playlistFaceWeather, "Weather"},
-	{playlistFaceCalendar, "Calendar"},
+	{"Weather", showFaceWeather, setupFaceWeather, loopFaceWeather},
+	{"Today", showFaceToday, setupFaceToday, loopFaceToday},
+	// {"Splash", showFaceSplash, setupFaceSplash, loopFaceSplash},
+	{"Calendar", showFaceCalendar, setupFaceCalendar, loopFaceCalendar},
 };
 
 const uint8_t faceCount = ARRAY_SIZE(faces);
@@ -38,12 +43,11 @@ void setupPlaylist()
 		timer = 30000;
 	}
 
-	setupFaceWeather();
-	setupFaceCalendar();
-
-	//Serial.print("  Timeout is: ");
-	//Serial.print(timer);
-	//Serial.println("");
+	// setup faces
+	for (uint8_t i = 0; i < faceCount; i++)
+	{
+		faces[i].setup();
+	}
 
 	// force instant update
 	lastSwitch = millis() - timer;
@@ -51,8 +55,11 @@ void setupPlaylist()
 
 void loopPlaylist()
 {
-	loopFaceWeather();
-	loopFaceCalendar();
+	// loop faces
+	for (uint8_t i = 0; i < faceCount; i++)
+	{
+		faces[i].loop();
+	}
 
 	if (PlaylistGetRemainingTimeMs() <= 0) // && autoplayEnabled
 	{
@@ -60,7 +67,7 @@ void loopPlaylist()
 		PlaylistNextFace();
 
 		Serial.println("switch face: " + faces[currentFaceIndex].name);
-		faces[currentFaceIndex].face();
+		faces[currentFaceIndex].show();
 	}
 }
 
