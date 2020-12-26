@@ -1,6 +1,6 @@
 #include "image.h"
-#include "imagePNG.h"
-#include "imageJPEG.h"
+#include "format/JPEG.h"
+#include "format/PNG.h"
 #include "display.h"
 
 structImageProcess ImageProcess;
@@ -18,6 +18,7 @@ void setupImage()
 	ditheringNextRowDelta = new int16_t[ditheringBufferSize];
 
 	setupImageJPEG();
+	//setupImagePNG();
 }
 
 void ImageNew(int x, int y, int w, int h, bool dithering)
@@ -39,7 +40,7 @@ void ImageWriteBuffer(uint8_t buff[], size_t c)
 	// initial detect format
 	if (ImageProcess.format == 0)
 	{
-		if (memcmp(buff, ImageHeaderPNG, sizeof(ImageHeaderPNG) - 1) == 0)
+		if (memcmp(buff, ImageHeaderPNG, sizeof(ImageHeaderPNG) - 1) == 0 && false)
 		{
 			Serial.println(" image format: PNG");
 			ImageProcess.format = 3;
@@ -151,5 +152,6 @@ void ImageProcessPixel(uint16_t x, uint16_t y, uint8_t rgba[4])
 		}
 	}
 
-	displayWritePixel(ImageProcess.x + x, ImageProcess.y + y, blackOrWhite);
+	GFXcanvas1 *displayCanvas;
+	displayCanvas->drawPixel(ImageProcess.x + x, ImageProcess.y + y, (uint16_t)blackOrWhite);
 }

@@ -1,7 +1,7 @@
 #include <Arduino.h>
 #include <SPIFFS.h>
 #include <JPEGDecoder.h>
-#include "imageJPEG.h"
+#include "JPEG.h"
 #include "display.h"
 
 File tmpFileBuffer;
@@ -13,11 +13,6 @@ int16_t *blockDelta;
 uint16_t displayWidth;
 uint16_t blockDeltaSize;
 
-// TODO uint32_t auf uint16_t ändern um speicher zu sparen
-// https://os.mbed.com/handbook/C-Data-Types#integer-data-types
-// image size limit prüfen damit alles in ein int16_t passt !
-// dann ist genug speicher da :D
-
 #define minimum(a, b) (((a) < (b)) ? (a) : (b))
 
 void setupImageJPEG()
@@ -28,14 +23,10 @@ void setupImageJPEG()
 	displayWidth = displayGetWidth();
 	blockDeltaSize = BLOCK_SIZE * displayWidth + 1;
 	blockDelta = new int16_t[blockDeltaSize];
-
-	Serial.println(sizeof(blockDelta[0]) * blockDeltaSize);
 }
 
 void jpegOpenFramebuffer()
 {
-	displayOpen();
-
 	SPIFFS.remove("/tmp.jpeg");
 
 	tmpFileBuffer = SPIFFS.open("/tmp.jpeg", FILE_WRITE);
@@ -171,10 +162,9 @@ void jpegFlushFramebuffer()
 			// print information about the image to the serial port
 			//jpegInfo();
 
-			// TODO use display size
-			if (JpegDec.width > 800 || JpegDec.height > 480)
+			if (JpegDec.width > displayGetWidth() || JpegDec.height > displayGetHeight())
 			{
-				Serial.println("image to big! skip rendering");
+				Serial.println("image resolution to big! skip rendering");
 			}
 			else
 			{

@@ -1,5 +1,5 @@
 #include <Arduino.h>
-#include "imagePNG.h"
+#include "PNG.h"
 #include "pngle.h"
 #include "display.h"
 
@@ -20,7 +20,6 @@ void setupImagePNG()
 
 void pngOpenFramebuffer()
 {
-	displayOpen();
 	pngle_reset(pngle);
 }
 
