@@ -21,7 +21,4 @@ void ImageFlushBuffer();
 
 void ImageProcessPixel(uint16_t x, uint16_t y, uint8_t rgba[4]);
 
-uint16_t drawRGB24toRGB565(uint8_t r, uint8_t g, uint8_t b);
-uint32_t drawRGB565toBGRA32(uint16_t color);
-
 #endif /* IMAGE_H */

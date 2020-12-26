@@ -1,13 +1,13 @@
 #include <Arduino.h>
 #include <SPIFFS.h>
 #include "display.h"
-#include "esp_task_wdt.h"
 
 // mapping suggestion for ESP32, e.g. LOLIN32, see .../variants/.../pins_arduino.h for your board
 // EPD -> ESP
 // BUSY -> 4, RST -> 16, DC -> 17, CS -> SS(5), CLK ->   (18), DIN -> MOSI(23), GND -> GND, 3.3V -> 3.3V
 
 GxEPD2_BW<GxEPD2_750, GxEPD2_750::HEIGHT> display(GxEPD2_750(/*CS=*/5, /*DC=*/17, /*RST=*/16, /*BUSY=*/4));
+//GxEPD2_BW<GxEPD2_750_T7, GxEPD2_750_T7::HEIGHT> display(GxEPD2_750_T7(/*CS=5*/ SS, /*DC=*/ 17, /*RST=*/ 16, /*BUSY=*/ 4)); // 800x480
 
 GFXcanvas1 *displayCanvas;
 File tmpFileCache;
@@ -20,7 +20,7 @@ void setupDisplay()
 {
 	Serial.println("setupDisplay");
 	delay(100);
-	display.init(115200); // TODO
+	display.init(115200);
 	display.setRotation(0);
 	display.setFullWindow();
 	display.firstPage();
@@ -33,17 +33,6 @@ void setupDisplay()
 GFXcanvas1 *displayGetCanvas()
 {
 	return displayCanvas;
-}
-
-void displayOpen()
-{
-	displayCanvas->setRotation(0);
-	displayCanvas->fillScreen(GxEPD_WHITE);
-}
-
-void displayWritePixel(int16_t x, int16_t y, uint16_t color)
-{
-	displayCanvas->drawPixel(x, y, color);
 }
 
 void displayFlush()
@@ -62,33 +51,6 @@ uint16_t displayGetHeight()
 {
 	return display.height();
 }
-
-
-/* TODO
-void printSplash()
-{
-	const char Hello[] = "Hello Paperdash!";
-
-	display.setRotation(1);
-	display.setFont(&FreeMonoBold9pt7b);
-	display.setTextColor(GxEPD_BLACK);
-	int16_t tbx, tby;
-	uint16_t tbw, tbh;
-	display.getTextBounds(Hello, 0, 0, &tbx, &tby, &tbw, &tbh);
-	// center bounding box by transposition of origin:
-	uint16_t x = ((display.width() - tbw) / 2) - tbx;
-	uint16_t y = ((display.height() - tbh) / 2) - tby;
-	display.setFullWindow();
-	display.firstPage();
-	do
-	{
-		display.fillScreen(GxEPD_WHITE);
-		display.setCursor(x, y);
-		display.print(Hello);
-	} while (display.nextPage());
-}
-*/
-
 
 size_t write8(uint8_t *buffer, uint8_t v)
 {
@@ -181,8 +143,6 @@ int displaySnapshotBMPStream(uint8_t *buffer, size_t maxLen, size_t index)
 
 			// reset resume
 			colidx_from = 0;
-
-			//esp_task_wdt_reset();
 		}
 
 		return pointer;
