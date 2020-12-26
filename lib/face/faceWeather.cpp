@@ -1,7 +1,7 @@
 #include <ArduinoJson.h>
 #include <SPIFFS.h>
 #include "faceWeather.h"
-#include "faceWeatherIcons.h"
+#include "faceWeather/Icons.h"
 #include "display.h"
 #include "download.h"
 #include "settings.h"
@@ -42,7 +42,7 @@ void loopFaceWeather()
 	}
 }
 
-void playlistFaceWeather()
+void showFaceWeather()
 {
 	GFXcanvas1 *canvas = displayGetCanvas();
 

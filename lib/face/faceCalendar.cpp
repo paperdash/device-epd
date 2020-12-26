@@ -8,20 +8,18 @@
 #include "image.h"
 #include "download.h"
 #include "faceWeather.h"
-#include "faceWeatherIcons.h"
+#include "faceWeather/icons.h"
 
-#include <Fonts/FreeMono12pt7b.h>	 // weekday - month year
-#include <Fonts/FreeMonoBold9pt7b.h> //
-#include <Fonts/FreeSans24pt7b.h>	 // current day
+#include <Fonts/FreeMono12pt7b.h>	  // weekday - month year
+#include <Fonts/FreeMonoBold9pt7b.h>  //
+#include <Fonts/FreeSans24pt7b.h>	  // current day
 #include <Fonts/FreeSansBold24pt7b.h> // current day
 
 void showFaceCalendar();
 void display_calender();
 void display_picture();
-void display_time();
 
 const char faceCalendarPicture[] = "/calendarPhoto.jpg";
-
 unsigned long lastCalendarDataUpdate = 0;
 
 void setupFaceCalendar()
@@ -38,11 +36,6 @@ void loopFaceCalendar()
 		lastCalendarDataUpdate = millis();
 		updateCalendarData();
 	}
-}
-
-void playlistFaceCalendar()
-{
-	showFaceCalendar();
 }
 
 void showFaceCalendar()
@@ -65,7 +58,8 @@ bool updateCalendarData()
 {
 	String url = NVS.getString("playlist.images");
 
-	if (!url.isEmpty()) {
+	if (!url.isEmpty())
+	{
 		url += "390x384.jpg";
 		return downloadFile(url, faceCalendarPicture);
 	}
@@ -175,43 +169,4 @@ void display_picture()
 	file.close();
 
 	ImageFlushBuffer();
-}
-
-void display_time()
-{
-	/*
-	int16_t x1, y1;
-	uint16_t w, h;
-
-	//display time
-	canvas->setFont(&FreeMonoBold9pt7b); // LARGE_FONT
-	canvas->setTextSize(1);
-	canvas->setTextColor(COLOR_BG);
-	int16_t time_base_y = 60;
-	int16_t time_base_x = 25;
-	canvas->getTextBounds("03", time_base_x, time_base_y, &x1, &y1, &w, &h); // 03 is arbitrary text to get the height and width
-	canvas->fillRect(time_base_x - 10, time_base_y - h - 10, w + 15, time_base_y + h + 10, GxEPD_WHITE);
-
-	canvas->setCursor(time_base_x, time_base_y);
-	if (now.hour < 10)
-	{
-		canvas->print("0");
-		canvas->print(now.hour);
-	}
-	else
-	{
-		canvas->println(now.hour);
-	}
-
-	canvas->setCursor(time_base_x, time_base_y + h + 10);
-	if (now.min < 10)
-	{
-		canvas->print("0");
-		canvas->print(now.min);
-	}
-	else
-	{
-		canvas->println(now.min);
-	}
-	*/
 }
