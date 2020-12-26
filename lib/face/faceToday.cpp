@@ -62,7 +62,7 @@ void addTodayDay()
 	int16_t time_base_y = 50;
 	int16_t time_base_x = 15;
 	canvas->getTextBounds("00", time_base_x, time_base_y, &x1, &y1, &w, &h);
-	// canvas->fillRect(0, 0, x1 + w + 25, time_base_y + (h *2) + 5, COLOR_FG);
+	canvas->fillRoundRect(-14, -14, x1 + w + 25 + 15, time_base_y + (h * 2) + 5 + 15, 15, COLOR_BG); // add border
 	canvas->fillRoundRect(-15, -15, x1 + w + 25 + 15, time_base_y + (h * 2) + 5 + 15, 15, COLOR_FG);
 
 	// 1. row - day
@@ -90,6 +90,7 @@ void addTodayWeather()
 	int16_t y = displayGetHeight() - 60;
 
 	// add tile
+	canvas->fillRoundRect(x -1, y -1, 150 + 15, 60 + 15, 15, COLOR_BG); // add border
 	canvas->fillRoundRect(x, y, 150 + 15, 60 + 15, 15, COLOR_FG);
 
 	// current weather condition - icon
@@ -108,7 +109,6 @@ void addTodayWeather()
 	int16_t textbox_x = x + 64 + 5;
 	int16_t textbox_y = y + 72;
 	canvas->getTextBounds("000", textbox_x, textbox_y, &x1, &y1, &w, &h);
-	Serial.printf("x:%d, y:%d", x1, y1);
 
 	canvas->setCursor(x1, y1);
 	canvas->print(weatherData.current_temp);
