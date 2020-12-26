@@ -49,9 +49,8 @@
           outlined
           type="info"
         >
-          Update: {{ updateType }}<br>
-          Version: {{ file.lastModifiedDate.toLocaleString() }}<br>
-          Current: {{ currentApp.toLocaleString() }}<br>
+          {{ updateType }}: {{ file.lastModifiedDate.toLocaleString() }}<br>
+          <small>Current: {{ currentVersion.toLocaleString() }}</small>
         </v-alert>
       </v-card-text>
       <v-card-text v-else-if="file">
@@ -170,6 +169,17 @@
               return 'Firmware'
             case 'spiffs.bin':
               return 'APP'
+          }
+        }
+        return null
+      },
+      currentVersion () {
+        if (this.file) {
+          switch (this.file.name) {
+            case 'firmware.bin':
+              return this.currentFirmware
+            case 'spiffs.bin':
+              return this.currentApp
           }
         }
         return null
