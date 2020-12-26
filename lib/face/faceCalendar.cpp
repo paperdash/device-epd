@@ -6,6 +6,7 @@
 #include "display.h"
 #include "datetime.h"
 #include "image.h"
+#include "imageService.h"
 #include "download.h"
 #include "faceWeather.h"
 #include "faceWeather/icons.h"
@@ -15,9 +16,7 @@
 #include <Fonts/FreeSans24pt7b.h>	  // current day
 #include <Fonts/FreeSansBold24pt7b.h> // current day
 
-void showFaceCalendar();
 void display_calender();
-void display_picture();
 
 const char faceCalendarPicture[] = "/calendarPhoto.jpg";
 unsigned long lastCalendarDataUpdate = 0;
@@ -45,7 +44,7 @@ void showFaceCalendar()
 	canvas->setRotation(0);
 	canvas->fillScreen(COLOR_FG);
 
-	display_picture();
+	imageServiceRenderFile(faceCalendarPicture, 250, 0, 0, 0, true);
 	display_calender();
 
 	displayFlush();
@@ -56,15 +55,7 @@ void showFaceCalendar()
  */
 bool updateCalendarData()
 {
-	String url = NVS.getString("playlist.images");
-
-	if (!url.isEmpty())
-	{
-		url += "390x384.jpg";
-		return downloadFile(url, faceCalendarPicture);
-	}
-
-	return false;
+	return imageServiceUpdateFile("390x384.jpg", faceCalendarPicture);
 }
 
 void display_calender()
@@ -148,25 +139,4 @@ void display_calender()
 	canvas->setTextSize(1);
 	canvas->setCursor(150, 367);
 	canvas->println(weatherData.current_temp);
-}
-
-void display_picture()
-{
-	File file = SPIFFS.open(faceCalendarPicture, "r");
-	if (!file)
-	{
-		Serial.println(" file not found");
-	}
-
-	ImageNew(250, 0, 0, 0, true);
-
-	// TODO check why a small buffer is not working correct
-	uint8_t buff[1280] = {0};
-	while (int c = file.read(buff, sizeof(buff)))
-	{
-		ImageWriteBuffer(buff, c);
-	}
-	file.close();
-
-	ImageFlushBuffer();
 }
