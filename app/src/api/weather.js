@@ -191,7 +191,7 @@ export default {
      */
   updateWeather (cb) {
     return axios
-      .get('/api/update?weather=1')
+      .get('/api/cache/clear?weather&warmUp')
       .then(response => cb(response.data))
   },
 }
