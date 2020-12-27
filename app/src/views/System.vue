@@ -70,10 +70,10 @@
       <v-list-item-avatar>
         <v-progress-circular
           :rotate="-90"
-          :value="fsUsage"
+          :value="getFSUsage"
           class="caption"
         >
-          {{ fsUsage }}
+          {{ getFSUsage }}
         </v-progress-circular>
       </v-list-item-avatar>
     </v-list-item>
@@ -95,17 +95,6 @@
         </v-list-item-subtitle>
       </v-list-item>
     </v-list>
-    <v-progress-linear
-      v-if="0"
-      height="25"
-      :value="fsUsage"
-      dark
-      rounded
-    >
-      <template #default="{ value }">
-        <strong>{{ Math.ceil(value) }}%</strong>
-      </template>
-    </v-progress-linear>
 
     <v-list-item class="mt-10">
       <v-list-item-icon class="mr-3">
@@ -117,10 +106,10 @@
       <v-list-item-avatar>
         <v-progress-circular
           :rotate="-90"
-          :value="memoryUsage"
+          :value="getMemoryUsage"
           class="caption"
         >
-          {{ memoryUsage }}
+          {{ getMemoryUsage }}
         </v-progress-circular>
       </v-list-item-avatar>
     </v-list-item>
@@ -143,17 +132,6 @@
         </v-list-item-subtitle>
       </v-list-item>
     </v-list>
-    <v-progress-linear
-      v-if="0"
-      height="25"
-      :value="memoryUsage"
-      dark
-      rounded
-    >
-      <template #default="{ value }">
-        <strong>{{ Math.ceil(value) }}%</strong>
-      </template>
-    </v-progress-linear>
 
     <v-divider class="mt-12" />
     <v-card-actions>
@@ -168,7 +146,7 @@
 </template>
 
 <script>
-  import { mapState } from 'vuex'
+  import { mapState, mapGetters } from 'vuex'
   import UpdateDialog from '@/components/UpdateDialog'
 
   export default {
@@ -179,11 +157,7 @@
     }),
     computed: {
       ...mapState(['stats']),
-      fsUsage () {
-        return Math.round(
-          (100 / this.stats.device.fs.total) * this.stats.device.fs.used,
-        )
-      },
+      ...mapGetters(['getFSUsage', 'getMemoryUsage']),
       fs () {
         return this.stats.device.fs
       },

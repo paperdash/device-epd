@@ -114,30 +114,18 @@ const store = new Vuex.Store({
     getTimezone: () => (timezone) => {
       return timezones.getTimezone(timezone)
     },
+    getFSUsage: (state) => {
+      return Math.round(
+        (100 / state.stats.device.fs.total) * state.stats.device.fs.used,
+      )
+    },
+    getMemoryUsage: (state) => {
+      return Math.round(
+        (100 / state.stats.device.heap.total) * state.stats.device.heap.free,
+      )
+    },
+
   },
 })
 
-// sensor push data
-/*
-const connection = new WebSocket('ws://' + window.location.host + '/ws')
-connection.onmessage = (message) => {
-  const log = JSON.parse(message.data)
-  log.last_update = new Date()
-
-  store.commit('updateSensor', log)
-  store.commit('addSensorHistory', log)
-  store.commit('notification', log)
-}
-
-store.watch(
-  state => state.pushUpdate,
-  (value) => {
-    if (value) {
-      console.info('TODO:: enable websocket')
-    } else {
-      console.info('TODO:: disable websocket')
-    }
-  },
-)
-*/
 export default store
