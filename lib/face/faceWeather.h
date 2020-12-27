@@ -38,7 +38,6 @@ extern faceWeatherData weatherData;
 void setupFaceWeather();
 void loopFaceWeather();
 void showFaceWeather();
-
-bool updateWeatherData();
+void invalidFaceWeatherCache(bool warmUp);
 
 #endif

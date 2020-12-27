@@ -5,6 +5,6 @@
 void setupFaceCalendar();
 void loopFaceCalendar();
 void showFaceCalendar();
-bool updateCalendarData();
+void invalidFaceCalendarCache(bool warmUp);
 
 #endif

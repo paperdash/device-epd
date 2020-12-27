@@ -20,10 +20,12 @@ void render_current();
 void render_forecast();
 bool readWeatherData();
 bool isFaceWeatherSetupCompleted();
+bool updateWeatherData();
 
 void setupFaceWeather()
 {
-	if (!isFaceWeatherSetupCompleted()) {
+	if (!isFaceWeatherSetupCompleted())
+	{
 		Serial.println("weather not configured");
 	}
 
@@ -37,7 +39,6 @@ void loopFaceWeather()
 	if ((millis() - lastWeatherDataUpdate) >= 600000)
 	{
 		Serial.println(&now, "update weather data @ %A, %B %d %Y %H:%M:%S");
-		lastWeatherDataUpdate = millis();
 		updateWeatherData();
 	}
 }
@@ -55,6 +56,20 @@ void showFaceWeather()
 	render_forecast();
 
 	displayFlush();
+}
+
+void invalidFaceWeatherCache(bool warmUp)
+{
+	if (warmUp)
+	{
+		updateWeatherData();
+		lastWeatherDataUpdate = millis();
+	}
+	else
+	{
+
+		lastWeatherDataUpdate = 0;
+	}
 }
 
 bool isFaceWeatherSetupCompleted()

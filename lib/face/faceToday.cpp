@@ -27,8 +27,7 @@ void loopFaceToday()
 	if ((millis() - faceTodayUpdate) >= 600000)
 	{
 		Serial.println(&now, "update today data @ %A, %B %d %Y %H:%M:%S");
-		faceTodayUpdate = millis();
-		imageServiceUpdateFile("640x384.jpg", faceTodayPicture);
+		invalidFaceTodayCache(true);
 	}
 }
 
@@ -47,6 +46,19 @@ void showFaceToday()
 
 	// update display
 	displayFlush();
+}
+
+void invalidFaceTodayCache(bool warmUp)
+{
+	if (warmUp)
+	{
+		imageServiceUpdateFile("640x384.jpg", faceTodayPicture);
+		faceTodayUpdate = millis();
+	}
+	else
+	{
+		faceTodayUpdate = 0;
+	}
 }
 
 void addTodayDay()
@@ -90,7 +102,7 @@ void addTodayWeather()
 	int16_t y = displayGetHeight() - 60;
 
 	// add tile
-	canvas->fillRoundRect(x -1, y -1, 150 + 15, 60 + 15, 15, COLOR_BG); // add border
+	canvas->fillRoundRect(x - 1, y - 1, 150 + 15, 60 + 15, 15, COLOR_BG); // add border
 	canvas->fillRoundRect(x, y, 150 + 15, 60 + 15, 15, COLOR_FG);
 
 	// current weather condition - icon

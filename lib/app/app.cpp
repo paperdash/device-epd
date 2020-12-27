@@ -14,6 +14,7 @@
 #include "datetime.h"
 #include "faceWeather.h"
 #include "faceCalendar.h"
+#include "faceToday.h"
 #include "download.h"
 
 AsyncWebServer server(80);
@@ -30,7 +31,7 @@ AppConfig appConfig;
 void setupApiDevice();
 void setupApiSettings();
 void setupApiWifi();
-void setupApiUpdate();
+void setupApiCache();
 void setupOTA();
 
 //flag to use from web update to update display
@@ -90,7 +91,7 @@ void setupApp()
 	setupApiDevice();
 	setupApiSettings();
 	setupApiWifi();
-	setupApiUpdate();
+	setupApiCache();
 	setupOTA();
 
 	server.onNotFound([](AsyncWebServerRequest *request) {
@@ -414,11 +415,13 @@ void setupApiWifi()
 }
 
 /**
- * api data endpoint
+ * api cache endpoint
  */
-void setupApiUpdate()
+void setupApiCache()
 {
-	server.on("/api/update", HTTP_GET, [](AsyncWebServerRequest *request) {
+	server.on("/api/cache/clear", HTTP_GET, [](AsyncWebServerRequest *request) {
+		bool warmUp = request->hasParam("warmUp");
+
 		if (request->hasParam("datetime"))
 		{
 			Serial.println("update datetime...");
@@ -428,26 +431,26 @@ void setupApiUpdate()
 
 		if (request->hasParam("weather"))
 		{
-			Serial.println("update weather data...");
+			Serial.println("invalidate weather cache...");
 
-			updateWeatherData();
+			invalidFaceWeatherCache(warmUp);
 		}
 
 		if (request->hasParam("calendar"))
 		{
-			Serial.println("update calendar data...");
+			Serial.println("invalidate calendar cache...");
 
-			updateCalendarData();
+			invalidFaceCalendarCache(warmUp);
 		}
 
-		if (request->getParam("url") && request->hasParam("file"))
+		if (request->hasParam("today"))
 		{
-			Serial.println("file...");
+			Serial.println("invalidate today cache...");
 
-			downloadFile(request->getParam("url")->value().c_str(), request->getParam("file")->value().c_str());
+			invalidFaceTodayCache(warmUp);
 		}
 
-		request->send(200, "application/ld; charset=utf-8", "{}");
+		request->send(200, "application/json; charset=utf-8", "{}");
 	});
 }
 

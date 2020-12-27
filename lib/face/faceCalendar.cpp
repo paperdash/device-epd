@@ -32,8 +32,7 @@ void loopFaceCalendar()
 	if ((millis() - lastCalendarDataUpdate) >= 600000)
 	{
 		Serial.println(&now, "update calendar data @ %A, %B %d %Y %H:%M:%S");
-		lastCalendarDataUpdate = millis();
-		updateCalendarData();
+		invalidFaceCalendarCache(true);
 	}
 }
 
@@ -50,12 +49,17 @@ void showFaceCalendar()
 	displayFlush();
 }
 
-/**
- * download and update calendar data
- */
-bool updateCalendarData()
+void invalidFaceCalendarCache(bool warmUp)
 {
-	return imageServiceUpdateFile("390x384.jpg", faceCalendarPicture);
+	if (warmUp)
+	{
+		imageServiceUpdateFile("390x384.jpg", faceCalendarPicture);
+		lastCalendarDataUpdate = millis();
+	}
+	else
+	{
+		lastCalendarDataUpdate = 0;
+	}
 }
 
 void display_calender()

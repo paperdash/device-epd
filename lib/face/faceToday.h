@@ -4,5 +4,6 @@
 void setupFaceToday();
 void loopFaceToday();
 void showFaceToday();
+void invalidFaceTodayCache(bool warmUp);
 
 #endif

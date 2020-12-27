@@ -2,6 +2,7 @@
 #include <SPIFFS.h>
 #include "download.h"
 #include "device.h"
+#include "esp_task_wdt.h"
 
 bool downloadFile(String url, const char *path, const char* CAcert)
 {
@@ -45,6 +46,9 @@ bool downloadFile(String url, const char *path, const char* CAcert)
 	}
 	else
 	{
+		// reset watchdog, is necessary if this method is running on second cpu core
+		esp_task_wdt_reset();
+
 		http.writeToStream(&file);
 
 		if (file)
