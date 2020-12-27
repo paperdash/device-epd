@@ -29,6 +29,7 @@ const char *jsonAppVersion = "/dist/version.json";
 AppConfig appConfig;
 
 void setupApiDevice();
+void setupApiPlaylist();
 void setupApiSettings();
 void setupApiWifi();
 void setupApiCache();
@@ -89,6 +90,7 @@ void setupApp()
 	server.serveStatic("/fs/", SPIFFS, "/");
 
 	setupApiDevice();
+	setupApiPlaylist();
 	setupApiSettings();
 	setupApiWifi();
 	setupApiCache();
@@ -130,8 +132,8 @@ void setupApp()
 		doc["device"]["heap"]["total"] = ESP.getHeapSize();
 		doc["device"]["heap"]["free"] = ESP.getFreeHeap();
 
-		doc["playlist"]["current"] = PlaylistGetCurrentFace();
-		doc["playlist"]["remaining"] = (PlaylistGetRemainingTimeMs() / 1000) + 3; // + face rendering time 3s
+		doc["playlist"]["current"] = playlistGetCurrentFace();
+		doc["playlist"]["remaining"] = (playlistGetRemainingTimeMs() / 1000) + 3; // + face rendering time 3s
 
 		doc["firmware"]["created"] = FW_CREATED;
 		doc["firmware"]["rev"] = FW_GIT_REV;
@@ -163,7 +165,7 @@ void loopApp()
 		Serial.println("loop app update display");
 
 		// stop playlist to show the new image
-		PlaylistResetTimer();
+		playlistResetTimer();
 
 		updateDisplayRequired = false;
 		displayFlush();
@@ -294,7 +296,7 @@ void setupApiDevice()
 				bool dither = strcmp(filename.c_str(), "dithering") == 0;
 
 				ImageNew(0, 0, 0, 0, dither);
-				PlaylistResetTimer();
+				playlistResetTimer();
 			}
 
 			ImageWriteBuffer(data, len);
@@ -349,6 +351,21 @@ void setupApiDevice()
 		json += "]";
 		request->send(200, "application/json", json);
 		json = String();
+	});
+}
+
+/**
+ * api playlist endpoint
+ */
+void setupApiPlaylist()
+{
+	server.on("/api/playlist/show", HTTP_GET, [](AsyncWebServerRequest *request) {
+
+		if (request->hasParam("face")) {
+			playlistShow(request->getParam("face")->value().c_str());
+		}
+
+		request->send(200, "application/json", "{}");
 	});
 }
 

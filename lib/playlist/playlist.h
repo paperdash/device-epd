@@ -6,9 +6,10 @@
 void setupPlaylist();
 void loopPlaylist();
 
-void PlaylistNextFace();
-String PlaylistGetCurrentFace();
-int32_t PlaylistGetRemainingTimeMs();
-void PlaylistResetTimer();
+void playlistNextFace();
+String playlistGetCurrentFace();
+int32_t playlistGetRemainingTimeMs();
+void playlistResetTimer();
+void playlistShow(const char name[]);
 
 #endif

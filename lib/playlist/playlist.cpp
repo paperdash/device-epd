@@ -61,43 +61,58 @@ void loopPlaylist()
 		faces[i].loop();
 	}
 
-	if (PlaylistGetRemainingTimeMs() <= 0) // && autoplayEnabled
+	if (playlistGetRemainingTimeMs() <= 0) // && autoplayEnabled
 	{
-		PlaylistResetTimer();
-		PlaylistNextFace();
+		playlistResetTimer();
+		playlistNextFace();
 
 		Serial.println("switch face: " + faces[currentFaceIndex].name);
 		faces[currentFaceIndex].show();
 	}
 }
 
-void PlaylistNextFace()
+void playlistNextFace()
 {
 	currentFaceIndex++;
 
-	// wrap around at the ends
 	if (currentFaceIndex < 0)
 	{
-		currentFaceIndex = faceCount - 1;
+		currentFaceIndex = 0;
 	}
 
+	// wrap around at the ends
 	if (currentFaceIndex >= faceCount)
 	{
 		currentFaceIndex = 0;
 	}
 }
 
-String PlaylistGetCurrentFace()
+String playlistGetCurrentFace()
 {
 	return faces[currentFaceIndex].name;
 }
 
-int32_t PlaylistGetRemainingTimeMs()
+int32_t playlistGetRemainingTimeMs()
 {
 	return timer - (millis() - lastSwitch);
 }
 
-void PlaylistResetTimer()
+void playlistResetTimer()
 {
 	lastSwitch = millis();
+}
+
+void playlistShow(const char name[])
+{
+	for (uint8_t i = 0; i < faceCount; i++)
+	{
+		if (faces[i].name.equalsIgnoreCase(name))
+		{
+			Serial.println("switch to face " + faces[i].name);
+
+			currentFaceIndex = i -1;
+			lastSwitch = 0;
+			break;
+		}
+	}
 }
