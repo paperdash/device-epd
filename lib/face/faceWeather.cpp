@@ -39,7 +39,7 @@ void loopFaceWeather()
 	if ((millis() - lastWeatherDataUpdate) >= 600000)
 	{
 		Serial.println(&now, "update weather data @ %A, %B %d %Y %H:%M:%S");
-		updateWeatherData();
+		invalidFaceWeatherCache(true);
 	}
 }
 
