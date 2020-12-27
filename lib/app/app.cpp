@@ -198,7 +198,6 @@ void setupApiSettings()
 		root["system"]["dst"] = NVS.getInt("system.dst");
 		root["system"]["wifi"] = NVS.getString("wifi.ssid");
 
-		//root["device"]["angle"] = NVS.getInt("device.angle");
 		root["device"]["theme"] = NVS.getString("device.theme");
 		root["device"]["name"] = NVS.getString("device.name");
 
@@ -455,15 +454,16 @@ void setupApiCache()
 }
 
 /**
- * api data endpoint
+ * ota update
  */
 void setupOTA()
 {
-	// Simple Firmware Update Form
+	// recovery update mode
 	server.on("/update", HTTP_GET, [](AsyncWebServerRequest *request) {
 		request->send(200, "text/html", "<form method='POST' action='/update' enctype='multipart/form-data'><input type='file' name='update'><input type='submit' value='Update'></form>");
 	});
 
+	// handle update
 	server.on(
 		"/update", HTTP_POST, [](AsyncWebServerRequest *request) {},
 		[](AsyncWebServerRequest *request, String filename, size_t index, uint8_t *data, size_t len, bool final) {

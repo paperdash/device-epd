@@ -4,7 +4,7 @@
 #include "device.h"
 #include "esp_task_wdt.h"
 
-bool downloadFile(String url, const char *path, const char* CAcert)
+bool downloadFile(String url, const char *path, const char *CAcert)
 {
 	// @note duration time: 200kb = 35sec write to flash
 	Serial.println("Download file: " + url);
@@ -32,9 +32,12 @@ bool downloadFile(String url, const char *path, const char* CAcert)
 	// use the last 8 bytes of the unique serial id
 	http.addHeader("X-PaperDash-Id", DeviceId);
 
-	if (CAcert) {
+	if (CAcert)
+	{
 		http.begin(url, CAcert);
-	} else {
+	}
+	else
+	{
 		http.begin(url);
 	}
 
@@ -67,7 +70,6 @@ bool downloadFile(String url, const char *path, const char* CAcert)
 
 	return !hasError;
 }
-
 
 bool downloadFile(String url, const char *path)
 {
