@@ -33,6 +33,16 @@
         </v-img>
       </template>
       <template #append>
+        <v-card
+          flat
+          color="transparent"
+          disabled
+          class="text-center"
+        >
+          <v-card-text>
+            paperdash.io
+          </v-card-text>
+        </v-card>
         <v-list class="py-0">
           <v-divider />
           <v-list-item
@@ -94,39 +104,18 @@
       dark
       clipped-left
     >
-      <v-btn
-        _class="hidden-xs-and-down"
-        to="/"
-        icon
-        color="transparent"
-      >
-        <img
-          width="48"
-          height="48"
-          src="@/assets/logo.png"
-          alt="logo"
-        >
-      </v-btn>
-
-      <v-toolbar-title class="hidden-xs-only">
-        paperdash
+      <v-toolbar-title>
+        {{ settings.device.name }}
       </v-toolbar-title>
-      <v-spacer />
-      <div>{{ settings.device.name }}</div>
+
       <v-spacer />
 
       <div class="hidden-xs-only mx-3">
-        <v-icon>$slideshow</v-icon>
+        <v-icon :title="'FS usage: ' + getFSUsage + '%'">
+          $storage
+        </v-icon>
         <v-progress-linear
-          :value="40"
-          size="40"
-          color="white"
-        />
-      </div>
-      <div class="hidden-xs-only mx-3">
-        <v-icon>$storage</v-icon>
-        <v-progress-linear
-          :value="72"
+          :value="getFSUsage"
           color="white"
         />
       </div>
@@ -135,6 +124,7 @@
         <v-btn
           icon
           class="hidden-xs-only"
+          :title="'RSSI: ' + stats.wifi.rssi"
         >
           <v-icon>
             {{ stats.wifi.rssi | wifiIcon(0) }}
@@ -184,11 +174,12 @@
 </template>
 
 <script>
-  import { mapState } from 'vuex'
+  import { mapState, mapGetters } from 'vuex'
   import Notifications from '@/components/Notifications'
+  const SvgLogo = () => import('@/assets/logo.svg?inline')
 
   export default {
-    components: { Notifications },
+    components: { Notifications, SvgLogo },
     data: () => ({
       drawer: true,
       pages: [
@@ -226,6 +217,7 @@
     }),
     computed: {
       ...mapState(['stats', 'settings']),
+      ...mapGetters(['getFSUsage']),
     },
     created () {
       this.drawer = !this.$vuetify.breakpoint.smAndDown
