@@ -10,9 +10,5 @@ module.exports = {
   extends: 'vuetify',
   // add your custom rules here
   rules: {
-  },
-  globals: {
-    __BUILD_TIME__: 'readonly',
-    __COMMIT_HASH__: 'readonly',
   }
 }

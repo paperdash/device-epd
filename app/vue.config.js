@@ -12,13 +12,6 @@ const buildInfo = {
   buildTime: JSON.stringify(new Date().getTime() / 1000 | 0),
 }
 
-/*
-const appVersionVue = new webpack.DefinePlugin({
-  __COMMIT_HASH__: buildInfo.commitHash,
-  __BUILD_TIME__: buildInfo.buildTime,
-})
-*/
-
 const appVersionJson = new VersionFile({
   output: '../data/dist/version.json',
   template: './version.ejs',
@@ -79,7 +72,6 @@ module.exports = {
             deleteOriginalAssets: true,
           }),
           // add version info
-          // appVersionVue,
           appVersionJson,
         ],
       }
@@ -88,7 +80,6 @@ module.exports = {
       return {
         plugins: [
           // add version info
-          // appVersionVue,
           appVersionJson,
         ],
       }
