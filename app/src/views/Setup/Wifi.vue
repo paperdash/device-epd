@@ -121,7 +121,9 @@
     },
     methods: {
       onWifiSelect (wifi) {
-        if (wifi.secure) {
+        if (wifi.ssid === this.settings.system.wifi) {
+          this.nextStep()
+        } else if (wifi.secure) {
           this.connectSSID = wifi.ssid
           this.wifiPasswordModal = true
         } else {
@@ -142,6 +144,9 @@
       },
       stepBack () {
         this.$router.push('/setup/country')
+      },
+      nextStep () {
+        this.$router.push('/setup/weather')
       },
     },
   }

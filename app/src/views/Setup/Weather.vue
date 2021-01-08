@@ -113,10 +113,10 @@
         this.$router.push('/setup/name')
       },
       registerApiKey () {
-        window.open('http://openweathermap.org/')
+        window.open('https://openweathermap.org/')
       },
       stepBack () {
-        this.$router.push('/setup/')
+        this.$router.push('/setup/wifi')
       },
     },
   }
