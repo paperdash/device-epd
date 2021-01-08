@@ -100,7 +100,6 @@ void setupApp()
 		request->send(404);
 	});
 
-	// TODO response
 	server.on("/stats", HTTP_GET, [](AsyncWebServerRequest *request) {
 		AsyncResponseStream *response = request->beginResponseStream("application/json");
 		const size_t capacity = 5 * JSON_OBJECT_SIZE(2) + JSON_OBJECT_SIZE(3) + JSON_OBJECT_SIZE(5) + JSON_OBJECT_SIZE(7) + JSON_OBJECT_SIZE(8) + 410;
@@ -141,10 +140,6 @@ void setupApp()
 
 		doc["app"]["created"] = appConfig.buildTime;
 		doc["app"]["rev"] = appConfig.buildRev;
-
-		//JsonArray capability = doc.createNestedArray("capability");
-		//capability.add("jpg");
-		//capability.add("wbmp");
 
 		serializeJson(doc, *response);
 		request->send(response);
@@ -329,7 +324,7 @@ void setupApiDevice()
 			size_t cnt = 0;
 			for (size_t i = 0; i < n; ++i)
 			{
-				// checking for epd
+				// checking for paperdash device
 				if (MDNS.hasTxt(i, "paperdash"))
 				{
 					if (cnt)

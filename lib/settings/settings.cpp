@@ -13,8 +13,6 @@ void setupSettings()
 void settingsFactoryReset()
 {
 	NVS.eraseAll();
-
-	// TODO remove also json db file
 }
 
 void loadSettingsColor()

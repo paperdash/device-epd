@@ -15,8 +15,7 @@ void setupWlan()
 	String ssid = NVS.getString("wifi.ssid");
 	String password = NVS.getString("wifi.password");
 
-	// TODO count failed connecting wifiFailedCount <=3
-	if (!ssid.isEmpty() && !password.isEmpty() && wifiFailedCount <=3) // && wifiFailedCount <=3
+	if (!ssid.isEmpty() && !password.isEmpty() && wifiFailedCount <=3)
 	{
 		// client mode
 		initClientMode(ssid.c_str(), password.c_str());
@@ -52,7 +51,7 @@ void initClientMode(const char *ssid, const char *password)
 		Serial.print(".");
 		if (!tryCount--)
 		{
-			// todo, hier passt was nicht
+			// TODO is this correct?
 			wifiFailedCount++;
 			if (wifiFailedCount > 3) {
 				Serial.println("  wifi is not reachable...");
@@ -88,6 +87,7 @@ void initAPMode()
 {
 	Serial.println("  init AP (Access Point)");
 
+	//WiFi.disconnect();
 	WiFi.softAP("paperdash.io");
 
 	IPAddress IP = WiFi.softAPIP();
