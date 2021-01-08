@@ -66,7 +66,7 @@ $ yarn --cwd app build
 $ platformio run --target buildfs
 
 // update esp
-$ platformio run --target upload
+$ platformio run --target uploadfs
 ```
 
 
