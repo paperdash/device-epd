@@ -176,10 +176,9 @@
 <script>
   import { mapState, mapGetters } from 'vuex'
   import Notifications from '@/components/Notifications'
-  const SvgLogo = () => import('@/assets/logo.svg?inline')
 
   export default {
-    components: { Notifications, SvgLogo },
+    components: { Notifications },
     data: () => ({
       drawer: true,
       pages: [
