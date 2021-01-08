@@ -63,10 +63,13 @@ $ platformio run --target upload
 ```
 $ yarn --cwd app
 $ yarn --cwd app build
-$ platformio run --target buildfs
 
 // update esp
 $ platformio run --target uploadfs
+
+// alternative, create spiffs.bin
+$ platformio run --target buildfs
+
 ```
 
 
