@@ -122,6 +122,7 @@ void setupApp()
 		doc["device"]["hostname"] = WiFi.getHostname();
 		doc["device"]["runtime"] = ceil(millis() / 1000);
 		doc["device"]["bootCycle"] = deviceGetBootCount();
+		doc["device"]["configured"] = deviceIsConfigured();
 		doc["device"]["screen"]["width"] = displayGetWidth();
 		doc["device"]["screen"]["height"] = displayGetHeight();
 

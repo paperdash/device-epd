@@ -43,7 +43,7 @@
       Promise.all([this.loadStats(), this.loadSettings()]).then(() => {
         // init app
         let goto
-        const setupFinished = true // TODO
+        const setupFinished = this.stats.device.configured
         const wifiConnected = this.stats.wifi.connected
 
         // only on initial navigation

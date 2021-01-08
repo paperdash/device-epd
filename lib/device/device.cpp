@@ -12,7 +12,6 @@ char DeviceId[21 + 1];
 void sleepDevice();
 bool isBootTimeOver();
 
-
 void setupDevice()
 {
 	// increment boot number and print it every reboot
@@ -50,6 +49,11 @@ long deviceGetSleepInterval()
 unsigned int deviceGetBootCount()
 {
 	return bootCount;
+}
+
+bool deviceIsConfigured()
+{
+	return !(NVS.getString("wifi.ssid").isEmpty() || NVS.getString("device.name").isEmpty() || NVS.getString("device.theme").isEmpty());
 }
 
 bool isBootTimeOver()

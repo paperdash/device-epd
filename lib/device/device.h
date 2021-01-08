@@ -12,6 +12,7 @@ void loopDevice();
 void deviceSetSleepInterval(long interval);
 long deviceGetSleepInterval();
 unsigned int deviceGetBootCount();
+bool deviceIsConfigured();
 
 extern char DeviceId[21 +1];
 
