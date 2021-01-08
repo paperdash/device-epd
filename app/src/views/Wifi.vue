@@ -178,7 +178,7 @@
           setTimeout(() => {
             // phone should be back in regular wifi
             // search for device via mDNS
-            window.location = 'http://paperdash-display.local/#/setup/name'
+            window.location = 'http://paperdash-epd.local'
           }, 5000)
         })
       },

@@ -1,7 +1,7 @@
 #include "wlan.h"
 #include "settings.h"
 
-const char *deviceName = "paperdash-display";
+const char *deviceName = "paperdash-epd";
 RTC_DATA_ATTR int wifiFailedCount = 0;
 
 void initClientMode(const char *ssid, const char *password);

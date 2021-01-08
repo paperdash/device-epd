@@ -31,7 +31,7 @@ module.exports = {
   devServer: {
     proxy: {
       '^/': {
-        target: 'http://paperdash-display:80',
+        target: 'http://paperdash-epd.local:80',
         ws: true,
         changeOrigin: true,
       },

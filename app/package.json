@@ -1,5 +1,5 @@
 {
-  "name": "paperdash-display",
+  "name": "paperdash-epd",
   "version": "0.1.0",
   "private": true,
   "scripts": {
