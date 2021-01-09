@@ -6,7 +6,7 @@
     :loading="isLoading"
     :search-input.sync="searchInput"
     no-filter
-    _hide-no-data
+    hide-no-data
     item-text="name"
     item-value="id"
     label="Location"

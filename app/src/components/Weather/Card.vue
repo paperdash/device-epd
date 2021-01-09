@@ -28,7 +28,6 @@
             <v-col cols="6">
               <v-img
                 :src="currentConditionIcon"
-                alt
                 width="92"
               />
             </v-col>
@@ -149,7 +148,7 @@
         this.isUpdatingData = true
 
         weatherApi.updateWeather(() => {
-          // TODO reload json
+          // TODO trigger esp weather data reload
           this.isUpdatingData = false
 
           this.loadData()

@@ -18,7 +18,7 @@
 </template>
 
 <script>
-  import weatherFindLocation from '@/components/WeatherFindLocation'
+  import weatherFindLocation from '@/components/Weather/FindLocation'
 
   export default {
     components: {

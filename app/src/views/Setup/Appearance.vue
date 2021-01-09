@@ -53,7 +53,7 @@
 
 <script>
   import { mapState, mapMutations, mapActions } from 'vuex'
-  import SetupPanel from '@/components/SetupPanel'
+  import SetupPanel from '@/components/Setup/BasePanel'
   import DeviceSimulator from '@/components/DeviceSimulator'
 
   export default {
@@ -96,7 +96,7 @@
         this.$router.push('/setup/done')
       },
       stepBack () {
-        this.$router.push('/setup/weather')
+        this.$router.push('/setup/name')
       },
     },
   }

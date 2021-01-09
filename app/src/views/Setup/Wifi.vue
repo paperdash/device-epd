@@ -90,8 +90,8 @@
 
 <script>
   import apiDevice from '@/api/device'
-  import setupWifiConnect from '@/components/SetupWifiConnect'
-  import SetupPanel from '@/components/SetupPanel'
+  import setupWifiConnect from '@/components/Setup/WifiConnect'
+  import SetupPanel from '@/components/Setup/BasePanel'
 
   export default {
     components: {
@@ -138,7 +138,7 @@
           setTimeout(() => {
             // phone should be back in regular wifi
             // search for device via mDNS
-            window.location = 'http://paperdash-display.local'
+            window.location = 'http://paperdash-epd.local'
           }, 5000)
         })
       },

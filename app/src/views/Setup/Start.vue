@@ -27,7 +27,7 @@
 </template>
 
 <script>
-  import SetupPanel from '@/components/SetupPanel'
+  import SetupPanel from '@/components/Setup/BasePanel'
   const SvgCase = () => import('@/assets/case_editor.svg?inline')
 
   export default {

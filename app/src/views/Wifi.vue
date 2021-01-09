@@ -135,7 +135,7 @@
 
 <script>
   import { mapState } from 'vuex'
-  import setupWifiConnect from '@/components/SetupWifiConnect'
+  import setupWifiConnect from '@/components/Setup/WifiConnect'
   import apiDevice from '@/api/device'
 
   export default {

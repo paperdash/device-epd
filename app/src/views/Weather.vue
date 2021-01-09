@@ -73,7 +73,7 @@
 
 <script>
   import { mapState, mapActions, mapMutations } from 'vuex'
-  import WeatherFindLocation from '@/components/WeatherFindLocation'
+  import WeatherFindLocation from '@/components/Weather/FindLocation'
   export default {
     components: {
       WeatherFindLocation,

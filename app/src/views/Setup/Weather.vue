@@ -54,8 +54,8 @@
 
 <script>
   import { mapState, mapMutations, mapActions } from 'vuex'
-  import weatherFindLocation from '@/components/WeatherFindLocation'
-  import SetupPanel from '@/components/SetupPanel'
+  import weatherFindLocation from '@/components/Weather/FindLocation'
+  import SetupPanel from '@/components/Setup/BasePanel'
 
   export default {
     components: {

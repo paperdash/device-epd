@@ -31,7 +31,7 @@
 
 <script>
   import { mapState } from 'vuex'
-  import SetupPanel from '@/components/SetupPanel'
+  import SetupPanel from '@/components/Setup/BasePanel'
   import DeviceSimulator from '@/components/DeviceSimulator'
 
   export default {

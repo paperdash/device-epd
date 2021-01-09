@@ -10,12 +10,6 @@
       Give it a name
     </template>
 
-    <p
-      class="text-center"
-    >
-      TODO:Lorem ipsum dolor sit amet, consetetur sadipscing elitr, sed diam nonumy eirmod tempor invidunt ut labore et dolore magna aliquyam
-    </p>
-
     <v-card-text>
       <v-text-field
         v-model="form.name"
@@ -49,7 +43,7 @@
 <script>
   import { mapState, mapMutations, mapActions } from 'vuex'
   import randomNames from '@/assets/fantasyNames.json'
-  import SetupPanel from '@/components/SetupPanel'
+  import SetupPanel from '@/components/Setup/BasePanel'
 
   export default {
     components: { SetupPanel },
