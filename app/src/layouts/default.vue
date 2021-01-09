@@ -64,37 +64,14 @@
           :to="page.to"
           link
         >
-          <v-list-item-content
-            v-if="0"
-            class="text-center"
-          >
+          <v-list-item-icon>
             <v-icon>{{ page.icon }}</v-icon>
+          </v-list-item-icon>
+
+          <v-list-item-content>
             <v-list-item-title>{{ page.label }}</v-list-item-title>
           </v-list-item-content>
-
-          <template v-if="1">
-            <v-list-item-icon>
-              <v-icon>{{ page.icon }}</v-icon>
-            </v-list-item-icon>
-
-            <v-list-item-content>
-              <v-list-item-title>{{ page.label }}</v-list-item-title>
-            </v-list-item-content>
-          </template>
         </v-list-item>
-
-        <!--
-        <v-divider />
-        <v-list-item
-          link
-          to="/setup"
-        >
-          <v-list-item-content class="text-center">
-            <v-icon>$support</v-icon>
-            <v-list-item-title>Assistant</v-list-item-title>
-          </v-list-item-content>
-        </v-list-item>
-        -->
       </v-list>
     </v-navigation-drawer>
 

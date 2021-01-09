@@ -75,16 +75,6 @@
       <v-divider />
 
       <v-card-actions>
-        <!--
-        <v-btn
-          :loading="isUpdatingData"
-          text
-          @click="updateData"
-        >
-          i8n:update weather data
-        </v-btn>
-        -->
-
         <v-spacer />
         <v-btn
           :loading="isUpdatingData"
