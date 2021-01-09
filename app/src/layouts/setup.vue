@@ -1,12 +1,16 @@
 <template>
   <v-main>
-    <router-view />
+    <transition-page>
+      <router-view />
+    </transition-page>
   </v-main>
 </template>
 
 <script>
+  import TransitionPage from '@/components/TransitionPage'
   export default {
     name: 'Setup',
+    components: { TransitionPage },
   }
 </script>
 

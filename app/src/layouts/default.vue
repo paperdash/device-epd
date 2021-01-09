@@ -166,7 +166,9 @@
           min-height="70vh"
           rounded="lg"
         >
-          <router-view class="pa-5" />
+          <transition-page>
+            <router-view class="pa-5" />
+          </transition-page>
         </v-sheet>
       </v-col>
     </v-main>
@@ -176,9 +178,10 @@
 <script>
   import { mapState, mapGetters } from 'vuex'
   import Notifications from '@/components/Notifications'
+  import TransitionPage from '@/components/TransitionPage'
 
   export default {
-    components: { Notifications },
+    components: { TransitionPage, Notifications },
     data: () => ({
       drawer: true,
       pages: [
