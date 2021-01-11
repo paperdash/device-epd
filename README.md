@@ -1,12 +1,36 @@
+![paperdash.io](./doc/logo-readme.svg)
+
+paperdash - Open Source ePaper
+
+[![Maintenance](https://img.shields.io/badge/Maintained%3F-yes-green.svg)](https://GitHub.com/Naereen/StrapDown.js/graphs/commit-activity)
+![Software License](https://img.shields.io/badge/license-MIT-brightgreen.svg)
+[![Generic badge](https://img.shields.io/badge/REST_API-0.1-<COLOR>.svg?logo=swagger)](https://app.swaggerhub.com/apis-docs/paperdash.io/paperdash-epd/0.1)
+![Generic badge](https://img.shields.io/badge/Firmware-0.1-orange.svg?logo=arduino)
+![Generic badge](https://img.shields.io/badge/APP-0.1-orange.svg?logo=vuetify)
+![Lines of code](https://img.shields.io/tokei/lines/github/paperdash/device-epd)
+
+[![ForTheBadge built-with-love](http://ForTheBadge.com/images/badges/built-with-love.svg)](https://GitHub.com/Naereen/)
+<form action="https://www.paypal.com/donate" method="post" target="_top">
+	<input type="hidden" name="hosted_button_id" value="HBVQC64JTW68N" />
+	<input type="image" src="https://www.paypalobjects.com/en_US/i/btn/btn_donate_LG.gif" border="0" name="submit" title="PayPal - The safer, easier way to pay online!" alt="Donate with PayPal button" />
+	<img alt="" border="0" src="https://www.paypal.com/en_DE/i/scr/pixel.gif" width="1" height="1" />
+</form>
+
+
+<!--
+[![GitHub license](https://img.shields.io/github/license/Naereen/StrapDown.js.svg)](https://github.com/Naereen/StrapDown.js/blob/master/LICENSE)
+[![saythanks](https://img.shields.io/badge/say-thanks-ff69b4.svg)](https://saythanks.io/to/kennethreitz)
+-->
+
+
+## Introduction [WIP]
+
 hello world beispiel für neue face
 
 ***out of the box device***
 
 ***usable for everyone and not only developer***
 
-
-
-# Introduction
 
 TODO, up to 3 images (2x device, 1x web app)
 
