@@ -1,8 +1,6 @@
 ![paperdash.io](./doc/logo-readme.svg)
 
-paperdash - Open Source ePaper
-
-[![Maintenance](https://img.shields.io/badge/Maintained%3F-yes-green.svg)](https://GitHub.com/Naereen/StrapDown.js/graphs/commit-activity)
+![Maintenance](https://img.shields.io/badge/Maintained%3F-yes-green.svg)
 ![Software License](https://img.shields.io/badge/license-MIT-brightgreen.svg)
 [![Generic badge](https://img.shields.io/badge/REST_API-0.1-<COLOR>.svg?logo=swagger)](https://app.swaggerhub.com/apis-docs/paperdash.io/paperdash-epd/0.1)
 ![Generic badge](https://img.shields.io/badge/Firmware-0.1-orange.svg?logo=arduino)
@@ -23,7 +21,7 @@ paperdash - Open Source ePaper
 -->
 
 
-## Introduction [WIP]
+## Open Source E-Paper Display Platform
 
 hello world beispiel für neue face
 
