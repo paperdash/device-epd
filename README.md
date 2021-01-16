@@ -1,10 +1,10 @@
 ![paperdash.io](./doc/logo-readme.svg)
 
-![Maintenance](https://img.shields.io/badge/Maintained%3F-yes-green.svg)
-![Software License](https://img.shields.io/badge/license-MIT-brightgreen.svg)
-[![Generic badge](https://img.shields.io/badge/REST_API-0.1-<COLOR>.svg?logo=swagger)](https://app.swaggerhub.com/apis-docs/paperdash.io/paperdash-epd/0.1)
-![Generic badge](https://img.shields.io/badge/Firmware-0.1-orange.svg?logo=arduino)
-![Generic badge](https://img.shields.io/badge/APP-0.1-orange.svg?logo=vuetify)
+[![Software License](https://img.shields.io/badge/license-MIT-brightgreen.svg)]()
+[![Generic badge](https://img.shields.io/badge/REST_API-1.0-<COLOR>.svg?logo=swagger)](https://app.swaggerhub.com/apis-docs/paperdash.io/paperdash-epd/0.1)
+[![Generic badge](https://img.shields.io/badge/Firmware-1.0-orange.svg?logo=arduino)]()
+[![Generic badge](https://img.shields.io/badge/APP-1.0-orange.svg?logo=vuetify)]()
+[![Generic badge](https://img.shields.io/badge/3D_Housing-1.0-orange.svg?logo=makerbot)](https://www.thingiverse.com/thing:4724292)
 
 [![ForTheBadge built-with-love](http://ForTheBadge.com/images/badges/built-with-love.svg)](https://GitHub.com/Naereen/)
 
@@ -13,7 +13,8 @@
 
 * 🌍 [Website](https://paperdash.io/) - Learn more about paperdash.io
 * 📡 [Discover](http://local.paperdash.io/) - Find devices in your local network
-* 👍 Like us on [Instagram](https://instagram.com/paperdash)
+* 📡 [Case](https://www.thingiverse.com/thing:4724292) - 3D Model
+* 👍 Like us on [Instagram](https://instagram.com/paperdash.io)
 
 ![Face Calendar](./doc/calendar.jpg)
 ![Face Picture](./doc/livingroom.jpeg)
@@ -53,11 +54,9 @@
 
 ## Necessary parts to build the project
 
-* ESP-32 microprocessor
-  * Amazon affiliate link [DE](https://amzn.to/34OYBol), US, UK, SP
-* TODO 640x384, 7.5inch E-Ink display. Black and white ONLY. (GDEW075T8 7.5" b/w)
-  * Amazon affiliate link [DE](https://amzn.to/34OYNnz)
-* 3D printed case
+* ESP32
+* EPD display: GDEW075T8
+* (Optional) 3D printed case TODO link thinkerverse
 
 ## ESP-32 firmware
 
@@ -142,8 +141,3 @@ pio run --target erase
 
 > get photos from calendar face
 http://paperdash-epd/fs/calendarPhoto.png
-
-
-
-## swagger documentation
-https://app.swaggerhub.com/apis-docs/paperdash.io/paperdash-epd/0.1
