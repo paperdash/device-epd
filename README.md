@@ -13,7 +13,7 @@
 
 * 🌍 [Website](https://paperdash.io/) - Learn more about paperdash.io
 * 📡 [Discover](http://local.paperdash.io/) - Find devices in your local network
-* 📡 [Case](https://www.thingiverse.com/thing:4724292) - 3D Model
+* 🛠 [Case](https://www.thingiverse.com/thing:4724292) - 3D Model
 * 👍 Like us on [Instagram](https://instagram.com/paperdash.io)
 
 ![Face Calendar](./doc/calendar.jpg)
@@ -36,7 +36,7 @@
 * [REST API](https://app.swaggerhub.com/apis-docs/paperdash.io/paperdash-epd/0.1)
 * JPEG decoder (some limitations)
 * PNG decoder (work in progress)
-* Out-of-the-box slideshow with
+* Out-of-the-box faces
   * Current weather condition and forecast (https://openweathermap.org/ api key requried)
   * Calendar view with random picture
   * Today view with fullscreen random picture
@@ -50,13 +50,26 @@
 * Basic PWA possibility
 
 
+## API examples
+
+```bash
+# Get device stats as json
+$ curl http://paperdash-epd.local/stats
+
+# Download current image display
+$ curl http://paperdash-epd.local/api/device/screen > current.bmp
+
+# Send an image to display
+$ curl -F '=@data/faceToday.jpg;filename=dithering' http://paperdash-epd.local/api/device/screen
+```
+
 # Getting started
 
 ## Necessary parts to build the project
 
-* ESP32
-* EPD display: GDEW075T8
-* (Optional) 3D printed case TODO link thinkerverse
+* [Microcontroller ESP32](https://www.espressif.com/sites/default/files/documentation/esp32_datasheet_en.pdf)
+* [E-Paper Display GDEW075T8](https://www.waveshare.com/wiki/7.5inch_e-Paper_HAT)
+* [Case](https://www.thingiverse.com/thing:4724292)
 
 ## ESP-32 firmware
 
@@ -64,10 +77,10 @@
 > This is the reason why everything is broken down into separate modules below `/lib`. Each module has basically a `setupXXX()` and `loopXXX()` method.
 
 ### Build (with PlatformIO)
-```
+```bash
 $ pio run --environment esp32
 
-// update esp
+# update esp
 $ platformio run --target upload
 ```
 
@@ -76,68 +89,13 @@ $ platformio run --target upload
 > Based on state of the art technologie [Vue.js](https://vuejs.org/) + [Vuetify](https://vuetifyjs.com/) + [Webpack](https://webpack.js.org/)
 
 ### Build
-```
+```bash
 $ yarn --cwd app
 $ yarn --cwd app build
 
-// update esp
+# update esp
 $ platformio run --target uploadfs
 
-// alternative, create spiffs.bin
+# alternative, create spiffs.bin
 $ platformio run --target buildfs
-
 ```
-
-
-## API examples
-
-Post a image to display
-```
-$ curl -F '=@demo.jpg;filename=dithering' http://paperdash-epd/api/device/screen
-```
-
-Access root filesystem
-
-http://paperdash-epd/fs/calendarPhoto.png
-
-
-
-## Similar projects
-
-> During my research, I have found exciting projects that are very similar to this one.
-- https://github.com/caedm/wall-ink
-- https://github.com/rgujju/paperdink
-- https://github.com/aceisace/Inkycal
-- https://github.com/ankesreich/eInkDisplayDriver
-
-------------------------------------------------
-
-
-## compile and upload new firmware
-```properties
-platformio run --target upload
-```
-
-## app development
-```properties
-# build new dist files
-yarn --cwd app build
-
-# upload to device filesystem
-platformio run --target uploadfs
-
-# send a picture to display over json
-curl -F '=@test3.png;filename=dithering' http://paperdash-epd/api/device/screen
-curl -F 'filename=@test1.jpg' http://paperdash-epd/api/device/screen
-
-# get current picture as bmp
-curl http://paperdash-epd/api/device/screen --output current.bmp
-
-# erase flash memory
-pio run --target erase
-```
-
-## access fs over http
-
-> get photos from calendar face
-http://paperdash-epd/fs/calendarPhoto.png
