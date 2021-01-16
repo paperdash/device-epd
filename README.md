@@ -6,7 +6,7 @@
 [![Generic badge](https://img.shields.io/badge/APP-1.0-orange.svg?logo=vuetify)]()
 [![Generic badge](https://img.shields.io/badge/3D_Housing-1.0-orange.svg?logo=makerbot)](https://www.thingiverse.com/thing:4724292)
 
-[![ForTheBadge built-with-love](http://ForTheBadge.com/images/badges/built-with-love.svg)](https://GitHub.com/Naereen/)
+![ForTheBadge built-with-love](http://ForTheBadge.com/images/badges/built-with-love.svg)
 
 
 ## Open Source E-Paper Display Platform
