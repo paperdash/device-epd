@@ -52,7 +52,7 @@
       <v-combobox
         v-model="form.images"
         :disabled="!isSettingSupported('playlist.images')"
-        :items="['https://api.paperdash.io/image/']"
+        :items="['http://free.paperdash.io/image/']"
         label="Image provider"
         prepend-icon="$link"
         append-outer-icon="$help"
