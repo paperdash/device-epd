@@ -1,9 +1,9 @@
 #include "faceSplash.h"
 #include "settings.h"
 #include "display.h"
-#include "datetime.h"
+#include <WString.h>
 
-#include <Fonts/FreeMono24pt7b.h>
+#include <Roboto_Bold_40.h>
 
 void setupFaceSplash()
 {
@@ -19,10 +19,19 @@ void showFaceSplash()
 {
 	// init
 	GFXcanvas1 *canvas = displayGetCanvas();
-	const char Hello[] = "Hello paperdash!";
+	String name = NVS.getString("device.name");
+
+	if (name.isEmpty())
+	{
+		name = "paperdash";
+	}
+
+	// create message
+	String welcome = "Hello ";
+	welcome += name;
 
 	// setup
-	canvas->setFont(&FreeMono24pt7b);
+	canvas->setFont(&Roboto_Bold_40);
 	canvas->setRotation(0);
 	canvas->fillScreen(COLOR_BG);
 	canvas->setTextColor(COLOR_FG);
@@ -30,13 +39,18 @@ void showFaceSplash()
 	// center bounding box by transposition of origin:
 	int16_t tbx, tby;
 	uint16_t tbw, tbh;
-	canvas->getTextBounds(Hello, 0, 0, &tbx, &tby, &tbw, &tbh);
+	canvas->getTextBounds(welcome, 0, 0, &tbx, &tby, &tbw, &tbh);
 	uint16_t x = ((canvas->width() - tbw) / 2) - tbx;
 	uint16_t y = ((canvas->height() - tbh) / 2) - tby;
+	int16_t welcomeWidth = tbw;
 
 	// print text
 	canvas->setCursor(x, y);
-	canvas->print(Hello);
+	canvas->print(welcome);
+
+	// add name underline
+	canvas->getTextBounds("Hello ", 0, 0, &tbx, &tby, &tbw, &tbh);
+	canvas->fillRect(x + tbw + 10, y + 8, welcomeWidth - tbw - 4, 4, COLOR_FG);
 
 	// update screen
 	displayFlush();

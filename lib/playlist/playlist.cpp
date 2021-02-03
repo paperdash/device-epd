@@ -48,9 +48,6 @@ void setupPlaylist()
 	{
 		faces[i].setup();
 	}
-
-	// force instant update
-	lastSwitch = millis() - timer;
 }
 
 void loopPlaylist()
@@ -69,6 +66,12 @@ void loopPlaylist()
 		Serial.println("switch face: " + faces[currentFaceIndex].name);
 		faces[currentFaceIndex].show();
 	}
+}
+
+void playlistNextSwitchIn(int32_t seconds)
+{
+	// define next update
+	lastSwitch = millis() - (timer - (seconds * 1000));
 }
 
 void playlistNextFace()

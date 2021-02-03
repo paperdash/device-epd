@@ -8,6 +8,7 @@
 #include "playlist.h"
 #include "app.h"
 #include "image.h"
+#include "faceSplash.h"
 
 void setup()
 {
@@ -38,6 +39,10 @@ void setup()
 	}
 
 	setupApp();
+
+	// show boot splash for x seconds
+	showFaceSplash();
+	playlistNextSwitchIn(3);
 
 	Serial.println();
 	Serial.println("setup - done");

@@ -11,5 +11,6 @@ String playlistGetCurrentFace();
 int32_t playlistGetRemainingTimeMs();
 void playlistResetTimer();
 void playlistShow(const char name[]);
+void playlistNextSwitchIn(int32_t seconds);
 
 #endif
