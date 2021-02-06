@@ -97,7 +97,13 @@ void setupApp()
 	setupOTA();
 
 	server.onNotFound([](AsyncWebServerRequest *request) {
-		request->send(404);
+		Serial.printf("not found: http://%s%s\n", request->host().c_str(), request->url().c_str());
+
+		if (ON_STA_FILTER(request)) {
+			request->send(404);
+		} else {
+			request->send(SPIFFS, "/dist/index.html");
+		}
 	});
 
 	server.on("/stats", HTTP_GET, [](AsyncWebServerRequest *request) {

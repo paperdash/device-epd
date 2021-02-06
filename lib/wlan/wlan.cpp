@@ -1,10 +1,20 @@
 #include "wlan.h"
 #include "settings.h"
+#include <DNSServer.h>
 
 const char *deviceName = "paperdash-epd";
 RTC_DATA_ATTR int wifiFailedCount = 0;
 
-void initClientMode(const char *ssid, const char *password);
+// DNS server
+const byte DNS_PORT = 53;
+DNSServer dnsServer;
+
+/* Soft AP network parameters */
+IPAddress apIP(192,178,4,1);
+
+#include <DNSServer.h>
+
+bool initClientMode(const char *ssid, const char *password);
 void initAPMode();
 
 void setupWlan()
@@ -15,12 +25,14 @@ void setupWlan()
 	String ssid = NVS.getString("wifi.ssid");
 	String password = NVS.getString("wifi.password");
 
+	bool clientMode = false;
 	if (!ssid.isEmpty() && !password.isEmpty() && wifiFailedCount <=3)
 	{
-		// client mode
-		initClientMode(ssid.c_str(), password.c_str());
+		// try client mode
+		clientMode = initClientMode(ssid.c_str(), password.c_str());
 	}
-	else
+
+	if (!clientMode)
 	{
 		// ap mode
 		initAPMode();
@@ -31,7 +43,14 @@ void setupWlan()
 	Serial.println("setup Wlan - done");
 }
 
-void initClientMode(const char *ssid, const char *password)
+
+void loopWlan()
+{
+	// DNS
+	dnsServer.processNextRequest();
+}
+
+bool initClientMode(const char *ssid, const char *password)
 {
 	uint8_t tryCount = 5;
 	long startMills = millis();
@@ -52,15 +71,13 @@ void initClientMode(const char *ssid, const char *password)
 		if (!tryCount--)
 		{
 			// TODO is this correct?
+			WiFi.disconnect();
 			wifiFailedCount++;
 			if (wifiFailedCount > 3) {
 				Serial.println("  wifi is not reachable...");
-				WiFi.disconnect();
-				initAPMode();
-				return;
+				return false;
 			} else {
 				tryCount = 5;
-				WiFi.disconnect();
 				Serial.println("  wifi reset...");
 				delay(500);
 				WiFi.begin(ssid, password);
@@ -82,13 +99,24 @@ void initClientMode(const char *ssid, const char *password)
 
 	Serial.print("  connected in: ");
 	Serial.println(millis() - startMills);
+
+	return true;
 }
 
 void initAPMode()
 {
 	Serial.println("  init AP (Access Point)");
 
+  	WiFi.mode(WIFI_AP);
 	WiFi.softAP("paperdash");
+
+	// prevent esp from crashing
+	delay(2000);
+
+	WiFi.softAPConfig(apIP, apIP, IPAddress(255, 255, 255, 0));
+
+	// redirect all to local ap
+  	dnsServer.start(DNS_PORT, "*", apIP);
 
 	IPAddress IP = WiFi.softAPIP();
 	Serial.print("  AP IP address: ");

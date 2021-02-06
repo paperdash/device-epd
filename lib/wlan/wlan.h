@@ -5,5 +5,6 @@
 #include <ESPmDNS.h>
 
 void setupWlan();
+void loopWlan();
 
 #endif

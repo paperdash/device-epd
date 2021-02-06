@@ -55,6 +55,8 @@ void setup()
 
 void loop()
 {
+	loopWlan();
+
 	if (WiFi.isConnected())
 	{
 		loopDateTime();
