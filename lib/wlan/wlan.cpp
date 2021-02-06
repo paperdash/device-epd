@@ -55,6 +55,7 @@ void initClientMode(const char *ssid, const char *password)
 			wifiFailedCount++;
 			if (wifiFailedCount > 3) {
 				Serial.println("  wifi is not reachable...");
+				WiFi.disconnect();
 				initAPMode();
 				return;
 			} else {
@@ -87,8 +88,7 @@ void initAPMode()
 {
 	Serial.println("  init AP (Access Point)");
 
-	//WiFi.disconnect();
-	WiFi.softAP("paperdash.io");
+	WiFi.softAP("paperdash");
 
 	IPAddress IP = WiFi.softAPIP();
 	Serial.print("  AP IP address: ");

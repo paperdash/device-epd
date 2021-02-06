@@ -9,6 +9,7 @@
 #include "app.h"
 #include "image.h"
 #include "faceSplash.h"
+#include "faceWifi.h"
 
 void setup()
 {
@@ -32,17 +33,21 @@ void setup()
 	setupImage();
 
 	setupWlan();
+	setupApp();
+
 	if (WiFi.isConnected())
 	{
 		setupDateTime();
 		setupPlaylist();
+
+		// show boot splash for x seconds
+		showFaceSplash();
+		playlistNextSwitchIn(3);
 	}
-
-	setupApp();
-
-	// show boot splash for x seconds
-	showFaceSplash();
-	playlistNextSwitchIn(3);
+	else
+	{
+		showFaceWifi();
+	}
 
 	Serial.println();
 	Serial.println("setup - done");
