@@ -78,7 +78,7 @@
 </script>
 
 <style scoped>
->>> .my-icon > .v-icon__svg {
+>>> .my-icon > .v-icon__component {
   transform: scale(3);
 }
 </style>
