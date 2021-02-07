@@ -1,100 +1,78 @@
 <template>
-  <v-container
-    class="_fill-height"
-    fluid
+  <setup-panel
+    back
+    @back="stepBack"
   >
-    <div>
-      <v-btn
-        text
-        color="primary"
-        class="px-0"
-        @click="stepBack"
-      >
-        <v-icon>$prev</v-icon>
-        Back
-      </v-btn>
-    </div>
+    <template #icon>
+      $language
+    </template>
 
-    <v-row
-      no-gutters
-      justify="center"
-    >
-      <v-col
-        lg="5"
-        md="6"
-        sm="8"
-      >
-        <template v-if="currentStep === 0">
-          <!-- country -->
-          <v-card flat>
-            <v-card-title
-              class="display-1 font-weight-bold mb-12 px-0 justify-center text-center"
+    <template #headline>
+      <template v-if="currentStep === 0">
+        Select Your Country or Region
+      </template>
+      <template v-else-if="currentStep === 1">
+        Select Your Timezone
+      </template>
+    </template>
+
+    <template v-if="currentStep === 0">
+      <!-- country -->
+      <v-list class="pa-0">
+        <template v-for="(country, code) in availableCountries">
+          <div :key="code">
+            <v-divider />
+
+            <v-list-item
+              class="px-0"
+              @click="commitCountry(code, country)"
             >
-              Select Your Country or Region
-            </v-card-title>
+              <!--<v-list-item-icon>{{ country.emoji }}</v-list-item-icon>-->
+              <v-list-item-content>{{ country.native }}</v-list-item-content>
 
-            <v-list class="pa-0">
-              <template v-for="(country, code) in availableCountries">
-                <div :key="code">
-                  <v-divider />
-
-                  <v-list-item
-                    class="px-0"
-                    @click="commitCountry(code, country)"
-                  >
-                    <!--<v-list-item-icon>{{ country.emoji }}</v-list-item-icon>-->
-                    <v-list-item-content>{{ country.native }}</v-list-item-content>
-
-                    <v-list-item-action>
-                      <v-icon>$next</v-icon>
-                    </v-list-item-action>
-                  </v-list-item>
-                </div>
-              </template>
-            </v-list>
-          </v-card>
+              <v-list-item-action>
+                <v-icon>$next</v-icon>
+              </v-list-item-action>
+            </v-list-item>
+          </div>
         </template>
+      </v-list>
+    </template>
 
-        <template v-else-if="currentStep === 1">
-          <!-- timezone if needed -->
-          <v-card flat>
-            <v-card-title class="display-1 font-weight-bold mb-12 px-0 justify-center text-center">
-              Select Your Timezone
-            </v-card-title>
+    <template v-else-if="currentStep === 1">
+      <!-- timezone if needed -->
 
-            <v-list class="pa-0">
-              <template v-for="(zone, i) in availableTimeZones">
-                <div :key="i">
-                  <v-divider />
+      <v-list class="pa-0">
+        <template v-for="(zone, i) in availableTimeZones">
+          <div :key="i">
+            <v-divider />
 
-                  <v-list-item
-                    class="px-0"
-                    @click="commitTimezone(zone)"
-                  >
-                    <v-list-item-content>{{ zone }}</v-list-item-content>
+            <v-list-item
+              class="px-0"
+              @click="commitTimezone(zone)"
+            >
+              <v-list-item-content>{{ zone }}</v-list-item-content>
 
-                    <v-list-item-action>
-                      <v-icon>$next</v-icon>
-                    </v-list-item-action>
-                  </v-list-item>
-                </div>
-              </template>
-              <v-divider />
-            </v-list>
-          </v-card>
+              <v-list-item-action>
+                <v-icon>$next</v-icon>
+              </v-list-item-action>
+            </v-list-item>
+          </div>
         </template>
-      </v-col>
-    </v-row>
-  </v-container>
+        <v-divider />
+      </v-list>
+    </template>
+  </setup-panel>
 </template>
 
 <script>
   import { mapState, mapActions, mapMutations } from 'vuex'
-  //  import apiDevice from '@/api/device'
   import { countries } from 'countries-list'
   import timezones from 'countries-and-timezones'
+  import SetupPanel from '@/components/Setup/BasePanel'
 
   export default {
+    components: { SetupPanel },
     data: () => ({
       currentStep: 0,
 
