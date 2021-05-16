@@ -3,7 +3,7 @@
     flat
     rounded="lg"
   >
-    <v-card-title class="display-2 mb-12 justify-center text-center">
+    <v-card-title class="text-h3 mb-12 justify-center text-center">
       System info
     </v-card-title>
 
@@ -71,7 +71,7 @@
         <v-progress-circular
           :rotate="-90"
           :value="getFSUsage"
-          class="caption"
+          class="text-caption"
         >
           {{ getFSUsage }}
         </v-progress-circular>
@@ -107,7 +107,7 @@
         <v-progress-circular
           :rotate="-90"
           :value="getMemoryUsage"
-          class="caption"
+          class="text-caption"
         >
           {{ getMemoryUsage }}
         </v-progress-circular>

@@ -3,7 +3,7 @@
     flat
     rounded="lg"
   >
-    <v-card-title class="display-2 mb-12 justify-center text-center">
+    <v-card-title class="text-h3 mb-12 justify-center text-center">
       Playlist settings
     </v-card-title>
 

@@ -19,7 +19,7 @@
       <v-list-item-avatar
         v-if="item.weather"
         color="grey lighten-2"
-        class="headline font-weight-light white--text"
+        class="text-h5 font-weight-light white--text"
       >
         <img
           width="64"

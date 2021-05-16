@@ -12,7 +12,7 @@
           color="secondary lighten-3"
           size="24"
         >
-          <span class="white--text headline caption">{{ stats.wifi.channel }}</span>
+          <span class="white--text text-h5 text-caption">{{ stats.wifi.channel }}</span>
         </v-avatar>
       </v-list-item-avatar>
     </v-list-item>
@@ -43,7 +43,7 @@
         <v-progress-circular
           :rotate="-90"
           :value="fsUsage"
-          class="caption"
+          class="text-caption"
         >
           {{ fsUsage }}
         </v-progress-circular>

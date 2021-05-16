@@ -9,7 +9,7 @@
     >
       <v-list-item two-line>
         <v-list-item-content v-if="weather">
-          <v-list-item-title class="headline">
+          <v-list-item-title class="text-h5">
             {{ weather.name }}
           </v-list-item-title>
           <v-list-item-subtitle>{{ new Date(weather.dt *1000).toLocaleString(undefined, {weekday:'short', hour: 'numeric'}) }}, {{ weather.weather[0].description }}</v-list-item-subtitle>
@@ -20,7 +20,7 @@
         <v-card-text>
           <v-row align="center">
             <v-col
-              class="display-3"
+              class="text-h2"
               cols="6"
             >
               {{ currentTemp }} &deg;C

@@ -1,7 +1,7 @@
 <template>
   <setup-panel>
     <v-card-title
-      class="display-2 font-weight-bold mb-12 px-0 justify-center text-center"
+      class="text-h3 font-weight-bold mb-12 px-0 justify-center text-center"
     >
       <span class="mr-5">Hello</span> <span class="text-decoration-underline">{{ settings.device.name }}</span>
     </v-card-title>

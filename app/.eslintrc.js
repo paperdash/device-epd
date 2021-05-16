@@ -10,5 +10,5 @@ module.exports = {
   extends: 'vuetify',
   // add your custom rules here
   rules: {
-  }
+  },
 }

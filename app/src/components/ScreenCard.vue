@@ -44,7 +44,7 @@
       >
         {{ playlistRemainingCountdown }}
       </v-progress-circular>
-      <span class="headline pl-3">{{ playlistCurrent }}</span>
+      <span class="text-h5 pl-3">{{ playlistCurrent }}</span>
     </v-card-actions>
   </v-card>
 </template>

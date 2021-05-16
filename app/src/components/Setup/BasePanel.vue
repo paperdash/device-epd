@@ -38,7 +38,7 @@
           </div>
 
           <v-card-title
-            class="display-1 font-weight-bold mb-12 px-0 justify-center text-center"
+            class="text-h4 font-weight-bold mb-12 px-0 justify-center text-center"
           >
             <slot name="headline" />
           </v-card-title>
