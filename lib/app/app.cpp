@@ -138,6 +138,9 @@ void setupApp()
 		doc["device"]["heap"]["total"] = ESP.getHeapSize();
 		doc["device"]["heap"]["free"] = ESP.getFreeHeap();
 
+		doc["device"]["specs"]["cpu"] = ESP.getCpuFreqMHz();
+		doc["device"]["specs"]["flash"] = ESP.getFlashChipSize();
+
 		doc["playlist"]["current"] = playlistGetCurrentFace();
 		doc["playlist"]["remaining"] = (playlistGetRemainingTimeMs() / 1000) + 3; // + face rendering time 3s
 
