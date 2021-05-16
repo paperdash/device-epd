@@ -47,7 +47,9 @@
         const wifiConnected = this.stats.wifi.connected
 
         // only on initial navigation
-        if (!setupFinished) {
+        if (wifiConnected && !setupFinished) {
+          goto = '/setup/weather'
+        } else if (!setupFinished) {
           if (this.$route.path !== '/setup/start') {
             goto = '/setup/start'
           }
