@@ -12,7 +12,6 @@ DNSServer dnsServer;
 /* Soft AP network parameters */
 IPAddress apIP(192,178,4,1);
 
-#include <DNSServer.h>
 
 bool initClientMode(const char *ssid, const char *password);
 void initAPMode();
