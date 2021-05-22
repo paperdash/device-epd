@@ -19,7 +19,7 @@ void showFaceWifi()
 	GFXcanvas1 *canvas = displayGetCanvas();
 
 	// render
-	canvas->drawBitmap(0, 0, imageSTA, 640, 384, COLOR_BG, COLOR_FG);
+	canvas->drawBitmap(0, 0, imageSTA, 640, 384, 0x0000, 0xFFFF);
 
 	// update screen
 	displayFlush();
