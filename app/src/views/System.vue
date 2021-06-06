@@ -133,6 +133,36 @@
       </v-list-item>
     </v-list>
 
+    <template v-if="specs">
+      <v-list-item class="mt-10">
+        <v-list-item-icon class="mr-3">
+          <v-icon>$cable</v-icon>
+        </v-list-item-icon>
+        <v-list-item-content>
+          <v-list-item-title>Hardware</v-list-item-title>
+        </v-list-item-content>
+      </v-list-item>
+
+      <v-divider class="mx-4" />
+      <v-list
+        class="pb-0"
+      >
+        <v-list-item>
+          <v-list-item-title>CPU</v-list-item-title>
+          <v-list-item-subtitle class="text-right">
+            {{ specs.cpu }} Mhz
+          </v-list-item-subtitle>
+        </v-list-item>
+
+        <v-list-item>
+          <v-list-item-title>Flash</v-list-item-title>
+          <v-list-item-subtitle class="text-right">
+            {{ specs.flash | prettyBytes }}
+          </v-list-item-subtitle>
+        </v-list-item>
+      </v-list>
+    </template>
+
     <v-divider class="mt-12" />
     <v-card-actions>
       <v-btn
@@ -169,7 +199,9 @@
       memory () {
         return this.stats.device.heap
       },
-
+      specs () {
+        return this.stats.device?.specs
+      },
     },
   }
 </script>

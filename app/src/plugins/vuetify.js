@@ -70,6 +70,7 @@ const MY_ICONS = {
     vpn_key: { component: () => import(/* webpackChunkName: "icons" */'@material-icons/svg/svg/vpn_key/baseline.svg') },
     place: { component: () => import(/* webpackChunkName: "icons" */'@material-icons/svg/svg/place/baseline.svg') },
     monochrome_photos: { component: () => import(/* webpackChunkName: "icons" */'@material-icons/svg/svg/monochrome_photos/baseline.svg') },
+    cable: { component: () => import(/* webpackChunkName: "icons" */'@material-icons/svg/svg/cable/baseline.svg') },
 
     // wifi
     wifi: { component: () => import(/* webpackChunkName: "icons" */'@material-icons/svg/svg/wifi/baseline.svg') },
