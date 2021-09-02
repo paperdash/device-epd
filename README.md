@@ -5,6 +5,7 @@
 [![Generic badge](https://img.shields.io/badge/Firmware-1.0-orange.svg?logo=arduino)]()
 [![Generic badge](https://img.shields.io/badge/APP-1.0-orange.svg?logo=vuetify)]()
 [![Generic badge](https://img.shields.io/badge/3D_Housing-1.0-orange.svg?logo=makerbot)](https://www.thingiverse.com/thing:4724292)
+[![MadeWithVueJs.com shield](https://madewithvuejs.com/storage/repo-shields/3009-shield.svg)](https://madewithvuejs.com/p/paperdash/shield-link)
 
 ![ForTheBadge built-with-love](http://ForTheBadge.com/images/badges/built-with-love.svg)
 
